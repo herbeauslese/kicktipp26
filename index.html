@@ -1,0 +1,1235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WM 2026 Tippspiel - Willkommen!</title>
+<style type="text/css">
+body {
+  background-color: #003300;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='1' fill='%23005500'/%3E%3C/svg%3E");
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  margin: 4px;
+}
+a { color: #003399; text-decoration: underline; }
+a:hover { color: #ff0000; text-decoration: underline; }
+a:visited { color: #660099; }
+
+.maintable {
+  background-color: #ffffff;
+  border: 4px outset #cccccc;
+}
+.headertable {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='2' height='2' fill='%23004400'/%3E%3Crect x='2' y='2' width='2' height='2' fill='%23003300'/%3E%3C/svg%3E");
+  background-color: #003300;
+  width: 100%;
+  border-bottom: 4px solid #ffcc00;
+}
+.title {
+  font-family: "Comic Sans MS", "Arial Black", Impact, sans-serif;
+  font-size: 32px;
+  font-weight: bold;
+  color: #ffff00;
+  text-shadow: 3px 3px 0px #ff6600, -1px -1px 0 #000;
+  letter-spacing: 3px;
+}
+.subtitle {
+  font-family: "Comic Sans MS", Verdana, Arial, sans-serif;
+  font-size: 11px;
+  color: #00ff88;
+  letter-spacing: 2px;
+}
+.navtable {
+  background: #336633;
+  width: 100%;
+  border-bottom: 4px solid #ffcc00;
+  border-top: 2px solid #ffcc00;
+}
+.navbtn {
+  font-family: "Comic Sans MS", Verdana, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  color: #ffff00;
+  background: #336633;
+  border: 3px outset #88cc88;
+  padding: 6px 16px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.navbtn:hover { background: #004400; color: #ffffff; border-color: #ffcc00; }
+.navbtn.active {
+  background: #ffffcc;
+  color: #003300;
+  border-style: inset;
+  font-style: italic;
+}
+/* MARQUEE AREA */
+.marqueebar {
+  background: #000033;
+  border-top: 2px solid #ffcc00;
+  border-bottom: 2px solid #ffcc00;
+  color: #ffff00;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  padding: 3px 0;
+}
+/* CONTENT */
+.contentbg {
+  background-color: #cccc99;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='4' height='4' fill='%23c8c895'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%23c8c895'/%3E%3Crect x='4' y='0' width='4' height='4' fill='%23d4d4a0'/%3E%3Crect x='0' y='4' width='4' height='4' fill='%23d4d4a0'/%3E%3C/svg%3E");
+}
+/* SECTION HEADERS */
+.sectionhdr {
+  font-family: "Comic Sans MS", "Arial Black", sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: #ffff00;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='3' height='3' fill='%23225522'/%3E%3Crect x='3' y='3' width='3' height='3' fill='%23225522'/%3E%3Crect x='3' y='0' width='3' height='3' fill='%231a441a'/%3E%3Crect x='0' y='3' width='3' height='3' fill='%231a441a'/%3E%3C/svg%3E");
+  background-color: #225522;
+  border-top: 2px solid #ffcc00;
+  border-bottom: 3px solid #ffcc00;
+  padding: 5px 10px;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 0 #000000;
+}
+.sectionbox {
+  background: #ffffff;
+  border: 3px outset #cccccc;
+  margin-bottom: 10px;
+}
+/* RANGLISTE */
+.rltable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.rltable th {
+  background: #336633;
+  color: #ffcc00;
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 5px 8px;
+  border: 1px solid #225522;
+  text-align: left;
+}
+.rltable td {
+  padding: 5px 8px;
+  border: 1px solid #ccccaa;
+  font-size: 11px;
+  vertical-align: middle;
+}
+.rltable tr.even td { background: #f5f5ee; }
+.rltable tr.odd  td { background: #eaeadb; }
+.rltable tr:hover td { background: #ffffcc !important; }
+.rank-no {
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 20px;
+  color: #aaaaaa;
+  text-align: center;
+  width: 32px;
+}
+.rank-1 .rank-no { color: #cc9900; font-size: 24px; }
+.rank-2 .rank-no { color: #999999; font-size: 22px; }
+.rank-3 .rank-no { color: #885522; font-size: 20px; }
+.ptsnum {
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 26px;
+  color: #003300;
+  line-height: 1;
+}
+.ptssub {
+  font-size: 9px;
+  color: #999999;
+}
+/* PILL FILTER */
+.pillrow {
+  background: #eeeecc;
+  border-bottom: 1px solid #ccccaa;
+  padding: 5px 6px;
+}
+.pill {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: #ffffff;
+  border: 2px outset #aaaaaa;
+  padding: 2px 8px;
+  cursor: pointer;
+  color: #555555;
+}
+.pill:hover { background: #ffffcc; }
+.pill.active {
+  background: #336633;
+  color: #ffff00;
+  border-style: inset;
+}
+/* GROUP GRID */
+.groupgrid {
+  border-top: 1px solid #bbbbaa;
+}
+.groupcard {
+  background: #ffffff;
+  border-right: 1px solid #ccccaa;
+  border-bottom: 1px solid #ccccaa;
+  vertical-align: top;
+  width: 25%;
+}
+.groupcardhdr {
+  background: #336633;
+  border-bottom: 2px solid #ffcc00;
+  padding: 4px 8px;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 13px;
+  color: #ffcc00;
+  letter-spacing: 2px;
+}
+.groupcardhdr small {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 8px;
+  color: #aaccaa;
+  font-weight: normal;
+  letter-spacing: 0;
+  display: block;
+  margin-top: 1px;
+}
+.gmrow {
+  border-bottom: 1px solid #f0f0e8;
+  padding: 4px 8px;
+  font-size: 10px;
+}
+.gmdate { color: #aaaaaa; font-size: 9px; font-family: "Courier New", monospace; }
+.gmhome { font-weight: bold; color: #333333; }
+.gmaway { color: #888888; }
+.gmscore {
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 15px;
+  text-align: center;
+}
+.gmscore.done { color: #336633; }
+.gmscore.open { color: #dddddd; }
+/* TIPPEN */
+.tipselbar {
+  background: #eeeecc;
+  border-bottom: 2px groove #aaaaaa;
+  padding: 7px 8px;
+}
+.retroselect {
+  border: 2px inset #aaaaaa;
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 12px;
+  padding: 4px 6px;
+  background: #ffffff;
+}
+.tippcard {
+  background: #ffffff;
+  border-right: 1px solid #ccccaa;
+  border-bottom: 1px solid #ccccaa;
+  vertical-align: top;
+  width: 25%;
+}
+.tippcardhdr {
+  background: #225522;
+  border-bottom: 2px solid #ffcc00;
+  padding: 4px 8px;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 12px;
+  color: #ffcc00;
+  letter-spacing: 2px;
+}
+.tipprow {
+  border-bottom: 1px solid #f0f0e8;
+  padding: 4px 7px;
+  font-size: 10px;
+}
+.tipprow.locked { background: #f8f8f0; }
+.tipprow:nth-child(odd) { background: #fafaf5; }
+.tipprow.locked:nth-child(odd) { background: #f5f5ec; }
+.tippinp {
+  width: 30px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  border: 2px inset #aaaaaa;
+  background: #ffffee;
+  color: #003300;
+  padding: 2px;
+}
+.tippinp:focus { outline: 2px solid #336633; background: #ffffcc; }
+.ptstag {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 5px;
+  border: 1px solid;
+}
+.p3 { background: #ccffcc; color: #003300; border-color: #66cc66; }
+.p2 { background: #ffeecc; color: #663300; border-color: #cc8800; }
+.p1 { background: #ffcccc; color: #660000; border-color: #cc6666; }
+.p0 { background: #eeeeee; color: #999999; border-color: #cccccc; }
+.savebar {
+  background: #eeeecc;
+  border-top: 2px groove #aaaaaa;
+  padding: 7px 8px;
+}
+.btngreen {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: #336633;
+  color: #ffcc00;
+  border: 2px outset #66aa66;
+  padding: 5px 14px;
+  cursor: pointer;
+}
+.btngreen:hover { background: #225522; }
+.btngreen:active { border-style: inset; }
+.btngrey {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  background: #888888;
+  color: #ffffff;
+  border: 2px outset #aaaaaa;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.btngrey:active { border-style: inset; }
+.btnred {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  background: #aa2222;
+  color: #ffffff;
+  border: 2px outset #cc5555;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.btnred:active { border-style: inset; }
+.btnok {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  background: #336633;
+  color: #ffffff;
+  border: 2px outset #55aa55;
+  padding: 2px 7px;
+  cursor: pointer;
+}
+.btnok:active { border-style: inset; }
+/* ADMIN */
+.loginbox {
+  background: #ffffff;
+  border: 3px outset #cccccc;
+  padding: 14px;
+  max-width: 320px;
+  margin: 16px auto;
+}
+.loginbox h3 {
+  font-family: "Comic Sans MS", Impact, sans-serif;
+  font-size: 16px;
+  color: #003300;
+  border-bottom: 2px solid #ffcc00;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+.retroinput {
+  border: 2px inset #aaaaaa;
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 12px;
+  padding: 5px 7px;
+  background: #ffffee;
+  width: 100%;
+  display: block;
+  margin-bottom: 8px;
+}
+.retroinput:focus { outline: 2px solid #336633; background: #ffffcc; }
+.admgrphdr {
+  background: #eeeecc;
+  border-bottom: 1px solid #ccccaa;
+  font-size: 9px;
+  font-weight: bold;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 3px 8px;
+}
+.admrow {
+  border-bottom: 1px solid #f0f0e8;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-family: Verdana, Arial, sans-serif;
+}
+.admrow:nth-child(even) { background: #fafaf5; }
+.admlabel { font-size: 10px; }
+.admlabel small { font-size: 9px; color: #aaaaaa; display: block; }
+.adminp {
+  width: 32px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  border: 2px inset #aaaaaa;
+  background: #ffffee;
+  padding: 2px;
+}
+.adminp:focus { outline: 2px solid #336633; }
+/* TOAST */
+.toastpop {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  z-index: 9999;
+  background: #000033;
+  color: #ffff00;
+  border: 3px outset #4444cc;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  display: none;
+}
+/* FOOTER */
+.footerbar {
+  background: #003300;
+  border-top: 3px solid #ffcc00;
+  text-align: center;
+  padding: 6px;
+  font-size: 9px;
+  color: #336633;
+  font-family: "Courier New", Courier, monospace;
+  letter-spacing: 2px;
+}
+/* TABS */
+.phasetab {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: #eeeecc;
+  border: 2px outset #aaaaaa;
+  border-bottom: none;
+  padding: 4px 14px;
+  cursor: pointer;
+  color: #555555;
+  margin-right: 2px;
+}
+.phasetab.active {
+  background: #ffffff;
+  color: #003300;
+  border-style: inset;
+  border-bottom: 2px solid #ffffff;
+}
+.phasetabrow {
+  background: #eeeecc;
+  border-bottom: 1px solid #ccccaa;
+  padding: 5px 6px 0;
+}
+.statbar { font-family: "Courier New", Courier, monospace; font-size: 10px; color: #666666; margin-left: auto; }
+.savemsg { font-family: "Courier New", Courier, monospace; font-size: 10px; color: #666666; }
+/* COUNTDOWN */
+.cd-wrap{padding:30px 20px;text-align:center;background:#ffffff}
+.cd-title{font-family:"Comic Sans MS",Impact,sans-serif;font-size:20px;font-weight:bold;color:#003300;margin-bottom:6px}
+.cd-sub{font-family:"Comic Sans MS",Verdana,sans-serif;font-size:11px;color:#666666;margin-bottom:20px}
+.cd-table{border-collapse:separate;border-spacing:8px;margin:0 auto 16px}
+.cd-cell{background:#003300;border:3px outset #336633;padding:8px 14px;text-align:center;min-width:60px}
+.cd-num{font-family:"Courier New",Courier,monospace;font-size:34px;font-weight:bold;color:#ffcc00;display:block;line-height:1;text-shadow:0 0 8px #ffcc00}
+.cd-lbl{font-family:"Comic Sans MS",Verdana,sans-serif;font-size:9px;color:#99cc99;text-transform:uppercase;letter-spacing:1px;display:block;margin-top:4px}
+.cd-info{font-family:"Comic Sans MS",Verdana,sans-serif;font-size:11px;color:#666666;font-style:italic;margin-top:8px}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.cd-ball{font-size:44px;display:block;margin-bottom:10px;animation:bounce .9s infinite alternate}
+/* STARS ANIMATION */
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+@keyframes blink2 { 0%,100%{opacity:1} 40%{opacity:0.0} }
+@keyframes blink3 { 0%{color:#ff0000}25%{color:#ffff00}50%{color:#00ff00}75%{color:#0088ff}100%{color:#ff0000} }
+.blink { animation: blink 1.2s infinite; }
+.blink2 { animation: blink2 0.7s infinite; }
+.rainbow { animation: blink3 2s infinite; font-weight:bold; }
+/* STATUS DOT */
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#999999; margin-right:4px; vertical-align:middle; }
+.dot.on { background:#00cc00; box-shadow: 0 0 5px #00cc00; }
+/* phase display */
+.phase-gruppe { display: block; }
+.phase-ko { display: none; }
+</style>
+</head>
+<body>
+
+<table width="980" align="center" cellpadding="0" cellspacing="0" class="maintable">
+<tr>
+  <!-- HEADER -->
+  <td>
+    <table width="100%" cellpadding="0" cellspacing="0" class="headertable">
+    <tr>
+      <td width="72" align="center" valign="middle" style="padding:10px">
+        <img src="ball.gif" width="56" height="56" alt="Fussball" style="display:block;border:0">
+      </td>
+      <td valign="middle" style="padding:8px 4px">
+        <div class="title">&#9917; WM 2026 TIPPSPIEL &#9917;</div>
+        <div class="subtitle">&#9733; USA &nbsp;&middot;&nbsp; Kanada &nbsp;&middot;&nbsp; Mexiko &nbsp;&middot;&nbsp; 11. Juni &ndash; 19. Juli 2026 &#9733;</div>
+        <div style="font-family:'Comic Sans MS',Verdana,sans-serif;font-size:10px;color:#ffcc00;margin-top:3px">
+          <span class="blink">&#9733;</span> Tippt euch zum Weltmeister! <span class="blink">&#9733;</span>
+        </div>
+      </td>
+      <td align="right" valign="middle" style="padding:10px">
+        <table cellpadding="0" cellspacing="0">
+        <tr><td align="right" style="font-family:'Courier New',monospace;font-size:10px;color:#ffff00;letter-spacing:1px;padding-bottom:4px">
+          <span class="dot" id="dot"></span><span id="gh-status" style="color:#ffff00">KEIN TOKEN</span>
+        </td></tr>
+        <tr><td align="right" style="font-size:20px;letter-spacing:4px">&#127482;&#127480;&#127464;&#127462;&#127474;&#127485;</td></tr>
+        </table>
+      </td>
+    </tr>
+    </table>
+    <!-- MARQUEE -->
+    <div class="marqueebar">
+      <marquee behavior="scroll" direction="left" scrollamount="3" style="height:18px">
+        &#9733;&nbsp; WM 2026 TIPPSPIEL &nbsp;&#9733;&nbsp;
+        48 MANNSCHAFTEN &middot; 12 GRUPPEN &middot; 104 SPIELE &nbsp;&#9733;&nbsp;
+        3 PUNKTE EXAKTES ERGEBNIS &middot; 2 PUNKTE RICHTIGE TORDIFFERENZ &middot; 1 PUNKT RICHTIGE TENDENZ &nbsp;&#9733;&nbsp;
+        WM-AUFTAKT: 11. JUNI 2026 IM AZTEKENSTADION &nbsp;&#9733;&nbsp;
+        FINALE: 19. JULI 2026, METLIFE STADIUM NEW JERSEY &nbsp;&#9733;&nbsp;
+        VIEL ERFOLG BEIM TIPPEN! &nbsp;&#9733;
+      </marquee>
+    </div>
+    <!-- NAV -->
+    <table width="100%" cellpadding="0" cellspacing="0" class="navtable">
+    <tr>
+      <td width="1%" nowrap><button class="navbtn active" onclick="showPage('rangliste',this)">&#9733; Rangliste</button></td>
+      <td width="1%" nowrap><button class="navbtn" onclick="showPage('spielplan',this)">Spielplan</button></td>
+      <td width="1%" nowrap><button class="navbtn" onclick="showPage('tippen',this)">Meine Tipps</button></td>
+      <td width="1%" nowrap><button class="navbtn" onclick="showPage('admin',this)">&#9881; Admin</button></td>
+      <td width="100%">&nbsp;</td>
+    </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td class="contentbg" style="padding:8px">
+
+    <!-- ══ COUNTDOWN (verschwindet ab 11. Juni) ══ -->
+    <div id="countdown-wrap" class="sectionbox" style="display:none">
+      <div class="sectionhdr">&#9733; WM 2026 STARTET BALD! &#9733; <span class="blink2">&#9733;</span></div>
+      <div class="cd-wrap">
+        <span class="cd-ball">&#9917;</span>
+        <div class="cd-title">Die Seite &ouml;ffnet am 11. Juni 2026!</div>
+        <div class="cd-sub">Tipps f&uuml;r die Gruppenphase kannst du schon jetzt &uuml;ber den <a href="tippen.html">Tippbogen</a> abgeben&nbsp;&#9733;</div>
+        <table class="cd-table" cellpadding="0" cellspacing="0" align="center">
+          <tr>
+            <td class="cd-cell"><span class="cd-num" id="cd-days">--</span><span class="cd-lbl">Tage</span></td>
+            <td class="cd-cell"><span class="cd-num" id="cd-hours">--</span><span class="cd-lbl">Stunden</span></td>
+            <td class="cd-cell"><span class="cd-num" id="cd-mins">--</span><span class="cd-lbl">Minuten</span></td>
+            <td class="cd-cell"><span class="cd-num" id="cd-secs">--</span><span class="cd-lbl">Sekunden</span></td>
+          </tr>
+        </table>
+        <div class="cd-info">
+          <span class="blink">&#9733;</span>
+          Er&ouml;ffnungsspiel: Mexiko vs. Kanada &mdash; 11. Juni 2026, 21:00 Uhr MEZ
+          <span class="blink">&#9733;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ HAUPTINHALT (versteckt bis 11. Juni) ══ -->
+    <div id="main-content" style="display:none">
+    <div id="page-rangliste">
+      <div class="sectionbox">
+        <div class="sectionhdr">&#9733; AKTUELLE RANGLISTE &#9733; <span class="blink" style="color:#ff4444">&#9733;</span> <span class="blink2" style="color:#ffff00">&#9733;</span> <span class="blink" style="color:#00ff88">&#9733;</span></div>
+        <div class="pillrow" id="pill-row"></div>
+        <table class="rltable">
+          <thead><tr>
+            <th width="36">#</th>
+            <th>Spieler</th>
+            <th>Punkte</th>
+            <th>Exakt&nbsp;(3P)</th>
+            <th>Diff&nbsp;(2P)</th>
+            <th>Tendenz&nbsp;(1P)</th>
+            <th>Getippt</th>
+          </tr></thead>
+          <tbody id="rl-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ SPIELPLAN ═══ -->
+    <div id="page-spielplan" style="display:none">
+      <div class="sectionbox">
+        <div class="sectionhdr">SPIELPLAN WM 2026</div>
+        <div class="phasetabrow">
+          <button class="phasetab active" onclick="setPhase('gruppe',this)">Gruppenphase</button>
+          <button class="phasetab" onclick="setPhase('ko',this)">K.O.-Runde</button>
+        </div>
+        <div id="sp-gruppe">
+          <table width="100%" cellpadding="0" cellspacing="0" id="group-outer-table" class="groupgrid"></table>
+        </div>
+        <div id="sp-ko" style="display:none;padding:20px;text-align:center;color:#999999;font-size:11px;font-style:italic">
+          &#8987; K.O.-Runde wird nach Abschluss der Gruppenphase bef&uuml;llt.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TIPPEN ═══ -->
+    <div id="page-tippen" style="display:none">
+      <div class="sectionbox">
+        <div class="sectionhdr">MEINE TIPPS</div>
+        <div class="tipselbar">
+          <table cellpadding="0" cellspacing="0" width="100%"><tr>
+            <td style="font-size:10px;font-weight:bold;color:#555555;text-transform:uppercase;letter-spacing:1px;padding-right:8px">Spieler:</td>
+            <td><select class="retroselect" id="tipper-select" onchange="loadMyTipps()">
+              <option value="">-- ausw&auml;hlen --</option>
+            </select></td>
+            <td align="right"><span class="statbar" id="tipp-stat"></span></td>
+          </tr></table>
+        </div>
+        <div id="tipp-form"></div>
+        <div id="tipp-actions" class="savebar" style="display:none">
+          <button class="btngreen" onclick="saveTipps()">&#128190; Tipps speichern</button>
+          &nbsp;&nbsp;<span class="savemsg" id="save-msg"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ADMIN ═══ -->
+    <div id="page-admin" style="display:none">
+      <div id="admin-login-wrap">
+        <!-- SCHRITT 1: Passwort -->
+        <div class="loginbox" id="login-step1">
+          <h3>&#128274; Admin-Bereich</h3>
+          <div style="font-size:10px;color:#666666;margin-bottom:8px;font-family:Verdana,Arial,sans-serif">Bitte Passwort eingeben:</div>
+          <input type="password" class="retroinput" id="admin-pw" placeholder="Passwort...">
+          <button class="btngreen" onclick="checkPassword()">Weiter &raquo;</button>
+          <div id="pw-error" style="color:#cc0000;font-size:10px;font-family:Verdana,Arial,sans-serif;margin-top:6px;display:none">&#10007; Falsches Passwort!</div>
+        </div>
+        <!-- SCHRITT 2: GitHub Token (nur sichtbar nach korrektem PW) -->
+        <div class="loginbox" id="login-step2" style="display:none">
+          <h3>&#9881; GitHub-Token</h3>
+          <div style="font-size:10px;color:#666666;margin-bottom:8px;font-family:Verdana,Arial,sans-serif">GitHub Personal Access Token:</div>
+          <input type="password" class="retroinput" id="gh-token" placeholder="ghp_...">
+          <button class="btngreen" onclick="adminLogin()">Anmelden</button>
+          <button class="btngrey" style="margin-top:4px;display:block" onclick="backToPassword()">&#171; Zur&uuml;ck</button>
+        </div>
+      </div>
+      <div id="admin-panel" style="display:none">
+        <div class="sectionbox">
+          <div class="sectionhdr">ERGEBNISSE EINTRAGEN</div>
+          <div id="admin-matches"></div>
+        </div>
+        <div class="sectionbox">
+          <div class="sectionhdr">&#128229; TIPPS IMPORTIEREN</div>
+          <div style="padding:10px;background:#fffff8;border-bottom:1px solid #ccccaa">
+            <div style="font-family:'Comic Sans MS',Verdana,sans-serif;font-size:11px;color:#444444;margin-bottom:8px">
+              Den <b>Import-Block</b> aus der Mail hier reinkopieren und auf <b>Importieren</b> klicken.<br>
+              <span style="font-size:10px;color:#888888">Spieler wird automatisch angelegt falls noch nicht vorhanden.</span>
+            </div>
+            <textarea id="import-json" style="width:100%;height:80px;border:2px inset #aaaaaa;font-family:'Courier New',Courier,monospace;font-size:10px;background:#ffffee;padding:5px;resize:vertical" placeholder='{"name":"Max Mustermann","tipps":{"G1":{"home":2,"away":1},...}}'></textarea>
+            <div style="margin-top:6px;display:flex;align-items:center;gap:8px">
+              <button class="btngreen" onclick="importTipps()">&#128229; Importieren</button>
+              <span id="import-msg" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#336633"></span>
+            </div>
+          </div>
+        </div>
+        <div class="sectionbox">
+          <div class="sectionhdr">SPIELER VERWALTEN</div>
+          <div style="padding:10px">
+            <div id="admin-players"></div>
+            <table cellpadding="0" cellspacing="0" style="margin-top:8px;width:100%"><tr>
+              <td><input type="text" class="retroinput" id="new-player" style="margin:0" placeholder="Neuer Spieler..."></td>
+              <td width="120" style="padding-left:6px"><button class="btngreen" onclick="addPlayer()">+ Hinzuf&uuml;gen</button></td>
+            </tr></table>
+          </div>
+        </div>
+        <div style="padding:8px">
+          <button class="btngrey" onclick="exportMattermost()">&#128203; Mattermost-Export</button>
+          &nbsp;
+          <button class="btngrey" onclick="adminLogout()">Abmelden</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+
+  </td>
+</tr>
+<tr>
+  <td class="footerbar">
+    <span class="rainbow">&#9733; WM 2026 TIPPSPIEL &#9733;</span> &nbsp; POWERED BY GITHUB PAGES &nbsp; &#9733; &nbsp; &copy; 2026 &nbsp; &#9733;
+  </td>
+</tr>
+</table>
+
+<div class="toastpop" id="toast"></div>
+
+<script type="text/javascript">
+// ── CONFIG ───────────────────────────────────────────────────────
+var GH_USER = 'DEIN_GITHUB_USERNAME';
+var GH_REPO = 'wm2026-tippspiel';
+var GH_FILE = 'data.json';
+
+// ── ADMIN PASSWORT ───────────────────────────────────────────────
+// SHA-256 Hash des Passworts "admin2026" — hier durch eigenen Hash ersetzen
+// Hash erzeugen: https://emn178.github.io/online-tools/sha256.html
+var PW_HASH = '6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6'; // Standard: "admin2026" — unbedingt ersetzen!
+
+async function hashString(str){
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+
+function checkPassword(){
+  var pw = document.getElementById('admin-pw').value;
+  if(!pw) return;
+  hashString(pw).then(function(h){
+    if(h === PW_HASH){
+      document.getElementById('login-step1').style.display='none';
+      document.getElementById('login-step2').style.display='block';
+      document.getElementById('pw-error').style.display='none';
+    } else {
+      document.getElementById('pw-error').style.display='block';
+      document.getElementById('admin-pw').value='';
+    }
+  });
+}
+
+function backToPassword(){
+  document.getElementById('login-step2').style.display='none';
+  document.getElementById('login-step1').style.display='block';
+}
+
+// ── DATA ─────────────────────────────────────────────────────────
+var GROUPS={
+  A:['Mexiko','S\u00fcdkorea','S\u00fcdafrika','Tschechien'],
+  B:['Schweiz','Kanada','Katar','Bosnien-Herzegowina'],
+  C:['Brasilien','Marokko','Schottland','Haiti'],
+  D:['USA','Paraguay','Australien','T\u00fcrkei'],
+  E:['Deutschland','Elfenbeink\u00fcste','Ecuador','Cura\u00e7ao'],
+  F:['Niederlande','Japan','Peru','Venezuela'],
+  G:['Portugal','Kolumbien','Nigeria','Mosambik'],
+  H:['Spanien','Uruguay','Saudi-Arabien','Kap Verde'],
+  I:['Frankreich','Norwegen','Senegal','Irak'],
+  J:['Argentinien','\u00d6sterreich','Algerien','Jordanien'],
+  K:['Belgien','Kroatien','Kamerun','Neuseeland'],
+  L:['England','Ghana','Panama','Tunesien']
+};
+var GROUP_DATES={
+  A:['11.06','12.06','18.06','19.06','25.06','25.06'],
+  B:['12.06','13.06','18.06','19.06','24.06','24.06'],
+  C:['14.06','14.06','20.06','20.06','25.06','25.06'],
+  D:['14.06','15.06','21.06','21.06','26.06','26.06'],
+  E:['14.06','15.06','20.06','21.06','25.06','25.06'],
+  F:['13.06','14.06','19.06','19.06','24.06','24.06'],
+  G:['15.06','16.06','21.06','22.06','26.06','26.06'],
+  H:['16.06','16.06','22.06','22.06','27.06','27.06'],
+  I:['16.06','17.06','22.06','23.06','27.06','27.06'],
+  J:['17.06','17.06','23.06','23.06','28.06','28.06'],
+  K:['17.06','18.06','23.06','24.06','28.06','28.06'],
+  L:['18.06','18.06','24.06','24.06','28.06','28.06']
+};
+var MATCHES=[];
+(function(){
+  var id=1;
+  var grpkeys=['A','B','C','D','E','F','G','H','I','J','K','L'];
+  for(var gi=0;gi<grpkeys.length;gi++){
+    var g=grpkeys[gi],teams=GROUPS[g],pairs=[],idx=0;
+    for(var i=0;i<4;i++)for(var j=i+1;j<4;j++)pairs.push([teams[i],teams[j]]);
+    for(var k=0;k<pairs.length;k++){
+      MATCHES.push({id:'G'+id++,group:g,home:pairs[k][0],away:pairs[k][1],date:GROUP_DATES[g][k]});
+    }
+  }
+})();
+
+// ── FLAGGEN ──────────────────────────────────────────────────────
+var FLAGS = {
+  'Mexiko':               '🇲🇽',
+  'Südkorea':             '🇰🇷',
+  'Südafrika':            '🇿🇦',
+  'Tschechien':           '🇨🇿',
+  'Schweiz':              '🇨🇭',
+  'Kanada':               '🇨🇦',
+  'Katar':                '🇶🇦',
+  'Bosnien-Herzegowina':  '🇧🇦',
+  'Brasilien':            '🇧🇷',
+  'Marokko':              '🇲🇦',
+  'Schottland':           '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+  'Haiti':                '🇭🇹',
+  'USA':                  '🇺🇸',
+  'Paraguay':             '🇵🇾',
+  'Australien':           '🇦🇺',
+  'Türkei':               '🇹🇷',
+  'Deutschland':          '🇩🇪',
+  'Elfenbeinküste':       '🇨🇮',
+  'Ecuador':              '🇪🇨',
+  'Curaçao':              '🇨🇼',
+  'Niederlande':          '🇳🇱',
+  'Japan':                '🇯🇵',
+  'Peru':                 '🇵🇪',
+  'Venezuela':            '🇻🇪',
+  'Portugal':             '🇵🇹',
+  'Kolumbien':            '🇨🇴',
+  'Nigeria':              '🇳🇬',
+  'Mosambik':             '🇲🇿',
+  'Spanien':              '🇪🇸',
+  'Uruguay':              '🇺🇾',
+  'Saudi-Arabien':        '🇸🇦',
+  'Kap Verde':            '🇨🇻',
+  'Frankreich':           '🇫🇷',
+  'Norwegen':             '🇳🇴',
+  'Senegal':              '🇸🇳',
+  'Irak':                 '🇮🇶',
+  'Argentinien':          '🇦🇷',
+  'Österreich':           '🇦🇹',
+  'Algerien':             '🇩🇿',
+  'Jordanien':            '🇯🇴',
+  'Belgien':              '🇧🇪',
+  'Kroatien':             '🇭🇷',
+  'Kamerun':              '🇨🇲',
+  'Neuseeland':           '🇳🇿',
+  'England':              '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+  'Ghana':                '🇬🇭',
+  'Panama':               '🇵🇦',
+  'Tunesien':             '🇹🇳'
+};
+function fl(name){ return (FLAGS[name]||'🏳')+'\u202F'; }
+
+// ── STATE ────────────────────────────────────────────────────────
+var STATE={players:[],results:{},tipps:{}};
+var SHA=null,TOKEN=null,ME=null,FILTERS=[];
+
+// ── GITHUB ───────────────────────────────────────────────────────
+function ghLoad(cb){
+  fetch('https://api.github.com/repos/'+GH_USER+'/'+GH_REPO+'/contents/'+GH_FILE,
+    {headers:{Authorization:'token '+TOKEN,Accept:'application/vnd.github.v3+json'}})
+  .then(function(r){
+    if(r.status===404){cb(true);return;}
+    if(!r.ok){cb(false);return;}
+    r.json().then(function(j){
+      SHA=j.sha;
+      var d=JSON.parse(atob(j.content.replace(/\n/g,'')));
+      if(d.players)STATE.players=d.players;
+      if(d.results)STATE.results=d.results;
+      if(d.tipps)STATE.tipps=d.tipps;
+      cb(true);
+    });
+  }).catch(function(){cb(false);});
+}
+function ghSave(cb){
+  var payload={players:STATE.players,results:STATE.results,tipps:STATE.tipps};
+  var content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
+  var body={message:'update',content:content};
+  if(SHA)body.sha=SHA;
+  fetch('https://api.github.com/repos/'+GH_USER+'/'+GH_REPO+'/contents/'+GH_FILE,
+    {method:'PUT',headers:{Authorization:'token '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify(body)})
+  .then(function(r){
+    if(r.status===409){ghLoad(function(){ghSave(cb);});return;}
+    if(!r.ok){showToast('FEHLER '+r.status);if(cb)cb();return;}
+    r.json().then(function(j){SHA=j.content.sha;showToast('GESPEICHERT!');if(cb)cb();});
+  }).catch(function(){showToast('NETZWERKFEHLER');if(cb)cb();});
+}
+
+// ── SCORING ──────────────────────────────────────────────────────
+function calcPts(t,r){
+  if(!t||!r||t.home==null||r.home==null)return null;
+  var th=+t.home,ta=+t.away,rh=+r.home,ra=+r.away;
+  if(th===rh&&ta===ra)return 3;
+  if(th-ta===rh-ra)return 2;
+  if((th>ta&&rh>ra)||(th<ta&&rh<ra)||(th===ta&&rh===ra))return 1;
+  return 0;
+}
+function calcStats(name){
+  var t=STATE.tipps[name]||{},p=0,ex=0,df=0,ten=0,pl=0;
+  for(var i=0;i<MATCHES.length;i++){
+    var m=MATCHES[i],r=STATE.results[m.id],ti=t[m.id];
+    if(!r||r.home==null||!ti||ti.home==null)continue;
+    pl++;var v=calcPts(ti,r);p+=v;
+    if(v===3)ex++;else if(v===2)df++;else if(v===1)ten++;
+  }
+  return{p:p,ex:ex,df:df,ten:ten,pl:pl};
+}
+
+// ── NAV ──────────────────────────────────────────────────────────
+function showPage(name,btn){
+  var pages=['rangliste','spielplan','tippen','admin'];
+  for(var i=0;i<pages.length;i++){
+    var el=document.getElementById('page-'+pages[i]);
+    if(el)el.style.display=pages[i]===name?'block':'none';
+  }
+  var btns=document.querySelectorAll('.navbtn');
+  for(var i=0;i<btns.length;i++)btns[i].classList.remove('active');
+  if(btn)btn.classList.add('active');
+  if(name==='rangliste')renderRangliste();
+  if(name==='spielplan')renderSpielplan();
+  if(name==='tippen')renderTippen();
+  if(name==='admin')renderAdmin();
+}
+
+// ── RANGLISTE ────────────────────────────────────────────────────
+function renderRangliste(){
+  var pl=STATE.players.map(function(n){var s=calcStats(n);s.name=n;return s;});
+  pl.sort(function(a,b){return b.p-a.p||b.ex-a.ex||b.df-a.df;});
+
+  // pills
+  var pr=document.getElementById('pill-row');
+  var html='<button class="pill'+(FILTERS.length===0?' active':'')+'" onclick="setFilter(null,this)">ALLE</button>';
+  for(var i=0;i<pl.length;i++){
+    html+='<button class="pill'+(FILTERS.indexOf(pl[i].name)>=0?' active':'')+'" onclick="setFilter(\''+pl[i].name+'\',this)">'+pl[i].name.toUpperCase()+'</button> ';
+  }
+  pr.innerHTML=html;
+
+  var medals=['&#129351;','&#129352;','&#129353;'];
+  var tbody='';
+  for(var i=0;i<pl.length;i++){
+    var p=pl[i];
+    var rc=i<3?'rank-'+(i+1):'';
+    tbody+='<tr class="'+(i%2===0?'even':'odd')+' '+rc+'">'
+      +'<td class="rank-no">'+(i<3?medals[i]:(i+1)+'.')+'</td>'
+      +'<td style="font-weight:bold;font-size:12px">'+p.name+'</td>'
+      +'<td><div class="ptsnum">'+p.p+'</div><div class="ptssub">'+p.pl+' Spiele</div></td>'
+      +'<td style="color:#336633;font-weight:bold;font-size:13px">'+p.ex+'</td>'
+      +'<td style="color:#885500;font-weight:bold;font-size:13px">'+p.df+'</td>'
+      +'<td style="color:#aa2222;font-weight:bold;font-size:13px">'+p.ten+'</td>'
+      +'<td style="color:#999999">'+p.pl+'</td>'
+      +'</tr>';
+  }
+  document.getElementById('rl-body').innerHTML=tbody;
+}
+
+function setFilter(name,btn){
+  if(name===null){
+    FILTERS=[];
+    var btns=document.querySelectorAll('.pill');
+    for(var i=0;i<btns.length;i++)btns[i].classList.remove('active');
+    document.querySelector('#pill-row .pill').classList.add('active');
+  }else{
+    document.querySelector('#pill-row .pill').classList.remove('active');
+    var idx=FILTERS.indexOf(name);
+    if(idx>=0){FILTERS.splice(idx,1);if(btn)btn.classList.remove('active');}
+    else{FILTERS.push(name);if(btn)btn.classList.add('active');}
+    if(FILTERS.length===0)document.querySelector('#pill-row .pill').classList.add('active');
+  }
+}
+
+// ── SPIELPLAN ────────────────────────────────────────────────────
+function setPhase(p,btn){
+  var tabs=document.querySelectorAll('.phasetab');
+  for(var i=0;i<tabs.length;i++)tabs[i].classList.toggle('active',i===(p==='gruppe'?0:1));
+  document.getElementById('sp-gruppe').style.display=p==='gruppe'?'block':'none';
+  document.getElementById('sp-ko').style.display=p==='ko'?'block':'none';
+}
+function renderSpielplan(){
+  var grps=['A','B','C','D','E','F','G','H','I','J','K','L'];
+  // 4 columns per row
+  var rows=[];
+  for(var i=0;i<grps.length;i+=4)rows.push(grps.slice(i,i+4));
+  var html='';
+  for(var ri=0;ri<rows.length;ri++){
+    html+='<tr>';
+    for(var ci=0;ci<rows[ri].length;ci++){
+      var g=rows[ri][ci];
+      var ms=MATCHES.filter(function(m){return m.group===g;});
+      html+='<td class="groupcard"><div class="groupcardhdr">GRUPPE '+g+'<small>'+GROUPS[g].map(function(t){return fl(t)+t;}).join(' &middot; ')+'</small></div>';
+      for(var mi=0;mi<ms.length;mi++){
+        var m=ms[mi],r=STATE.results[m.id]||{},done=r.home!=null;
+        html+='<table width="100%" cellpadding="0" cellspacing="0" class="gmrow"><tr>'
+          +'<td class="gmdate">'+m.date+'</td>'
+          +'<td><span class="gmhome">'+fl(m.home)+m.home+'</span><br><span class="gmaway">'+fl(m.away)+m.away+'</span></td>'
+          +'<td align="right" class="gmscore '+(done?'done':'open')+'">'+(done?r.home+':'+r.away:'&ndash;:&ndash;')+'</td>'
+          +'</tr></table>';
+      }
+      html+='</td>';
+    }
+    // fill empty cells
+    for(var ci=rows[ri].length;ci<4;ci++)html+='<td></td>';
+    html+='</tr>';
+  }
+  document.getElementById('group-outer-table').innerHTML=html;
+}
+
+// ── TIPPEN ───────────────────────────────────────────────────────
+function renderTippen(){
+  var sel=document.getElementById('tipper-select');
+  sel.innerHTML='<option value="">-- ausw\u00e4hlen --</option>';
+  for(var i=0;i<STATE.players.length;i++)
+    sel.innerHTML+='<option value="'+STATE.players[i]+'"'+( ME===STATE.players[i]?' selected':'')+'>'+STATE.players[i]+'</option>';
+  if(ME)loadMyTipps();
+}
+function loadMyTipps(){
+  ME=document.getElementById('tipper-select').value;
+  if(!ME){
+    document.getElementById('tipp-form').innerHTML='';
+    document.getElementById('tipp-actions').style.display='none';
+    document.getElementById('tipp-stat').textContent='';
+    return;
+  }
+  document.getElementById('tipp-actions').style.display='block';
+  var myT=STATE.tipps[ME]||{};
+  var done=MATCHES.filter(function(m){return STATE.results[m.id]&&STATE.results[m.id].home!=null;}).length;
+  var tipped=MATCHES.filter(function(m){return myT[m.id]&&myT[m.id].home!=null;}).length;
+  var st=calcStats(ME);
+  document.getElementById('tipp-stat').textContent=tipped+'/'+MATCHES.length+' getippt  |  '+done+' ausgewertet  |  '+st.p+' Punkte';
+
+  var grps=['A','B','C','D','E','F','G','H','I','J','K','L'];
+  var rows=[];
+  for(var i=0;i<grps.length;i+=4)rows.push(grps.slice(i,i+4));
+  var html='<table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #bbbbaa">';
+  for(var ri=0;ri<rows.length;ri++){
+    html+='<tr>';
+    for(var ci=0;ci<rows[ri].length;ci++){
+      var g=rows[ri][ci];
+      var ms=MATCHES.filter(function(m){return m.group===g;});
+      html+='<td class="tippcard"><div class="tippcardhdr">GRUPPE '+g+'</div>';
+      for(var mi=0;mi<ms.length;mi++){
+        var m=ms[mi],r=STATE.results[m.id]||{},locked=r.home!=null;
+        var ti=myT[m.id]||{},pv=locked?calcPts(ti,r):null;
+        var ph=pv!=null?'<span class="ptstag p'+pv+'">'+pv+'P</span>':'';
+        var hv=ti.home!=null?ti.home:'',av=ti.away!=null?ti.away:'';
+        if(locked){
+          html+='<table width="100%" cellpadding="0" cellspacing="0" class="tipprow locked"><tr>'
+            +'<td><b>'+fl(m.home)+m.home+'</b> &ndash; '+fl(m.away)+m.away+'<br><span style="font-size:9px;color:#aaa">'+m.date+'</span></td>'
+            +'<td align="right" nowrap style="font-family:\'Courier New\',monospace;font-size:11px;color:#888">'
+            +(hv!==''?hv:'?')+':'+(av!==''?av:'?')+' '+ph+'<br><span style="font-size:9px;color:#ccc">('+r.home+':'+r.away+')</span></td>'
+            +'</tr></table>';
+        }else{
+          html+='<table width="100%" cellpadding="0" cellspacing="0" class="tipprow"><tr>'
+            +'<td><b>'+fl(m.home)+m.home+'</b> &ndash; '+fl(m.away)+m.away+'<br><span style="font-size:9px;color:#aaa">'+m.date+'</span></td>'
+            +'<td align="right" nowrap>'
+            +'<input class="tippinp" type="number" min="0" max="20" value="'+hv+'" id="t_'+m.id+'_h"/>'
+            +' <span style="font-family:\'Courier New\',monospace;font-weight:bold">:</span> '
+            +'<input class="tippinp" type="number" min="0" max="20" value="'+av+'" id="t_'+m.id+'_a"/>'
+            +'</td></tr></table>';
+        }
+      }
+      html+='</td>';
+    }
+    for(var ci=rows[ri].length;ci<4;ci++)html+='<td></td>';
+    html+='</tr>';
+  }
+  html+='</table>';
+  document.getElementById('tipp-form').innerHTML=html;
+}
+function saveTipps(){
+  if(!ME)return;
+  document.getElementById('save-msg').textContent='Speichere...';
+  if(!STATE.tipps[ME])STATE.tipps[ME]={};
+  for(var i=0;i<MATCHES.length;i++){
+    var m=MATCHES[i];
+    if(STATE.results[m.id]&&STATE.results[m.id].home!=null)continue;
+    var h=document.getElementById('t_'+m.id+'_h'),a=document.getElementById('t_'+m.id+'_a');
+    if(h&&a&&h.value!==''&&a.value!=='')STATE.tipps[ME][m.id]={home:+h.value,away:+a.value};
+  }
+  ghSave(function(){
+    document.getElementById('save-msg').textContent='Gespeichert!';
+    setTimeout(function(){document.getElementById('save-msg').textContent='';},3000);
+    loadMyTipps();
+  });
+}
+
+// ── ADMIN ────────────────────────────────────────────────────────
+function adminLogin(){
+  var t=document.getElementById('gh-token').value.trim();
+  if(!t)return;TOKEN=t;
+  setStatus('VERBINDE...',false);
+  ghLoad(function(ok){
+    if(!ok){showToast('VERBINDUNG FEHLGESCHLAGEN');TOKEN=null;setStatus('FEHLER',false);return;}
+    setStatus('VERBUNDEN',true);
+    localStorage.setItem('wm_tok',t);
+    document.getElementById('admin-login-wrap').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
+    renderAdmin();renderRangliste();renderSpielplan();renderTippen();
+  });
+}
+function adminLogout(){
+  TOKEN=null;localStorage.removeItem('wm_tok');
+  document.getElementById('admin-login-wrap').style.display='block';
+  document.getElementById('admin-panel').style.display='none';
+  document.getElementById('gh-token').value='';
+  document.getElementById('admin-pw').value='';
+  document.getElementById('login-step1').style.display='block';
+  document.getElementById('login-step2').style.display='none';
+  document.getElementById('pw-error').style.display='none';
+  setStatus('KEIN TOKEN',false);
+}
+function setStatus(txt,on){
+  document.getElementById('gh-status').textContent=txt;
+  document.getElementById('dot').className='dot'+(on?' on':'');
+}
+function renderAdmin(){
+  if(!TOKEN||document.getElementById('admin-panel').style.display==='none')return;
+  var grps=['A','B','C','D','E','F','G','H','I','J','K','L'];
+  var html='';
+  for(var gi=0;gi<grps.length;gi++){
+    var g=grps[gi];
+    var ms=MATCHES.filter(function(m){return m.group===g;});
+    html+='<div class="admgrphdr">GRUPPE '+g+'</div>';
+    for(var mi=0;mi<ms.length;mi++){
+      var m=ms[mi],r=STATE.results[m.id]||{};
+      html+='<table width="100%" cellpadding="0" cellspacing="0" class="admrow"><tr>'
+        +'<td class="admlabel">'+fl(m.home)+m.home+' &ndash; '+fl(m.away)+m.away+'<small>'+m.date+'</small></td>'
+        +'<td align="right" nowrap style="padding-right:4px">'
+        +'<input class="adminp" type="number" min="0" max="20" value="'+(r.home!=null?r.home:'')+'" id="r_'+m.id+'_h"/>'
+        +' <b style="color:#888">:</b> '
+        +'<input class="adminp" type="number" min="0" max="20" value="'+(r.away!=null?r.away:'')+'" id="r_'+m.id+'_a"/>'
+        +' <button class="btnok" onclick="saveResult(\''+m.id+'\')">OK</button>'
+        +'</td></tr></table>';
+    }
+  }
+  document.getElementById('admin-matches').innerHTML=html;
+
+  var phtml='';
+  for(var i=0;i<STATE.players.length;i++){
+    phtml+='<table cellpadding="0" cellspacing="2" style="margin-bottom:5px;width:100%"><tr>'
+      +'<td><input type="text" style="border:2px inset #aaa;font-family:Verdana,Arial,sans-serif;font-size:11px;padding:4px 6px;background:#ffffee;width:100%" value="'+STATE.players[i]+'" onchange="STATE.players['+i+']=this.value"/></td>'
+      +'<td width="40"><button class="btnred" onclick="delPlayer('+i+')">&#10005;</button></td>'
+      +'</tr></table>';
+  }
+  document.getElementById('admin-players').innerHTML=phtml;
+}
+function importTipps(){
+  var raw = document.getElementById('import-json').value.trim();
+  var msgEl = document.getElementById('import-msg');
+  msgEl.style.color = '#336633';
+  msgEl.textContent = '';
+
+  // JSON-Block aus Mail extrahieren falls ganzer Mailtext eingeklebt wurde
+  var jsonStr = raw;
+  var blockMatch = raw.match(/[{][^{}]*"name"[^{}]*"tipps"[\s\S]*[}]$/m);
+  if(blockMatch) jsonStr = blockMatch[0];
+
+  var data;
+  try {
+    data = JSON.parse(jsonStr);
+  } catch(e) {
+    msgEl.style.color = '#cc0000';
+    msgEl.textContent = '⚠ Ungültiges Format — bitte nur den Import-Block einfügen.';
+    return;
+  }
+
+  if(!data.name || !data.tipps){
+    msgEl.style.color = '#cc0000';
+    msgEl.textContent = '⚠ Fehlende Felder: "name" oder "tipps" nicht gefunden.';
+    return;
+  }
+
+  // Spieler anlegen falls nicht vorhanden
+  if(STATE.players.indexOf(data.name) < 0){
+    STATE.players.push(data.name);
+  }
+
+  // Tipps übernehmen — nur Spiele die noch nicht gespielt sind überschreiben
+  if(!STATE.tipps[data.name]) STATE.tipps[data.name] = {};
+  var count = 0;
+  for(var id in data.tipps){
+    var t = data.tipps[id];
+    if(t.home != null && t.away != null){
+      STATE.tipps[data.name][id] = {home: +t.home, away: +t.away};
+      count++;
+    }
+  }
+
+  ghSave(function(){
+    msgEl.textContent = '✓ ' + data.name + ' importiert — ' + count + ' Tipps gespeichert.';
+    document.getElementById('import-json').value = '';
+    renderAdmin();
+    renderRangliste();
+    renderTippen();
+  });
+}
+  var h=document.getElementById('r_'+id+'_h').value,a=document.getElementById('r_'+id+'_a').value;
+  if(h===''||a==='')return;
+  STATE.results[id]={home:+h,away:+a};
+  ghSave(function(){renderRangliste();renderSpielplan();if(ME)loadMyTipps();});
+}
+function addPlayer(){
+  var inp=document.getElementById('new-player'),n=inp.value.trim();
+  if(!n||STATE.players.indexOf(n)>=0)return;
+  STATE.players.push(n);inp.value='';renderAdmin();
+}
+function delPlayer(i){
+  if(!confirm('"'+STATE.players[i]+'" wirklich entfernen?'))return;
+  STATE.players.splice(i,1);renderAdmin();
+}
+function exportMattermost(){
+  var pl=STATE.players.map(function(n){var s=calcStats(n);s.name=n;return s;});
+  pl.sort(function(a,b){return b.p-a.p||b.ex-a.ex;});
+  var done=MATCHES.filter(function(m){return STATE.results[m.id]&&STATE.results[m.id].home!=null;}).length;
+  var mx=['\uD83E\uDD47','\uD83E\uDD48','\uD83E\uDD49'];
+  var lines=['### \u26BD WM 2026 Tippspiel \u2014 Stand nach '+done+' Spielen'];
+  for(var i=0;i<pl.length;i++){
+    var p=pl[i];
+    lines.push((i<3?mx[i]:(i+1)+'.')+' **'+p.name+'** \u2014 '+p.p+' Punkte ('+p.ex+'\u00d7 exakt, '+p.df+'\u00d7 Diff, '+p.ten+'\u00d7 Tendenz)');
+  }
+  navigator.clipboard.writeText(lines.join('\n')).then(function(){showToast('KOPIERT!');});
+}
+
+// ── TOAST & INIT ─────────────────────────────────────────────────
+function showToast(msg){
+  var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';
+  clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none';},2500);
+}
+
+var WM_START = new Date('2026-06-11T19:00:00Z'); // 11. Juni 2026, 21:00 Uhr MEZ
+
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+
+function updateCountdown(){
+  var diff = WM_START - new Date();
+  if(diff <= 0){ openMainContent(); return; }
+  var days  = Math.floor(diff / 86400000);
+  var hours = Math.floor((diff % 86400000) / 3600000);
+  var mins  = Math.floor((diff % 3600000)  / 60000);
+  var secs  = Math.floor((diff % 60000)    / 1000);
+  document.getElementById('cd-days').textContent  = pad(days);
+  document.getElementById('cd-hours').textContent = pad(hours);
+  document.getElementById('cd-mins').textContent  = pad(mins);
+  document.getElementById('cd-secs').textContent  = pad(secs);
+}
+
+function openMainContent(){
+  document.getElementById('countdown-wrap').style.display = 'none';
+  document.getElementById('main-content').style.display   = 'block';
+  if(window._cdInterval){ clearInterval(window._cdInterval); }
+}
+
+function init(){
+  var diff = WM_START - new Date();
+  if(diff <= 0){
+    // WM läuft — direkt Hauptinhalt
+    openMainContent();
+  } else {
+    // Countdown zeigen
+    document.getElementById('countdown-wrap').style.display = 'block';
+    updateCountdown();
+    window._cdInterval = setInterval(updateCountdown, 1000);
+  }
+
+  var saved=localStorage.getItem('wm_tok');
+  if(saved){
+    TOKEN=saved;setStatus('VERBINDE...',false);
+    ghLoad(function(ok){
+      setStatus(ok?'VERBUNDEN':'OFFLINE',ok);
+      if(ok){
+        document.getElementById('gh-token').value=saved;
+        document.getElementById('admin-login-wrap').style.display='none';
+        document.getElementById('admin-panel').style.display='block';
+      }
+      renderRangliste();renderSpielplan();renderTippen();if(TOKEN)renderAdmin();
+    });
+  }else{
+    renderRangliste();renderSpielplan();renderTippen();
+  }
+}
+window.onload=init;
+</script>
+</body>
+</html>
