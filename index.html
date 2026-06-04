@@ -7,9 +7,9 @@
 var WM_START = new Date('2026-06-11T19:00:00Z');
 if(new Date() < WM_START){
   window.location.replace('tippen.html');
-} 
+}
 </script>
-<title>RZ 2026 WM Tippspiel - Willkommen!</title>
+<title>WM 2026 RZ Tippspiel</title>
 <style type="text/css">
 body {
   background-color: #003300;
@@ -485,7 +485,7 @@ a:visited { color: #660099; }
         <img src="ball.gif" width="56" height="56" alt="Fussball" style="display:block;border:0;background:transparent">
       </td>
       <td valign="middle" style="padding:8px 4px">
-        <div class="title">&#9917; RZ 2026 WM TIPPSPIEL &#9917;</div>
+        <div class="title">&#9917; WM 2026 RZ Tippspiel &#9917;</div>
         <div class="subtitle">&#9733; USA &nbsp;&middot;&nbsp; Kanada &nbsp;&middot;&nbsp; Mexiko &nbsp;&middot;&nbsp; 11. Juni &ndash; 19. Juli 2026 &#9733;</div>
         <div style="font-family:'Comic Sans MS',Verdana,sans-serif;font-size:10px;color:#ffcc00;margin-top:3px">
           <span class="blink">&#9733;</span> Tippt euch zum Weltmeister! <span class="blink">&#9733;</span>
@@ -504,7 +504,7 @@ a:visited { color: #660099; }
     <!-- MARQUEE -->
     <div class="marqueebar">
       <marquee behavior="scroll" direction="left" scrollamount="3" style="height:18px">
-        &#9733;&nbsp; WM 2026 TIPPSPIEL &nbsp;&#9733;&nbsp;
+        &#9733;&nbsp; WM 2026 RZ TIPPSPIEL &nbsp;&#9733;&nbsp;
         48 MANNSCHAFTEN &middot; 12 GRUPPEN &middot; 104 SPIELE &nbsp;&#9733;&nbsp;
         3 PUNKTE EXAKTES ERGEBNIS &middot; 2 PUNKTE RICHTIGE TORDIFFERENZ &middot; 1 PUNKT RICHTIGE TENDENZ &nbsp;&#9733;&nbsp;
         WM-AUFTAKT: 11. JUNI 2026 IM AZTEKENSTADION &nbsp;&#9733;&nbsp;
@@ -518,6 +518,7 @@ a:visited { color: #660099; }
       <td width="1%" nowrap><button class="navbtn active" onclick="showPage('rangliste',this)">&#9733; Rangliste</button></td>
       <td width="1%" nowrap><button class="navbtn" onclick="showPage('spielplan',this)">Spielplan</button></td>
       <td width="1%" nowrap><button class="navbtn" onclick="showPage('tippen',this)">Meine Tipps</button></td>
+      <td width="1%" nowrap><button class="navbtn" onclick="showPage('sonder',this)">Sondertipps</button></td>
       <td width="1%" nowrap><button class="navbtn" onclick="showPage('admin',this)">&#9881; Admin</button></td>
       <td width="100%">&nbsp;</td>
     </tr>
@@ -609,6 +610,14 @@ a:visited { color: #660099; }
       </div>
     </div>
 
+    <!-- ═══ SONDERTIPPS ═══ -->
+    <div id="page-sonder" style="display:none">
+      <div class="sectionbox">
+        <div class="sectionhdr">&#9733; SONDERTIPPS &Uuml;BERSICHT <span class="blink2">&#9733;</span></div>
+        <div id="sonder-inner"></div>
+      </div>
+    </div>
+
     <!-- ═══ ADMIN ═══ -->
     <div id="page-admin" style="display:none">
       <div id="admin-login-wrap">
@@ -672,7 +681,7 @@ a:visited { color: #660099; }
 </tr>
 <tr>
   <td class="footerbar">
-    <span class="rainbow">&#9733; WM 2026 TIPPSPIEL &#9733;</span> &nbsp; POWERED BY GITHUB PAGES &nbsp; &#9733; &nbsp; &copy; 2026 &nbsp; &#9733;
+    <span class="rainbow">&#9733; WM 2026 RZ TIPPSPIEL &#9733;</span> &nbsp; POWERED BY GITHUB PAGES &nbsp; &#9733; &nbsp; &copy; 2026 &nbsp; &#9733;
   </td>
 </tr>
 </table>
@@ -716,102 +725,86 @@ function backToPassword(){
 }
 
 // ── DATA ─────────────────────────────────────────────────────────
+// Gruppen verifiziert gegen offiziellen FIFA/Media Markt Spielplan
 var GROUPS={
   A:['Mexiko','S\u00fcdkorea','S\u00fcdafrika','Tschechien'],
-  B:['Schweiz','Kanada','Katar','Bosnien-Herzegowina'],
-  C:['Brasilien','Marokko','Schottland','Haiti'],
+  B:['Kanada','Bosnien-Herzegowina','Katar','Schweiz'],
+  C:['Brasilien','Marokko','Haiti','Schottland'],
   D:['USA','Paraguay','Australien','T\u00fcrkei'],
-  E:['Deutschland','Elfenbeink\u00fcste','Ecuador','Cura\u00e7ao'],
-  F:['Niederlande','Japan','Peru','Venezuela'],
-  G:['Portugal','Kolumbien','Nigeria','Mosambik'],
-  H:['Spanien','Uruguay','Saudi-Arabien','Kap Verde'],
-  I:['Frankreich','Norwegen','Senegal','Irak'],
-  J:['Argentinien','\u00d6sterreich','Algerien','Jordanien'],
-  K:['Belgien','Kroatien','Kamerun','Neuseeland'],
-  L:['England','Ghana','Panama','Tunesien']
+  E:['Deutschland','Cura\u00e7ao','Elfenbeink\u00fcste','Ecuador'],
+  F:['Niederlande','Japan','Schweden','Tunesien'],
+  G:['Belgien','\u00c4gypten','Iran','Neuseeland'],
+  H:['Spanien','Kap Verde','Saudi-Arabien','Uruguay'],
+  I:['Frankreich','Senegal','Irak','Norwegen'],
+  J:['Argentinien','Algerien','\u00d6sterreich','Jordanien'],
+  K:['Portugal','DR Kongo','Usbekistan','Kolumbien'],
+  L:['England','Kroatien','Ghana','Panama']
 };
-var GROUP_DATES={
-  A:['11.06','12.06','18.06','19.06','25.06','25.06'],
-  B:['12.06','13.06','18.06','19.06','24.06','24.06'],
-  C:['14.06','14.06','20.06','20.06','25.06','25.06'],
-  D:['14.06','15.06','21.06','21.06','26.06','26.06'],
-  E:['14.06','15.06','20.06','21.06','25.06','25.06'],
-  F:['13.06','14.06','19.06','19.06','24.06','24.06'],
-  G:['15.06','16.06','21.06','22.06','26.06','26.06'],
-  H:['16.06','16.06','22.06','22.06','27.06','27.06'],
-  I:['16.06','17.06','22.06','23.06','27.06','27.06'],
-  J:['17.06','17.06','23.06','23.06','28.06','28.06'],
-  K:['17.06','18.06','23.06','24.06','28.06','28.06'],
-  L:['18.06','18.06','24.06','24.06','28.06','28.06']
+// Spielpaarungen exakt laut offiziellem Spielplan (Heim:Gast, Datum)
+// Jede Gruppe: 6 Spiele in korrekter Reihenfolge
+var GROUP_MATCHES={
+  A:[['Mexiko','S\u00fcdafrika','11.06'],['S\u00fcdkorea','Tschechien','12.06'],['Tschechien','S\u00fcdafrika','18.06'],['Mexiko','S\u00fcdkorea','19.06'],['Tschechien','Mexiko','25.06'],['S\u00fcdafrika','S\u00fcdkorea','25.06']],
+  B:[['Kanada','Bosnien-Herzegowina','12.06'],['Katar','Schweiz','13.06'],['Schweiz','Bosnien-Herzegowina','18.06'],['Kanada','Katar','19.06'],['Schweiz','Kanada','24.06'],['Bosnien-Herzegowina','Katar','24.06']],
+  C:[['Brasilien','Marokko','14.06'],['Haiti','Schottland','14.06'],['Schottland','Marokko','20.06'],['Brasilien','Haiti','20.06'],['Schottland','Brasilien','25.06'],['Marokko','Haiti','25.06']],
+  D:[['USA','Paraguay','13.06'],['Australien','T\u00fcrkei','14.06'],['T\u00fcrkei','Paraguay','20.06'],['USA','Australien','19.06'],['T\u00fcrkei','USA','26.06'],['Paraguay','Australien','26.06']],
+  E:[['Deutschland','Cura\u00e7ao','14.06'],['Elfenbeink\u00fcste','Ecuador','15.06'],['Deutschland','Elfenbeink\u00fcste','20.06'],['Ecuador','Cura\u00e7ao','21.06'],['Ecuador','Deutschland','25.06'],['Cura\u00e7ao','Elfenbeink\u00fcste','25.06']],
+  F:[['Niederlande','Japan','14.06'],['Schweden','Tunesien','15.06'],['Niederlande','Schweden','20.06'],['Tunesien','Japan','21.06'],['Japan','Schweden','26.06'],['Tunesien','Niederlande','26.06']],
+  G:[['Belgien','\u00c4gypten','15.06'],['Iran','Neuseeland','16.06'],['Belgien','Iran','21.06'],['Neuseeland','\u00c4gypten','22.06'],['Neuseeland','Belgien','27.06'],['\u00c4gypten','Iran','27.06']],
+  H:[['Spanien','Kap Verde','15.06'],['Saudi-Arabien','Uruguay','16.06'],['Spanien','Saudi-Arabien','21.06'],['Uruguay','Kap Verde','22.06'],['Uruguay','Spanien','27.06'],['Kap Verde','Saudi-Arabien','27.06']],
+  I:[['Frankreich','Senegal','16.06'],['Irak','Norwegen','17.06'],['Frankreich','Irak','22.06'],['Norwegen','Senegal','23.06'],['Norwegen','Frankreich','26.06'],['Senegal','Irak','26.06']],
+  J:[['Argentinien','Algerien','17.06'],['\u00d6sterreich','Jordanien','17.06'],['Argentinien','\u00d6sterreich','22.06'],['Jordanien','Algerien','23.06'],['Jordanien','Argentinien','28.06'],['Algerien','\u00d6sterreich','28.06']],
+  K:[['Portugal','DR Kongo','17.06'],['Usbekistan','Kolumbien','18.06'],['Portugal','Usbekistan','23.06'],['Kolumbien','DR Kongo','24.06'],['Kolumbien','Portugal','28.06'],['DR Kongo','Usbekistan','28.06']],
+  L:[['England','Kroatien','17.06'],['Ghana','Panama','18.06'],['England','Ghana','23.06'],['Panama','Kroatien','24.06'],['Panama','England','27.06'],['Kroatien','Ghana','27.06']]
 };
+
+// FIFA-Ränge (Stand Mai 2026, Quelle: FIFA-Weltrangliste)
+var FIFA_RANKS={
+  'Frankreich':1,'Spanien':2,'Argentinien':3,'England':4,'Portugal':5,
+  'Brasilien':6,'Niederlande':7,'Marokko':8,'Belgien':9,'Deutschland':10,
+  'Kroatien':11,'Kolumbien':13,'Senegal':14,'Mexiko':15,'USA':16,
+  'Uruguay':17,'Japan':18,'Schweiz':19,'Türkei':22,'Ecuador':23,
+  'Österreich':24,'Südkorea':25,'Australien':27,'Algerien':28,
+  'Ägypten':29,'Kanada':30,'Norwegen':31,'Panama':33,'Elfenbeinküste':34,
+  'Schweden':38,'Paraguay':40,'Tschechien':41,'Schottland':43,
+  'Tunesien':44,'Kap Verde':69,'Ghana':74,'Iran':21,'Neuseeland':85,
+  'Katar':55,'Irak':57,'Südafrika':60,'Saudi-Arabien':61,'Jordanien':63,
+  'Bosnien-Herzegowina':65,'Curaçao':82,'Haiti':83,'Usbekistan':50,
+  'DR Kongo':46,'Ecuador':23,'Peru':53,'Venezuela':49,'Nigeria':26,
+  'Mosambik':99
+};
+
 var MATCHES=[];
 (function(){
   var id=1;
   var grpkeys=['A','B','C','D','E','F','G','H','I','J','K','L'];
   for(var gi=0;gi<grpkeys.length;gi++){
-    var g=grpkeys[gi],teams=GROUPS[g],pairs=[],idx=0;
-    for(var i=0;i<4;i++)for(var j=i+1;j<4;j++)pairs.push([teams[i],teams[j]]);
-    for(var k=0;k<pairs.length;k++){
-      MATCHES.push({id:'G'+id++,group:g,home:pairs[k][0],away:pairs[k][1],date:GROUP_DATES[g][k]});
+    var g=grpkeys[gi];
+    var ms=GROUP_MATCHES[g];
+    for(var k=0;k<ms.length;k++){
+      MATCHES.push({id:'G'+id++,group:g,home:ms[k][0],away:ms[k][1],date:ms[k][2]});
     }
   }
 })();
 
 // ── FLAGGEN ──────────────────────────────────────────────────────
 var FLAGS = {
-  'Mexiko':               '🇲🇽',
-  'Südkorea':             '🇰🇷',
-  'Südafrika':            '🇿🇦',
-  'Tschechien':           '🇨🇿',
-  'Schweiz':              '🇨🇭',
-  'Kanada':               '🇨🇦',
-  'Katar':                '🇶🇦',
-  'Bosnien-Herzegowina':  '🇧🇦',
-  'Brasilien':            '🇧🇷',
-  'Marokko':              '🇲🇦',
-  'Schottland':           '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
-  'Haiti':                '🇭🇹',
-  'USA':                  '🇺🇸',
-  'Paraguay':             '🇵🇾',
-  'Australien':           '🇦🇺',
-  'Türkei':               '🇹🇷',
-  'Deutschland':          '🇩🇪',
-  'Elfenbeinküste':       '🇨🇮',
-  'Ecuador':              '🇪🇨',
-  'Curaçao':              '🇨🇼',
-  'Niederlande':          '🇳🇱',
-  'Japan':                '🇯🇵',
-  'Peru':                 '🇵🇪',
-  'Venezuela':            '🇻🇪',
-  'Portugal':             '🇵🇹',
-  'Kolumbien':            '🇨🇴',
-  'Nigeria':              '🇳🇬',
-  'Mosambik':             '🇲🇿',
-  'Spanien':              '🇪🇸',
-  'Uruguay':              '🇺🇾',
-  'Saudi-Arabien':        '🇸🇦',
-  'Kap Verde':            '🇨🇻',
-  'Frankreich':           '🇫🇷',
-  'Norwegen':             '🇳🇴',
-  'Senegal':              '🇸🇳',
-  'Irak':                 '🇮🇶',
-  'Argentinien':          '🇦🇷',
-  'Österreich':           '🇦🇹',
-  'Algerien':             '🇩🇿',
-  'Jordanien':            '🇯🇴',
-  'Belgien':              '🇧🇪',
-  'Kroatien':             '🇭🇷',
-  'Kamerun':              '🇨🇲',
-  'Neuseeland':           '🇳🇿',
-  'England':              '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
-  'Ghana':                '🇬🇭',
-  'Panama':               '🇵🇦',
-  'Tunesien':             '🇹🇳'
+  'Mexiko':'🇲🇽','Südkorea':'🇰🇷','Südafrika':'🇿🇦','Tschechien':'🇨🇿',
+  'Kanada':'🇨🇦','Bosnien-Herzegowina':'🇧🇦','Katar':'🇶🇦','Schweiz':'🇨🇭',
+  'Brasilien':'🇧🇷','Marokko':'🇲🇦','Haiti':'🇭🇹','Schottland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+  'USA':'🇺🇸','Paraguay':'🇵🇾','Australien':'🇦🇺','Türkei':'🇹🇷',
+  'Deutschland':'🇩🇪','Curaçao':'🇨🇼','Elfenbeinküste':'🇨🇮','Ecuador':'🇪🇨',
+  'Niederlande':'🇳🇱','Japan':'🇯🇵','Schweden':'🇸🇪','Tunesien':'🇹🇳',
+  'Belgien':'🇧🇪','Ägypten':'🇪🇬','Iran':'🇮🇷','Neuseeland':'🇳🇿',
+  'Spanien':'🇪🇸','Kap Verde':'🇨🇻','Saudi-Arabien':'🇸🇦','Uruguay':'🇺🇾',
+  'Frankreich':'🇫🇷','Senegal':'🇸🇳','Irak':'🇮🇶','Norwegen':'🇳🇴',
+  'Argentinien':'🇦🇷','Algerien':'🇩🇿','Österreich':'🇦🇹','Jordanien':'🇯🇴',
+  'Portugal':'🇵🇹','DR Kongo':'🇨🇩','Usbekistan':'🇺🇿','Kolumbien':'🇨🇴',
+  'England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Kroatien':'🇭🇷','Ghana':'🇬🇭','Panama':'🇵🇦'
 };
 function fl(name){ return (FLAGS[name]||'🏳')+'\u202F'; }
 
 // ── STATE ────────────────────────────────────────────────────────
-var STATE={players:[],results:{},tipps:{}};
+var STATE={players:[],results:{},tipps:{},sonder:{}};
 var SHA=null,TOKEN=null,ME=null,FILTERS=[];
 
 // ── GITHUB ───────────────────────────────────────────────────────
@@ -827,12 +820,13 @@ function ghLoad(cb){
       if(d.players)STATE.players=d.players;
       if(d.results)STATE.results=d.results;
       if(d.tipps)STATE.tipps=d.tipps;
+      if(d.sonder)STATE.sonder=d.sonder;
       cb(true);
     });
   }).catch(function(){cb(false);});
 }
 function ghSave(cb){
-  var payload={players:STATE.players,results:STATE.results,tipps:STATE.tipps};
+  var payload={players:STATE.players,results:STATE.results,tipps:STATE.tipps,sonder:STATE.sonder};
   var content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
   var body={message:'update',content:content};
   if(SHA)body.sha=SHA;
@@ -878,6 +872,7 @@ function showPage(name,btn){
   if(name==='rangliste')renderRangliste();
   if(name==='spielplan')renderSpielplan();
   if(name==='tippen')renderTippen();
+  if(name==='sonder')renderSonder();
   if(name==='admin')renderAdmin();
 }
 
@@ -925,6 +920,59 @@ function setFilter(name,btn){
     else{FILTERS.push(name);if(btn)btn.classList.add('active');}
     if(FILTERS.length===0)document.querySelector('#pill-row .pill').classList.add('active');
   }
+}
+
+// ── SONDERTIPPS ──────────────────────────────────────────────────
+function renderSonder(){
+  var container = document.getElementById('sonder-inner');
+  var players = STATE.players;
+
+  if(!players.length){
+    container.innerHTML = '<div style="padding:16px;font-size:11px;color:#999999;font-family:Verdana,Arial,sans-serif">Noch keine Spieler vorhanden.</div>';
+    return;
+  }
+
+  // Prüfen ob überhaupt jemand Sondertipps abgegeben hat
+  var hasSonder = false;
+  for(var i=0;i<players.length;i++){
+    if(STATE.sonder[players[i]]) { hasSonder=true; break; }
+  }
+  if(!hasSonder){
+    container.innerHTML = '<div style="padding:16px;font-size:11px;color:#999999;font-family:Verdana,Arial,sans-serif;font-style:italic">Noch keine Sondertipps eingegangen.</div>';
+    return;
+  }
+
+  var labels = {
+    winner:   '&#127942; WM-Sieger',
+    finalist: '&#129352; Finalist',
+    third:    '&#129353; Dritter Platz',
+    surprise: '&#128293; &Uuml;berraschungsteam'
+  };
+  var keys = ['winner','finalist','third','surprise'];
+
+  var html = '<table width="100%" cellpadding="0" cellspacing="0" class="rltable">';
+  // Header
+  html += '<thead><tr>';
+  html += '<th style="width:160px">Spieler</th>';
+  for(var k=0;k<keys.length;k++) html += '<th>'+labels[keys[k]]+'</th>';
+  html += '</tr></thead><tbody>';
+
+  for(var i=0;i<players.length;i++){
+    var name = players[i];
+    var s = STATE.sonder[name];
+    html += '<tr class="'+(i%2===0?'even':'odd')+'">';
+    html += '<td style="font-weight:bold;font-size:12px">'+name+'</td>';
+    for(var k=0;k<keys.length;k++){
+      if(s && s[keys[k]]){
+        html += '<td>'+fl(s[keys[k]])+s[keys[k]]+'</td>';
+      } else {
+        html += '<td style="color:#cccccc;font-style:italic;font-size:10px">nicht getippt</td>';
+      }
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  container.innerHTML = html;
 }
 
 // ── SPIELPLAN ────────────────────────────────────────────────────
@@ -1131,6 +1179,12 @@ function importTipps(){
   // Spieler anlegen falls nicht vorhanden
   if(STATE.players.indexOf(data.name) < 0){
     STATE.players.push(data.name);
+  }
+
+  // Sondertipps übernehmen falls vorhanden
+  if(data.sonder){
+    if(!STATE.sonder) STATE.sonder = {};
+    STATE.sonder[data.name] = data.sonder;
   }
 
   // Tipps übernehmen — nur Spiele die noch nicht gespielt sind überschreiben
