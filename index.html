@@ -1089,11 +1089,9 @@ function loadMyTipps(){
   ME=document.getElementById('tipper-select').value;
   if(!ME){
     document.getElementById('tipp-form').innerHTML='';
-    document.getElementById('tipp-actions').style.display='none';
     document.getElementById('tipp-stat').textContent='';
     return;
   }
-  document.getElementById('tipp-actions').style.display='block';
   var myT=STATE.tipps[ME]||{};
   var done=MATCHES.filter(function(m){return STATE.results[m.id]&&STATE.results[m.id].home!=null;}).length;
   var tipped=MATCHES.filter(function(m){return myT[m.id]&&myT[m.id].home!=null;}).length;
