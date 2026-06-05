@@ -4,10 +4,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script type="text/javascript">
 // Weiche: vor WM-Start zu tippen.html, danach bleibt index.html
+// ?admin in der URL überspringt den Redirect
 var WM_START = new Date('2026-06-11T19:00:00Z');
-if(new Date() < WM_START){
+if(new Date() < WM_START && window.location.search.indexOf('admin') === -1){
   window.location.replace('tippen.html');
-}
 }
 </script>
 <title>WM 2026 RZ Tippspiel</title>
@@ -562,10 +562,12 @@ a:visited { color: #660099; }
           <thead><tr>
             <th width="36">#</th>
             <th>Spieler</th>
-            <th>Punkte</th>
+            <th>Gesamt</th>
+            <th>Gruppe</th>
+            <th>Sonder</th>
             <th>Exakt&nbsp;(3P)</th>
             <th>Diff&nbsp;(2P)</th>
-            <th>Tendenz&nbsp;(1P)</th>
+            <th>Tend.&nbsp;(1P)</th>
             <th>Getippt</th>
           </tr></thead>
           <tbody id="rl-body"></tbody>
@@ -659,7 +661,33 @@ a:visited { color: #660099; }
           </div>
         </div>
         <div class="sectionbox">
-          <div class="sectionhdr">SPIELER VERWALTEN</div>
+          <div class="sectionhdr">&#9733; SONDERWERTUNG AUFL&Ouml;SEN</div>
+          <div style="padding:10px;background:#fffff8;font-family:Verdana,Arial,sans-serif;font-size:11px">
+            <div style="margin-bottom:10px;color:#555555">Hier tr&auml;gst du am Ende ein wer was wirklich erreicht hat.</div>
+            <table cellpadding="4" cellspacing="0" width="100%">
+              <tr>
+                <td style="font-weight:bold;width:160px">&#127942; WM-Sieger:</td>
+                <td><select class="retroselect" id="sr-winner" style="min-width:180px"><option value="">-- Team --</option></select></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold">&#129352; Finalist:</td>
+                <td><select class="retroselect" id="sr-finalist"><option value="">-- Team --</option></select></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold">&#129353; Dritter Platz:</td>
+                <td><select class="retroselect" id="sr-third"><option value="">-- Team --</option></select></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold;vertical-align:top;padding-top:6px">&#128293; &Uuml;berraschungsteam<br><span style="font-size:9px;color:#888888;font-weight:normal">pro Team die erreichte Runde</span></td>
+                <td id="sr-surprise-rows" style="padding-top:4px"></td>
+              </tr>
+            </table>
+            <div style="margin-top:10px">
+              <button class="btngreen" onclick="saveSonderResult()">&#128190; Sonderwertung speichern</button>
+              <span id="sr-msg" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#336633;margin-left:8px"></span>
+            </div>
+          </div>
+        </div>
           <div style="padding:10px">
             <div id="admin-players"></div>
             <table cellpadding="0" cellspacing="0" style="margin-top:8px;width:100%"><tr>
@@ -805,7 +833,7 @@ var FLAGS = {
 function fl(name){ return (FLAGS[name]||'🏳')+'\u202F'; }
 
 // ── STATE ────────────────────────────────────────────────────────
-var STATE={players:[],results:{},tipps:{},sonder:{}};
+var STATE={players:[],results:{},tipps:{},sonder:{},sonderResult:{}};
 var SHA=null,TOKEN=null,ME=null,FILTERS=[];
 
 // ── GITHUB ───────────────────────────────────────────────────────
@@ -822,12 +850,13 @@ function ghLoad(cb){
       if(d.results)STATE.results=d.results;
       if(d.tipps)STATE.tipps=d.tipps;
       if(d.sonder)STATE.sonder=d.sonder;
+      if(d.sonderResult)STATE.sonderResult=d.sonderResult;
       cb(true);
     });
   }).catch(function(){cb(false);});
 }
 function ghSave(cb){
-  var payload={players:STATE.players,results:STATE.results,tipps:STATE.tipps,sonder:STATE.sonder};
+  var payload={players:STATE.players,results:STATE.results,tipps:STATE.tipps,sonder:STATE.sonder,sonderResult:STATE.sonderResult};
   var content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
   var body={message:'update',content:content};
   if(SHA)body.sha=SHA;
@@ -849,6 +878,32 @@ function calcPts(t,r){
   if((th>ta&&rh>ra)||(th<ta&&rh<ra)||(th===ta&&rh===ra))return 1;
   return 0;
 }
+// Sonderpunkte
+var SONDER_PTS = {winner:15, finalist:10, third:5};
+// Überraschungsteam: FIFA-Rang × Runden-Multiplikator (wird manuell eingetragen)
+// STATE.sonderResult = { "Max": "viertelfinale" } etc.
+var RUNDEN_MULT = {gruppe:0, achtelfinale:1, viertelfinale:2, halbfinale:3, finale:4, weltmeister:5};
+
+function calcSonderPts(name){
+  var s = STATE.sonder[name];
+  if(!s) return {sp:0, sw:0, sf:0, st:0, sur:0};
+  var r = STATE.sonderResult||{};
+  var sw=0, sf=0, st=0, sur=0;
+  // WM-Sieger
+  if(r.winner && s.winner === r.winner) sw = SONDER_PTS.winner;
+  // Finalist
+  if(r.finalist && s.finalist === r.finalist) sf = SONDER_PTS.finalist;
+  // Dritter Platz
+  if(r.third && s.third === r.third) st = SONDER_PTS.third;
+  // Überraschungsteam: FIFA-Rang × Runde
+  if(r.surpriseResults && r.surpriseResults[s.surprise]){
+    var runde = r.surpriseResults[s.surprise];
+    var rank  = FIFA_RANKS[s.surprise]||50;
+    sur = rank * (RUNDEN_MULT[runde]||0);
+  }
+  return {sp: sw+sf+st+sur, sw:sw, sf:sf, st:st, sur:sur};
+}
+
 function calcStats(name){
   var t=STATE.tipps[name]||{},p=0,ex=0,df=0,ten=0,pl=0;
   for(var i=0;i<MATCHES.length;i++){
@@ -857,12 +912,13 @@ function calcStats(name){
     pl++;var v=calcPts(ti,r);p+=v;
     if(v===3)ex++;else if(v===2)df++;else if(v===1)ten++;
   }
-  return{p:p,ex:ex,df:df,ten:ten,pl:pl};
+  var sp=calcSonderPts(name);
+  return{p:p+sp.sp, base:p, ex:ex,df:df,ten:ten,pl:pl, sp:sp.sp,sw:sp.sw,sf:sp.sf,st:sp.st,sur:sp.sur};
 }
 
 // ── NAV ──────────────────────────────────────────────────────────
 function showPage(name,btn){
-  var pages=['rangliste','spielplan','tippen','admin'];
+  var pages=['rangliste','spielplan','tippen','sonder','admin'];
   for(var i=0;i<pages.length;i++){
     var el=document.getElementById('page-'+pages[i]);
     if(el)el.style.display=pages[i]===name?'block':'none';
@@ -895,10 +951,15 @@ function renderRangliste(){
   for(var i=0;i<pl.length;i++){
     var p=pl[i];
     var rc=i<3?'rank-'+(i+1):'';
+    var sonderTip = p.sp>0
+      ? '<span title="Sieger: '+p.sw+'P  Finalist: '+p.sf+'P  3.Platz: '+p.st+'P  Überraschung: '+p.sur+'P" style="cursor:help">'+p.sp+'</span>'
+      : '<span style="color:#cccccc">0</span>';
     tbody+='<tr class="'+(i%2===0?'even':'odd')+' '+rc+'">'
       +'<td class="rank-no">'+(i<3?medals[i]:(i+1)+'.')+'</td>'
       +'<td style="font-weight:bold;font-size:12px">'+p.name+'</td>'
       +'<td><div class="ptsnum">'+p.p+'</div><div class="ptssub">'+p.pl+' Spiele</div></td>'
+      +'<td style="color:#555555;font-size:12px">'+p.base+'</td>'
+      +'<td style="color:#cc8800;font-weight:bold;font-size:12px">'+sonderTip+'</td>'
       +'<td style="color:#336633;font-weight:bold;font-size:13px">'+p.ex+'</td>'
       +'<td style="color:#885500;font-weight:bold;font-size:13px">'+p.df+'</td>'
       +'<td style="color:#aa2222;font-weight:bold;font-size:13px">'+p.ten+'</td>'
@@ -1150,6 +1211,65 @@ function renderAdmin(){
       +'</tr></table>';
   }
   document.getElementById('admin-players').innerHTML=phtml;
+  fillSonderDropdowns();
+}
+function saveSonderResult(){
+  if(!STATE.sonderResult) STATE.sonderResult={};
+  var r=STATE.sonderResult;
+  r.winner   = document.getElementById('sr-winner').value   ||null;
+  r.finalist = document.getElementById('sr-finalist').value ||null;
+  r.third    = document.getElementById('sr-third').value    ||null;
+  r.surpriseResults = r.surpriseResults||{};
+  var rows=document.querySelectorAll('.sr-surprise-row');
+  for(var i=0;i<rows.length;i++){
+    var team=rows[i].getAttribute('data-team');
+    var runde=rows[i].querySelector('select').value;
+    if(runde) r.surpriseResults[team]=runde;
+  }
+  ghSave(function(){
+    document.getElementById('sr-msg').textContent='✓ Gespeichert!';
+    setTimeout(function(){document.getElementById('sr-msg').textContent='';},3000);
+    renderRangliste();
+  });
+}
+function fillSonderDropdowns(){
+  var ALLE_TEAMS=['Ägypten','Algerien','Argentinien','Australien','Belgien','Bosnien-Herzegowina','Brasilien','Curaçao','Deutschland','DR Kongo','Ecuador','Elfenbeinküste','England','Frankreich','Ghana','Haiti','Irak','Iran','Japan','Jordanien','Kanada','Kap Verde','Katar','Kolumbien','Kroatien','Marokko','Mexiko','Neuseeland','Niederlande','Norwegen','Österreich','Panama','Paraguay','Portugal','Saudi-Arabien','Schottland','Schweden','Schweiz','Senegal','Spanien','Südafrika','Südkorea','Tschechien','Tunesien','Türkei','Uruguay','USA','Usbekistan'];
+  var ids=['sr-winner','sr-finalist','sr-third'];
+  var r=STATE.sonderResult||{};
+  for(var k=0;k<ids.length;k++){
+    var sel=document.getElementById(ids[k]);
+    if(!sel||sel.options.length>1)continue;
+    for(var t=0;t<ALLE_TEAMS.length;t++){
+      var o=document.createElement('option');o.value=ALLE_TEAMS[t];o.textContent=fl(ALLE_TEAMS[t])+ALLE_TEAMS[t];sel.appendChild(o);
+    }
+  }
+  if(r.winner)   document.getElementById('sr-winner').value=r.winner;
+  if(r.finalist) document.getElementById('sr-finalist').value=r.finalist;
+  if(r.third)    document.getElementById('sr-third').value=r.third;
+  var RUNDEN=[['gruppe','Gruppenphase (Aus)'],['achtelfinale','Achtelfinale'],['viertelfinale','Viertelfinale'],['halbfinale','Halbfinale'],['finale','Finale'],['weltmeister','Weltmeister']];
+  var surpriseTeams={};
+  for(var name in STATE.sonder){var s=STATE.sonder[name];if(s&&s.surprise)surpriseTeams[s.surprise]=true;}
+  var surHtml='';
+  var sr=r.surpriseResults||{};
+  for(var team in surpriseTeams){
+    surHtml+='<div class="sr-surprise-row" data-team="'+team+'" style="margin-bottom:4px">'+fl(team)+team+': ';
+    surHtml+='<select style="border:2px inset #aaa;font-family:Verdana,Arial,sans-serif;font-size:10px;padding:2px 4px;background:#ffffee"><option value="">-- Runde --</option>';
+    for(var ri=0;ri<RUNDEN.length;ri++){
+      surHtml+='<option value="'+RUNDEN[ri][0]+'"'+(sr[team]===RUNDEN[ri][0]?' selected':'')+'>'+RUNDEN[ri][1]+'</option>';
+    }
+    surHtml+='</select></div>';
+  }
+  if(!surHtml) surHtml='<span style="font-size:10px;color:#aaa;font-style:italic">Noch keine Überraschungsteam-Tipps eingegangen.</span>';
+  document.getElementById('sr-surprise-rows').innerHTML=surHtml;
+}
+function saveResult(id){
+  for(var i=0;i<STATE.players.length;i++){
+    phtml+='<table cellpadding="0" cellspacing="2" style="margin-bottom:5px;width:100%"><tr>'
+      +'<td><input type="text" style="border:2px inset #aaa;font-family:Verdana,Arial,sans-serif;font-size:11px;padding:4px 6px;background:#ffffee;width:100%" value="'+STATE.players[i]+'" onchange="STATE.players['+i+']=this.value"/></td>'
+      +'<td width="40"><button class="btnred" onclick="delPlayer('+i+')">&#10005;</button></td>'
+      +'</tr></table>';
+  }
+  document.getElementById('admin-players').innerHTML=phtml;
 }
 function importTipps(){
   var raw = document.getElementById('import-json').value.trim();
@@ -1264,9 +1384,11 @@ function openMainContent(){
 }
 
 function init(){
+  var isAdmin = window.location.search.indexOf('admin') !== -1;
   var diff = WM_START - new Date();
-  if(diff <= 0){
-    // WM läuft — direkt Hauptinhalt
+
+  if(diff <= 0 || isAdmin){
+    // WM läuft oder Admin-Modus — direkt Hauptinhalt
     openMainContent();
   } else {
     // Countdown zeigen
