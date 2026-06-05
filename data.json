@@ -1,6 +1,7 @@
 {
   "players": [
-    "Dome"
+    "Dome",
+    "Marco S."
   ],
   "results": {},
   "tipps": {
@@ -293,6 +294,296 @@
         "home": 3,
         "away": 2
       }
+    },
+    "Marco S.": {
+      "G1": {
+        "home": 1,
+        "away": 0
+      },
+      "G2": {
+        "home": 0,
+        "away": 2
+      },
+      "G3": {
+        "home": 1,
+        "away": 1
+      },
+      "G4": {
+        "home": 2,
+        "away": 0
+      },
+      "G5": {
+        "home": 1,
+        "away": 1
+      },
+      "G6": {
+        "home": 1,
+        "away": 2
+      },
+      "G7": {
+        "home": 2,
+        "away": 1
+      },
+      "G8": {
+        "home": 0,
+        "away": 3
+      },
+      "G9": {
+        "home": 2,
+        "away": 2
+      },
+      "G10": {
+        "home": 2,
+        "away": 0
+      },
+      "G11": {
+        "home": 1,
+        "away": 1
+      },
+      "G12": {
+        "home": 2,
+        "away": 1
+      },
+      "G13": {
+        "home": 6,
+        "away": 0
+      },
+      "G14": {
+        "home": 1,
+        "away": 3
+      },
+      "G15": {
+        "home": 3,
+        "away": 1
+      },
+      "G16": {
+        "home": 3,
+        "away": 1
+      },
+      "G17": {
+        "home": 2,
+        "away": 1
+      },
+      "G18": {
+        "home": 3,
+        "away": 2
+      },
+      "G19": {
+        "home": 1,
+        "away": 0
+      },
+      "G20": {
+        "home": 2,
+        "away": 3
+      },
+      "G21": {
+        "home": 3,
+        "away": 1
+      },
+      "G22": {
+        "home": 1,
+        "away": 2
+      },
+      "G23": {
+        "home": 2,
+        "away": 1
+      },
+      "G24": {
+        "home": 1,
+        "away": 1
+      },
+      "G25": {
+        "home": 2,
+        "away": 0
+      },
+      "G26": {
+        "home": 1,
+        "away": 2
+      },
+      "G27": {
+        "home": 3,
+        "away": 0
+      },
+      "G28": {
+        "home": 1,
+        "away": 1
+      },
+      "G29": {
+        "home": 1,
+        "away": 3
+      },
+      "G30": {
+        "home": 1,
+        "away": 1
+      },
+      "G31": {
+        "home": 4,
+        "away": 3
+      },
+      "G32": {
+        "home": 2,
+        "away": 0
+      },
+      "G33": {
+        "home": 3,
+        "away": 2
+      },
+      "G34": {
+        "home": 1,
+        "away": 3
+      },
+      "G35": {
+        "home": 2,
+        "away": 2
+      },
+      "G36": {
+        "home": 1,
+        "away": 3
+      },
+      "G37": {
+        "home": 2,
+        "away": 1
+      },
+      "G38": {
+        "home": 1,
+        "away": 1
+      },
+      "G39": {
+        "home": 3,
+        "away": 1
+      },
+      "G40": {
+        "home": 1,
+        "away": 1
+      },
+      "G41": {
+        "home": 1,
+        "away": 3
+      },
+      "G42": {
+        "home": 1,
+        "away": 1
+      },
+      "G43": {
+        "home": 3,
+        "away": 1
+      },
+      "G44": {
+        "home": 1,
+        "away": 1
+      },
+      "G45": {
+        "home": 3,
+        "away": 0
+      },
+      "G46": {
+        "home": 1,
+        "away": 1
+      },
+      "G47": {
+        "home": 1,
+        "away": 4
+      },
+      "G48": {
+        "home": 1,
+        "away": 3
+      },
+      "G49": {
+        "home": 4,
+        "away": 1
+      },
+      "G50": {
+        "home": 1,
+        "away": 2
+      },
+      "G51": {
+        "home": 3,
+        "away": 1
+      },
+      "G52": {
+        "home": 2,
+        "away": 1
+      },
+      "G53": {
+        "home": 1,
+        "away": 3
+      },
+      "G54": {
+        "home": 1,
+        "away": 1
+      },
+      "G55": {
+        "home": 4,
+        "away": 1
+      },
+      "G56": {
+        "home": 2,
+        "away": 0
+      },
+      "G57": {
+        "home": 1,
+        "away": 1
+      },
+      "G58": {
+        "home": 1,
+        "away": 1
+      },
+      "G59": {
+        "home": 1,
+        "away": 3
+      },
+      "G60": {
+        "home": 1,
+        "away": 2
+      },
+      "G61": {
+        "home": 5,
+        "away": 0
+      },
+      "G62": {
+        "home": 1,
+        "away": 3
+      },
+      "G63": {
+        "home": 1,
+        "away": 0
+      },
+      "G64": {
+        "home": 1,
+        "away": 0
+      },
+      "G65": {
+        "home": 2,
+        "away": 2
+      },
+      "G66": {
+        "home": 1,
+        "away": 1
+      },
+      "G67": {
+        "home": 4,
+        "away": 3
+      },
+      "G68": {
+        "home": 1,
+        "away": 1
+      },
+      "G69": {
+        "home": 2,
+        "away": 0
+      },
+      "G70": {
+        "home": 1,
+        "away": 2
+      },
+      "G71": {
+        "home": 1,
+        "away": 3
+      },
+      "G72": {
+        "home": 1,
+        "away": 1
+      }
     }
   },
   "sonder": {
@@ -301,6 +592,12 @@
       "finalist": "Spanien",
       "third": "Niederlande",
       "surprise": "Deutschland"
+    },
+    "Marco S.": {
+      "winner": "Frankreich",
+      "finalist": "Deutschland",
+      "third": "Spanien",
+      "surprise": "Japan"
     }
   },
   "sonderResult": {}
