@@ -5,8 +5,9 @@
 <script type="text/javascript">
 // Weiche: vor WM-Start zu tippen.html, danach bleibt index.html
 var WM_START = new Date('2026-06-11T19:00:00Z');
-if(new Date() < WM_START){
+if(new Date() < WM_START && window.location.search.indexOf('admin') === -1){
   window.location.replace('tippen.html');
+}
 }
 </script>
 <title>WM 2026 RZ Tippspiel</title>
