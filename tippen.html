@@ -284,12 +284,25 @@ body {
       <!-- SUBMIT -->
       <div class="submit-bar">
         <p>
-          <b>So funktioniert es:</b> F&uuml;ll alle Felder aus und klick auf den Button.<br>
-          Dein Mailprogramm &ouml;ffnet sich mit allen Tipps &ndash; einfach auf <b>Senden</b> klicken!
+          <b>So funktioniert es:</b> F&uuml;ll alle Felder aus und klick auf einen der Buttons.<br>
+          <b>Option 1:</b> Dein Mailprogramm &ouml;ffnet sich &ndash; einfach auf <b>Senden</b> klicken.<br>
+          <b>Option 2:</b> Tipps in die Zwischenablage kopieren und per Matrix schicken.
         </p>
-        <button class="btnbig" onclick="buildMail()">
-          &#9993; Tipps per Mail abschicken!
-        </button>
+        <table cellpadding="0" cellspacing="0"><tr>
+          <td style="padding-right:8px">
+            <button class="btnbig" onclick="buildMail()">
+              &#9993; Per Mail abschicken
+            </button>
+          </td>
+          <td>
+            <button class="btnbig" onclick="copyToClipboard()" style="background:#336633;border-color:#559955">
+              &#128203; In Zwischenablage kopieren
+            </button>
+          </td>
+        </tr></table>
+        <div id="copy-msg" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#336633;margin-top:8px;display:none">
+          &#10003; Kopiert! Jetzt per Matrix versenden.
+        </div>
         <div id="error-msg"></div>
       </div>
 
@@ -425,88 +438,81 @@ function renderForm(){
   document.getElementById('form-inner').innerHTML = html;
 }
 
-// ── MAIL BAUEN ───────────────────────────────────────────────────
-function buildMail(){
-  var name    = document.getElementById('player-name').value.trim();
-  var winner  = document.getElementById('s-winner').value;
-  var finalist= document.getElementById('s-finalist').value;
-  var third   = document.getElementById('s-third').value;
-  var surprise= document.getElementById('s-surprise').value;
-  var errEl   = document.getElementById('error-msg');
+// ── INHALT ZUSAMMENBAUEN (gemeinsam für Mail + Kopieren) ─────────
+function buildContent(){
+  var name     = document.getElementById('player-name').value.trim();
+  var winner   = document.getElementById('s-winner').value;
+  var finalist = document.getElementById('s-finalist').value;
+  var third    = document.getElementById('s-third').value;
+  var surprise = document.getElementById('s-surprise').value;
+  var errEl    = document.getElementById('error-msg');
   errEl.style.display = 'none';
 
-  // Pflichtfelder prüfen
   if(!name){
     errEl.textContent = '⚠ Bitte gib deinen Namen ein!';
     errEl.style.display = 'block';
     document.getElementById('player-name').focus();
-    return;
+    return null;
   }
   if(!winner||!finalist||!third||!surprise){
     errEl.textContent = '⚠ Bitte alle 4 Sondertipps ausfüllen!';
     errEl.style.display = 'block';
-    return;
+    return null;
   }
   if(winner === finalist){
     errEl.textContent = '⚠ WM-Sieger und Finalist müssen verschiedene Teams sein!';
     errEl.style.display = 'block';
-    return;
+    return null;
   }
-
-  // Spielfelder prüfen
   var missing = [];
   for(var i = 0; i < MATCHES.length; i++){
     var m = MATCHES[i];
-    var h = document.getElementById('h_' + m.id).value;
-    var a = document.getElementById('a_' + m.id).value;
-    if(h === '' || a === '') missing.push(m.home + ' - ' + m.away);
+    if(document.getElementById('h_'+m.id).value===''||document.getElementById('a_'+m.id).value==='')
+      missing.push(m.home+' - '+m.away);
   }
   if(missing.length > 0){
-    errEl.textContent = '⚠ Noch ' + missing.length + ' Spiel(e) nicht getippt! Bitte alle Felder ausfüllen.';
+    errEl.textContent = '⚠ Noch '+missing.length+' Spiel(e) nicht getippt! Bitte alle Felder ausfüllen.';
     errEl.style.display = 'block';
-    return;
+    return null;
   }
 
-  // ── Lesbarer Mailteil ─────────────────────────────────────────
+  // Lesbarer Teil
   var lines = [];
-  lines.push('WM 2026 RZ Tippspiel - Tipps von: ' + name);
-  lines.push('Abgeschickt am: ' + new Date().toLocaleString('de-DE'));
+  lines.push('WM 2026 RZ Tippspiel - Tipps von: '+name);
+  lines.push('Abgeschickt am: '+new Date().toLocaleString('de-DE'));
   lines.push('');
   lines.push('--- SONDERTIPPS ---');
-  lines.push('WM-Sieger:        ' + fl(winner)   + winner);
-  lines.push('Finalist:         ' + fl(finalist) + finalist);
-  lines.push('Dritter Platz:    ' + fl(third)    + third);
-  lines.push('Überraschungsteam:' + fl(surprise) + surprise);
+  lines.push('WM-Sieger:         '+fl(winner)+winner);
+  lines.push('Finalist:          '+fl(finalist)+finalist);
+  lines.push('Dritter Platz:     '+fl(third)+third);
+  lines.push('Überraschungsteam: '+fl(surprise)+surprise);
   lines.push('');
 
   var grpkeys = ['A','B','C','D','E','F','G','H','I','J','K','L'];
   for(var gi = 0; gi < grpkeys.length; gi++){
     var g = grpkeys[gi];
-    lines.push('--- GRUPPE ' + g + ' ---');
-    var ms = MATCHES.filter(function(m){ return m.group === g; });
+    lines.push('--- GRUPPE '+g+' ---');
+    var ms = MATCHES.filter(function(m){ return m.group===g; });
     for(var mi = 0; mi < ms.length; mi++){
       var m = ms[mi];
-      var h = document.getElementById('h_' + m.id).value;
-      var a = document.getElementById('a_' + m.id).value;
+      var h = document.getElementById('h_'+m.id).value;
+      var a = document.getElementById('a_'+m.id).value;
       var home = m.home; while(home.length < 22) home += ' ';
-      lines.push(m.date + '  ' + fl(m.home) + home + h + ' : ' + a + '  ' + fl(m.away) + m.away);
+      lines.push(m.date+'  '+fl(m.home)+home+h+' : '+a+'  '+fl(m.away)+m.away);
     }
     lines.push('');
   }
 
-  // ── JSON-Block für Import ─────────────────────────────────────
+  // JSON-Block
   var tippsObj = {};
   for(var i = 0; i < MATCHES.length; i++){
     var m = MATCHES[i];
-    tippsObj[m.id] = {
-      home: +document.getElementById('h_' + m.id).value,
-      away: +document.getElementById('a_' + m.id).value
-    };
+    tippsObj[m.id] = {home:+document.getElementById('h_'+m.id).value, away:+document.getElementById('a_'+m.id).value};
   }
   var jsonBlock = JSON.stringify({
-    name:     name,
-    sonder:   { winner: winner, finalist: finalist, third: third, surprise: surprise },
-    tipps:    tippsObj
+    name: name,
+    sonder: {winner:winner, finalist:finalist, third:third, surprise:surprise},
+    tipps: tippsObj
   });
 
   lines.push('════════════════════════════════════════');
@@ -515,9 +521,38 @@ function buildMail(){
   lines.push(jsonBlock);
   lines.push('════════════════════════════════════════');
 
-  var subject = encodeURIComponent('WM 2026 RZ Tippspiel - Tipps von ' + name);
-  var body    = encodeURIComponent(lines.join('\n'));
-  window.location.href = 'mailto:' + MAIL_TO + '?subject=' + subject + '&body=' + body;
+  return {name: name, text: lines.join('\n')};
+}
+
+// ── MAIL BAUEN ───────────────────────────────────────────────────
+function buildMail(){
+  var result = buildContent();
+  if(!result) return;
+  var subject = encodeURIComponent('WM 2026 RZ Tippspiel - Tipps von '+result.name);
+  var body    = encodeURIComponent(result.text);
+  window.location.href = 'mailto:'+MAIL_TO+'?subject='+subject+'&body='+body;
+}
+
+// ── IN ZWISCHENABLAGE KOPIEREN ───────────────────────────────────
+function copyToClipboard(){
+  var result = buildContent();
+  if(!result) return;
+  var msgEl = document.getElementById('copy-msg');
+  navigator.clipboard.writeText(result.text).then(function(){
+    msgEl.style.display = 'block';
+    setTimeout(function(){ msgEl.style.display='none'; }, 4000);
+  }).catch(function(){
+    // Fallback für ältere Browser
+    var ta = document.createElement('textarea');
+    ta.value = result.text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    msgEl.style.display = 'block';
+    setTimeout(function(){ msgEl.style.display='none'; }, 4000);
+  });
 }
 
 // ── INIT ─────────────────────────────────────────────────────────
