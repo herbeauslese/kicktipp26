@@ -261,17 +261,22 @@ a:visited { color: #660099; }
 .tipprow:nth-child(odd) { background: #fafaf5; }
 .tipprow.locked:nth-child(odd) { background: #f5f5ec; }
 .tippinp {
-  width: 45px;
+  width: 44px;
   font-family: "Courier New", Courier, monospace;
   font-size: 14px;
   font-weight: bold;
   text-align: center;
-  border: 2px inset #aaaaaa;
-  background: #ffffee;
-  color: #003300;
+  border: 2px inset #cccccc;
+  background: #f5f5ee;
+  color: #555555;
   padding: 2px;
+  cursor: default;
+  pointer-events: none;
 }
-.tippinp:focus { outline: 2px solid #336633; background: #ffffcc; }
+.tippinp:focus { outline: none; }
+.tippinp::-webkit-inner-spin-button,
+.tippinp::-webkit-outer-spin-button { display: none; }
+.tippinp[type=number] { -moz-appearance: textfield; }
 .ptstag {
   font-family: Verdana, Arial, sans-serif;
   font-size: 9px;
@@ -606,10 +611,6 @@ a:visited { color: #660099; }
           </tr></table>
         </div>
         <div id="tipp-form"></div>
-        <div id="tipp-actions" class="savebar" style="display:none">
-          <button class="btngreen" onclick="saveTipps()">&#128190; Tipps speichern</button>
-          &nbsp;&nbsp;<span class="savemsg" id="save-msg"></span>
-        </div>
       </div>
     </div>
 
@@ -1124,9 +1125,9 @@ function loadMyTipps(){
           html+='<table width="100%" cellpadding="0" cellspacing="0" class="tipprow"><tr>'
             +'<td><b>'+fl(m.home)+m.home+'</b> &ndash; '+fl(m.away)+m.away+'<br><span style="font-size:9px;color:#aaa">'+m.date+'</span></td>'
             +'<td align="right" nowrap>'
-            +'<input class="tippinp" type="number" min="0" max="20" value="'+hv+'" id="t_'+m.id+'_h"/>'
+            +'<input class="tippinp" type="number" readonly value="'+hv+'" id="t_'+m.id+'_h"/>'
             +' <span style="font-family:\'Courier New\',monospace;font-weight:bold">:</span> '
-            +'<input class="tippinp" type="number" min="0" max="20" value="'+av+'" id="t_'+m.id+'_a"/>'
+            +'<input class="tippinp" type="number" readonly value="'+av+'" id="t_'+m.id+'_a"/>'
             +'</td></tr></table>';
         }
       }
