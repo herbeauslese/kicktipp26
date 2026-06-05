@@ -1330,6 +1330,7 @@ function importTipps(){
     renderTippen();
   });
 }
+function saveResult(id){
   var h=document.getElementById('r_'+id+'_h').value,a=document.getElementById('r_'+id+'_a').value;
   if(h===''||a==='')return;
   STATE.results[id]={home:+h,away:+a};
