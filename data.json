@@ -4,7 +4,8 @@
     "Marco S.",
     "Testspielerin",
     "3rik",
-    "Thomi"
+    "Thomi",
+    "J. R."
   ],
   "results": {},
   "tipps": {
@@ -1457,6 +1458,296 @@
         "home": 3,
         "away": 1
       }
+    },
+    "J. R.": {
+      "G1": {
+        "home": 6,
+        "away": 4
+      },
+      "G2": {
+        "home": 0,
+        "away": 4
+      },
+      "G3": {
+        "home": 0,
+        "away": 2
+      },
+      "G4": {
+        "home": 0,
+        "away": 3
+      },
+      "G5": {
+        "home": 0,
+        "away": 2
+      },
+      "G6": {
+        "home": 3,
+        "away": 2
+      },
+      "G7": {
+        "home": 0,
+        "away": 1
+      },
+      "G8": {
+        "home": 2,
+        "away": 2
+      },
+      "G9": {
+        "home": 2,
+        "away": 2
+      },
+      "G10": {
+        "home": 3,
+        "away": 2
+      },
+      "G11": {
+        "home": 1,
+        "away": 2
+      },
+      "G12": {
+        "home": 0,
+        "away": 2
+      },
+      "G13": {
+        "home": 2,
+        "away": 2
+      },
+      "G14": {
+        "home": 0,
+        "away": 3
+      },
+      "G15": {
+        "home": 2,
+        "away": 2
+      },
+      "G16": {
+        "home": 3,
+        "away": 44
+      },
+      "G17": {
+        "home": 3,
+        "away": 0
+      },
+      "G18": {
+        "home": 2,
+        "away": 6
+      },
+      "G19": {
+        "home": 1,
+        "away": 2
+      },
+      "G20": {
+        "home": 2,
+        "away": 2
+      },
+      "G21": {
+        "home": 3,
+        "away": 0
+      },
+      "G22": {
+        "home": 3,
+        "away": 0
+      },
+      "G23": {
+        "home": 0,
+        "away": 4
+      },
+      "G24": {
+        "home": 3,
+        "away": 0
+      },
+      "G25": {
+        "home": 3,
+        "away": 0
+      },
+      "G26": {
+        "home": 0,
+        "away": 2
+      },
+      "G27": {
+        "home": 2,
+        "away": 1
+      },
+      "G28": {
+        "home": 1,
+        "away": 1
+      },
+      "G29": {
+        "home": 0,
+        "away": 1
+      },
+      "G30": {
+        "home": 1,
+        "away": 1
+      },
+      "G31": {
+        "home": 3,
+        "away": 2
+      },
+      "G32": {
+        "home": 0,
+        "away": 0
+      },
+      "G33": {
+        "home": 1,
+        "away": 2
+      },
+      "G34": {
+        "home": 2,
+        "away": 0
+      },
+      "G35": {
+        "home": 3,
+        "away": 2
+      },
+      "G36": {
+        "home": 0,
+        "away": 2
+      },
+      "G37": {
+        "home": 1,
+        "away": 3
+      },
+      "G38": {
+        "home": 0,
+        "away": 1
+      },
+      "G39": {
+        "home": 1,
+        "away": 1
+      },
+      "G40": {
+        "home": 1,
+        "away": 2
+      },
+      "G41": {
+        "home": 2,
+        "away": 1
+      },
+      "G42": {
+        "home": 2,
+        "away": 0
+      },
+      "G43": {
+        "home": 3,
+        "away": 0
+      },
+      "G44": {
+        "home": 0,
+        "away": 3
+      },
+      "G45": {
+        "home": 1,
+        "away": 3
+      },
+      "G46": {
+        "home": 0,
+        "away": 2
+      },
+      "G47": {
+        "home": 0,
+        "away": 1
+      },
+      "G48": {
+        "home": 2,
+        "away": 1
+      },
+      "G49": {
+        "home": 3,
+        "away": 2
+      },
+      "G50": {
+        "home": 2,
+        "away": 2
+      },
+      "G51": {
+        "home": 0,
+        "away": 1
+      },
+      "G52": {
+        "home": 1,
+        "away": 2
+      },
+      "G53": {
+        "home": 1,
+        "away": 4
+      },
+      "G54": {
+        "home": 4,
+        "away": 0
+      },
+      "G55": {
+        "home": 0,
+        "away": 2
+      },
+      "G56": {
+        "home": 1,
+        "away": 3
+      },
+      "G57": {
+        "home": 1,
+        "away": 4
+      },
+      "G58": {
+        "home": 2,
+        "away": 1
+      },
+      "G59": {
+        "home": 2,
+        "away": 0
+      },
+      "G60": {
+        "home": 1,
+        "away": 4
+      },
+      "G61": {
+        "home": 4,
+        "away": 1
+      },
+      "G62": {
+        "home": 1,
+        "away": 1
+      },
+      "G63": {
+        "home": 5,
+        "away": 1
+      },
+      "G64": {
+        "home": 0,
+        "away": 1
+      },
+      "G65": {
+        "home": 1,
+        "away": 3
+      },
+      "G66": {
+        "home": 1,
+        "away": 2
+      },
+      "G67": {
+        "home": 0,
+        "away": 1
+      },
+      "G68": {
+        "home": 2,
+        "away": 2
+      },
+      "G69": {
+        "home": 3,
+        "away": 2
+      },
+      "G70": {
+        "home": 1,
+        "away": 0
+      },
+      "G71": {
+        "home": 1,
+        "away": 4
+      },
+      "G72": {
+        "home": 1,
+        "away": 4
+      }
     }
   },
   "sonder": {
@@ -1476,7 +1767,7 @@
       "winner": "Spanien",
       "finalist": "Deutschland",
       "third": "Frankreich",
-      "surprise": "TÃÂ¼rkei"
+      "surprise": "TÃÂÃÂ¼rkei"
     },
     "3rik": {
       "winner": "Frankreich",
@@ -1489,6 +1780,12 @@
       "finalist": "Frankreich",
       "third": "Deutschland",
       "surprise": "Japan"
+    },
+    "J. R.": {
+      "winner": "Frankreich",
+      "finalist": "Schweiz",
+      "third": "Deutschland",
+      "surprise": "Mexiko"
     }
   },
   "sonderResult": {}
