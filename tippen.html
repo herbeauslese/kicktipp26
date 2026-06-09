@@ -148,7 +148,105 @@ body {
 .sp-colon { font-family: "Courier New", Courier, monospace; font-weight: bold; font-size: 14px; color: #666666; padding: 0 3px; }
 .sp-inputs { white-space: nowrap; }
 
-/* SUBMIT */
+/* SCHNELLTIPP POPUP */
+.qt-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.6); z-index: 1000;
+  align-items: center; justify-content: center;
+}
+.qt-overlay.open { display: flex; }
+.qt-box {
+  background: #fff; border: 4px outset #cccccc;
+  width: 300px; font-family: Verdana, Arial, sans-serif;
+}
+.qt-hdr {
+  background: #225522; border-bottom: 3px solid #ffcc00;
+  padding: 5px 10px; font-family: "Comic Sans MS", Impact, sans-serif;
+  font-size: 13px; color: #ffff00; letter-spacing: 1px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.qt-close {
+  background: none; border: none; color: #ffcc00;
+  font-size: 18px; font-weight: bold; cursor: pointer; line-height: 1;
+}
+.qt-matchname {
+  padding: 6px 10px 5px; font-size: 11px; font-weight: bold;
+  color: #333; border-bottom: 1px solid #eee;
+  text-align: center; background: #fafaf5;
+}
+.qt-section-label {
+  font-size: 9px; font-weight: bold; color: #888;
+  text-transform: uppercase; letter-spacing: 1px; padding: 5px 10px 3px;
+}
+.qt-presets {
+  display: flex; flex-wrap: wrap; gap: 4px; padding: 3px 10px 8px;
+}
+.qt-preset {
+  background: #ffffee; border: 2px outset #aaaaaa;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px; font-weight: bold;
+  padding: 4px 0; cursor: pointer; color: #003300;
+  width: 42px; text-align: center;
+}
+.qt-preset:hover { background: #ffffcc; border-color: #336633; }
+.qt-preset:active, .qt-preset.sel { border-style: inset; background: #ccffcc; border-color: #336633; }
+.qt-numpad-wrap {
+  border-top: 2px groove #ccccaa; padding: 8px 10px; background: #f5f5ee;
+}
+.qt-score-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; margin-bottom: 7px;
+}
+.qt-score-side { text-align: center; }
+.qt-score-label {
+  font-size: 9px; color: #888; font-weight: bold;
+  text-transform: uppercase; letter-spacing: .5px;
+  display: block; margin-bottom: 3px;
+  width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.qt-score-val {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 26px; font-weight: bold; color: #003300;
+  background: #ffffee; border: 2px inset #aaaaaa;
+  width: 54px; height: 40px; line-height: 40px;
+  text-align: center; display: block; cursor: pointer;
+}
+.qt-score-val.active { border-color: #336633; background: #ffffcc; }
+.qt-score-colon {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 26px; font-weight: bold; color: #666; margin-top: 14px;
+}
+.qt-numpad-hint {
+  font-size: 9px; color: #999; text-align: center; margin-bottom: 5px;
+}
+.qt-numpad-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 8px;
+}
+.qt-num-btn {
+  height: 32px; background: #ffffee; border: 2px outset #aaaaaa;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px; font-weight: bold; cursor: pointer; color: #003300;
+}
+.qt-num-btn:hover { background: #ffffcc; border-color: #336633; }
+.qt-num-btn:active { border-style: inset; }
+.qt-confirm {
+  background: #336633; color: #ffff00; border: 2px outset #55aa55;
+  font-family: "Comic Sans MS", Verdana, sans-serif;
+  font-size: 12px; font-weight: bold;
+  padding: 6px; cursor: pointer; width: 100%; display: block; text-align: center;
+}
+.qt-confirm:active { border-style: inset; }
+.sp-tipp-btn {
+  background: #ffffee; border: 2px outset #aaaaaa;
+  font-family: Verdana, Arial, sans-serif; font-size: 9px; font-weight: bold;
+  color: #336633; cursor: pointer; padding: 2px 6px; white-space: nowrap;
+}
+.sp-tipp-btn:hover { background: #ffffcc; border-color: #336633; }
+.sp-tipp-btn:active { border-style: inset; }
+.sp-tipp-display {
+  font-family: "Courier New", Courier, monospace; font-size: 13px; font-weight: bold;
+  color: #003300; min-width: 14px; text-align: center; display: inline-block;
+}
 .submit-bar {
   background: #ddddaa; border: 3px outset #ccccaa;
   padding: 12px; text-align: center; margin-bottom: 10px;
@@ -213,10 +311,10 @@ body {
         <div class="sectionhdr">&#9733; DEIN NAME &#9733;</div>
         <div class="name-bar">
           <span class="name-label">Name:</span>
-          <input type="text" class="retroinput" id="player-name" placeholder="Basti Schweinsteiger" style="width:220px">
+          <input type="text" class="retroinput" id="player-name" placeholder="z.B. Max M." style="width:220px">
           &nbsp;&nbsp;
           <span style="font-family:Verdana,Arial,sans-serif;font-size:10px;color:#888888">
-            (Vorname oder frecher nickname - ist egal)
+            (wird automatisch in die Mail eingetragen)
           </span>
         </div>
       </div>
@@ -285,8 +383,8 @@ body {
       <div class="submit-bar">
         <p>
           <b>So funktioniert es:</b> F&uuml;ll alle Felder aus und klick auf einen der Buttons.<br>
-          <b>Option 1:</b> Mailprogramm &ouml;ffnet sich &ndash; einfach auf <b>Senden</b> klicken.<br>
-          <b>Option 2:</b> Tipps in die Zwischenablage kopieren und per Matrix schicken.
+          <b>Option 1:</b> Dein Mailprogramm &ouml;ffnet sich &ndash; einfach auf <b>Senden</b> klicken.<br>
+          <b>Option 2:</b> Tipps in die Zwischenablage kopieren und per Chat/Messenger schicken.
         </p>
         <table cellpadding="0" cellspacing="0"><tr>
           <td style="padding-right:8px">
@@ -301,7 +399,7 @@ body {
           </td>
         </tr></table>
         <div id="copy-msg" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#336633;margin-top:8px;display:none">
-          &#10003; Kopiert! Jetzt per Matrix versenden.
+          &#10003; Kopiert! Jetzt per Chat/Messenger versenden.
         </div>
         <div id="error-msg"></div>
       </div>
@@ -310,7 +408,35 @@ body {
 
   </div><!-- /contentbg -->
 
-  <div class="footerbar">
+  <!-- SCHNELLTIPP POPUP -->
+<div class="qt-overlay" id="qt-overlay" onclick="qtCloseIfBg(event)">
+  <div class="qt-box">
+    <div class="qt-hdr">
+      <span>&#9917; Schnelltipp</span>
+      <button class="qt-close" onclick="qtClose()">&#10005;</button>
+    </div>
+    <div class="qt-matchname" id="qt-matchname"></div>
+    <div class="qt-section-label">H&auml;ufige Ergebnisse</div>
+    <div class="qt-presets" id="qt-presets"></div>
+    <div class="qt-numpad-wrap">
+      <div class="qt-score-row">
+        <div class="qt-score-side">
+          <span class="qt-score-label" id="qt-home-label">Heim</span>
+          <span class="qt-score-val" id="qt-h" onclick="qtActivate('h')">0</span>
+        </div>
+        <div class="qt-score-colon">:</div>
+        <div class="qt-score-side">
+          <span class="qt-score-label" id="qt-away-label">Gast</span>
+          <span class="qt-score-val" id="qt-a" onclick="qtActivate('a')">0</span>
+        </div>
+      </div>
+      <div class="qt-numpad-hint">Aktives Feld antippen &rarr; Zahl w&auml;hlen</div>
+      <div class="qt-numpad-grid" id="qt-numpad"></div>
+      <button class="qt-confirm" onclick="qtConfirm()">&#10003; &Uuml;bernehmen</button>
+    </div>
+  </div>
+</div>
+<div class="footerbar">
     <span class="rainbow">&#9733; WM 2026 RZ TIPPSPIEL &#9733;</span>
     &nbsp; VIEL ERFOLG! &nbsp; &#9733; &nbsp; &copy; 2026
   </div>
@@ -423,10 +549,13 @@ function renderForm(){
       html += '<tr class="' + row + '">'
             + '<td class="sp-date">' + m.date + '</td>'
             + '<td class="sp-home">' + fl(m.home) + m.home + '</td>'
-            + '<td align="center" class="sp-inputs">'
-            +   '<input class="sp-inp" type="number" min="0" max="20" id="h_' + m.id + '" />'
+            + '<td align="center" class="sp-inputs" style="white-space:nowrap">'
+            +   '<span class="sp-tipp-display" id="dh_' + m.id + '">?</span>'
             +   '<span class="sp-colon">:</span>'
-            +   '<input class="sp-inp" type="number" min="0" max="20" id="a_' + m.id + '" />'
+            +   '<span class="sp-tipp-display" id="da_' + m.id + '">?</span>'
+            +   '&nbsp;<button class="sp-tipp-btn" onclick="qtOpen(\'' + m.id + '\',\'' + m.home.replace(/'/g,"\\'") + '\',\'' + m.away.replace(/'/g,"\\'") + '\')">&#9998; Tippen</button>'
+            +   '<input type="hidden" id="h_' + m.id + '" />'
+            +   '<input type="hidden" id="a_' + m.id + '" />'
             + '</td>'
             + '<td class="sp-away">' + fl(m.away) + m.away + '</td>'
             + '</tr>';
@@ -553,6 +682,114 @@ function copyToClipboard(){
     msgEl.style.display = 'block';
     setTimeout(function(){ msgEl.style.display='none'; }, 4000);
   });
+}
+
+// ── SCHNELLTIPP POPUP ────────────────────────────────────────────
+var QT_PRESETS = [
+  [1,0],[2,0],[2,1],[3,0],[3,1],[3,2],
+  [0,0],[1,1],[2,2],
+  [0,1],[0,2],[1,2],[0,3],[1,3],[2,3]
+];
+var qtCurrentId = null;
+var qtH = 0, qtA = 0;
+var qtActive = 'h';
+
+function qtOpen(id, home, away){
+  qtCurrentId = id;
+  var curH = document.getElementById('h_'+id).value;
+  var curA = document.getElementById('a_'+id).value;
+  qtH = curH !== '' ? +curH : 0;
+  qtA = curA !== '' ? +curA : 0;
+  qtActive = 'h';
+
+  document.getElementById('qt-matchname').innerHTML = fl(home)+' <b>'+home+'</b> &ndash; <b>'+away+'</b> '+fl(away);
+  document.getElementById('qt-home-label').textContent = home;
+  document.getElementById('qt-away-label').textContent = away;
+  qtUpdateDisplay();
+  qtBuildPresets();
+  qtBuildNumpad();
+  document.getElementById('qt-overlay').classList.add('open');
+}
+
+function qtActivate(which){
+  qtActive = which;
+  qtUpdateDisplay();
+}
+
+function qtUpdateDisplay(){
+  var hEl = document.getElementById('qt-h');
+  var aEl = document.getElementById('qt-a');
+  hEl.textContent = qtH;
+  aEl.textContent = qtA;
+  hEl.className = 'qt-score-val' + (qtActive==='h' ? ' active' : '');
+  aEl.className = 'qt-score-val' + (qtActive==='a' ? ' active' : '');
+}
+
+function qtBuildPresets(){
+  var html = '';
+  for(var i = 0; i < QT_PRESETS.length; i++){
+    var h = QT_PRESETS[i][0], a = QT_PRESETS[i][1];
+    var sel = (h===qtH && a===qtA) ? ' sel' : '';
+    html += '<button class="qt-preset'+sel+'" onclick="qtSetPreset('+h+','+a+')">'
+          + h+':'+a+'</button>';
+  }
+  document.getElementById('qt-presets').innerHTML = html;
+}
+
+function qtBuildNumpad(){
+  var html = '';
+  for(var n = 0; n <= 9; n++){
+    html += '<button class="qt-num-btn" onclick="qtNumPress('+n+')">'+n+'</button>';
+  }
+  document.getElementById('qt-numpad').innerHTML = html;
+}
+
+function qtNumPress(n){
+  if(qtActive === 'h'){
+    qtH = n;
+    qtActive = 'a';
+  } else {
+    qtA = n;
+    qtActive = 'h'; // zurück zu Heim für nächsten Tipp
+  }
+  qtUpdateDisplay();
+  qtBuildPresets();
+}
+
+function qtSetPreset(h, a){
+  qtH = h; qtA = a;
+  qtUpdateDisplay();
+  qtBuildPresets();
+  qtConfirm();
+}
+
+function qtClose(){
+  document.getElementById('qt-overlay').classList.remove('open');
+  qtCurrentId = null;
+}
+
+function qtCloseIfBg(e){
+  if(e.target === document.getElementById('qt-overlay')) qtClose();
+}
+
+function qtConfirm(){
+  if(!qtCurrentId) return;
+  document.getElementById('h_'+qtCurrentId).value = qtH;
+  document.getElementById('a_'+qtCurrentId).value = qtA;
+  document.getElementById('dh_'+qtCurrentId).textContent = qtH;
+  document.getElementById('da_'+qtCurrentId).textContent = qtA;
+  var allBtns = document.querySelectorAll('.sp-tipp-btn');
+  for(var i=0;i<allBtns.length;i++){
+    var oc = allBtns[i].getAttribute('onclick')||'';
+    if(oc.indexOf("'"+qtCurrentId+"'") >= 0){
+      allBtns[i].textContent = '✓ '+qtH+':'+qtA;
+      allBtns[i].style.background = '#ccffcc';
+      allBtns[i].style.borderColor = '#336633';
+      allBtns[i].style.color = '#003300';
+      break;
+    }
+  }
+  qtClose();
 }
 
 // ── INIT ─────────────────────────────────────────────────────────
