@@ -697,9 +697,9 @@ a:visited { color: #660099; }
             </tr></table>
           </div>
         </div>
-        <div style="padding:8px">
+        <div style="padding:8px;display:flex;gap:6px;flex-wrap:wrap">
           <button class="btngrey" onclick="exportMattermost()">&#128203; Mattermost-Export</button>
-          &nbsp;
+          <button class="btngrey" onclick="repairEncoding()">&#128295; Encoding reparieren</button>
           <button class="btngrey" onclick="adminLogout()">Abmelden</button>
         </div>
       </div>
@@ -727,7 +727,7 @@ var GH_FILE = 'data.json';
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 // SHA-256 Hash des Passworts "admin2026" — hier durch eigenen Hash ersetzen
 // Hash erzeugen: https://emn178.github.io/online-tools/sha256.html
-var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; // Standard: "admin2026" — unbedingt ersetzen!
+var PW_HASH = '6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6'; // Standard: "admin2026" — unbedingt ersetzen!
 
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -757,32 +757,32 @@ function backToPassword(){
 // ── DATA ─────────────────────────────────────────────────────────
 // Gruppen verifiziert gegen offiziellen FIFA/Media Markt Spielplan
 var GROUPS={
-  A:['Mexiko','S\u00fcdkorea','S\u00fcdafrika','Tschechien'],
+  A:['Mexiko','Südkorea','Südafrika','Tschechien'],
   B:['Kanada','Bosnien-Herzegowina','Katar','Schweiz'],
   C:['Brasilien','Marokko','Haiti','Schottland'],
-  D:['USA','Paraguay','Australien','T\u00fcrkei'],
-  E:['Deutschland','Cura\u00e7ao','Elfenbeink\u00fcste','Ecuador'],
+  D:['USA','Paraguay','Australien','Türkei'],
+  E:['Deutschland','Curaçao','Elfenbeinküste','Ecuador'],
   F:['Niederlande','Japan','Schweden','Tunesien'],
-  G:['Belgien','\u00c4gypten','Iran','Neuseeland'],
+  G:['Belgien','Ägypten','Iran','Neuseeland'],
   H:['Spanien','Kap Verde','Saudi-Arabien','Uruguay'],
   I:['Frankreich','Senegal','Irak','Norwegen'],
-  J:['Argentinien','Algerien','\u00d6sterreich','Jordanien'],
+  J:['Argentinien','Algerien','Österreich','Jordanien'],
   K:['Portugal','DR Kongo','Usbekistan','Kolumbien'],
   L:['England','Kroatien','Ghana','Panama']
 };
 // Spielpaarungen exakt laut offiziellem Spielplan (Heim:Gast, Datum)
 // Jede Gruppe: 6 Spiele in korrekter Reihenfolge
 var GROUP_MATCHES={
-  A:[['Mexiko','S\u00fcdafrika','11.06'],['S\u00fcdkorea','Tschechien','12.06'],['Tschechien','S\u00fcdafrika','18.06'],['Mexiko','S\u00fcdkorea','19.06'],['Tschechien','Mexiko','25.06'],['S\u00fcdafrika','S\u00fcdkorea','25.06']],
+  A:[['Mexiko','Südafrika','11.06'],['Südkorea','Tschechien','12.06'],['Tschechien','Südafrika','18.06'],['Mexiko','Südkorea','19.06'],['Tschechien','Mexiko','25.06'],['Südafrika','Südkorea','25.06']],
   B:[['Kanada','Bosnien-Herzegowina','12.06'],['Katar','Schweiz','13.06'],['Schweiz','Bosnien-Herzegowina','18.06'],['Kanada','Katar','19.06'],['Schweiz','Kanada','24.06'],['Bosnien-Herzegowina','Katar','24.06']],
   C:[['Brasilien','Marokko','14.06'],['Haiti','Schottland','14.06'],['Schottland','Marokko','20.06'],['Brasilien','Haiti','20.06'],['Schottland','Brasilien','25.06'],['Marokko','Haiti','25.06']],
-  D:[['USA','Paraguay','13.06'],['Australien','T\u00fcrkei','14.06'],['T\u00fcrkei','Paraguay','20.06'],['USA','Australien','19.06'],['T\u00fcrkei','USA','26.06'],['Paraguay','Australien','26.06']],
-  E:[['Deutschland','Cura\u00e7ao','14.06'],['Elfenbeink\u00fcste','Ecuador','15.06'],['Deutschland','Elfenbeink\u00fcste','20.06'],['Ecuador','Cura\u00e7ao','21.06'],['Ecuador','Deutschland','25.06'],['Cura\u00e7ao','Elfenbeink\u00fcste','25.06']],
+  D:[['USA','Paraguay','13.06'],['Australien','Türkei','14.06'],['Türkei','Paraguay','20.06'],['USA','Australien','19.06'],['Türkei','USA','26.06'],['Paraguay','Australien','26.06']],
+  E:[['Deutschland','Curaçao','14.06'],['Elfenbeinküste','Ecuador','15.06'],['Deutschland','Elfenbeinküste','20.06'],['Ecuador','Curaçao','21.06'],['Ecuador','Deutschland','25.06'],['Curaçao','Elfenbeinküste','25.06']],
   F:[['Niederlande','Japan','14.06'],['Schweden','Tunesien','15.06'],['Niederlande','Schweden','20.06'],['Tunesien','Japan','21.06'],['Japan','Schweden','26.06'],['Tunesien','Niederlande','26.06']],
-  G:[['Belgien','\u00c4gypten','15.06'],['Iran','Neuseeland','16.06'],['Belgien','Iran','21.06'],['Neuseeland','\u00c4gypten','22.06'],['Neuseeland','Belgien','27.06'],['\u00c4gypten','Iran','27.06']],
+  G:[['Belgien','Ägypten','15.06'],['Iran','Neuseeland','16.06'],['Belgien','Iran','21.06'],['Neuseeland','Ägypten','22.06'],['Neuseeland','Belgien','27.06'],['Ägypten','Iran','27.06']],
   H:[['Spanien','Kap Verde','15.06'],['Saudi-Arabien','Uruguay','16.06'],['Spanien','Saudi-Arabien','21.06'],['Uruguay','Kap Verde','22.06'],['Uruguay','Spanien','27.06'],['Kap Verde','Saudi-Arabien','27.06']],
   I:[['Frankreich','Senegal','16.06'],['Irak','Norwegen','17.06'],['Frankreich','Irak','22.06'],['Norwegen','Senegal','23.06'],['Norwegen','Frankreich','26.06'],['Senegal','Irak','26.06']],
-  J:[['Argentinien','Algerien','17.06'],['\u00d6sterreich','Jordanien','17.06'],['Argentinien','\u00d6sterreich','22.06'],['Jordanien','Algerien','23.06'],['Jordanien','Argentinien','28.06'],['Algerien','\u00d6sterreich','28.06']],
+  J:[['Argentinien','Algerien','17.06'],['Österreich','Jordanien','17.06'],['Argentinien','Österreich','22.06'],['Jordanien','Algerien','23.06'],['Jordanien','Argentinien','28.06'],['Algerien','Österreich','28.06']],
   K:[['Portugal','DR Kongo','17.06'],['Usbekistan','Kolumbien','18.06'],['Portugal','Usbekistan','23.06'],['Kolumbien','DR Kongo','24.06'],['Kolumbien','Portugal','28.06'],['DR Kongo','Usbekistan','28.06']],
   L:[['England','Kroatien','17.06'],['Ghana','Panama','18.06'],['England','Ghana','23.06'],['Panama','Kroatien','24.06'],['Panama','England','27.06'],['Kroatien','Ghana','27.06']]
 };
@@ -846,7 +846,7 @@ function ghLoad(cb){
     if(!r.ok){cb(false);return;}
     r.json().then(function(j){
       SHA=j.sha;
-      var d=JSON.parse(atob(j.content.replace(/\n/g,'')));
+      var d=JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))));
       if(d.players)STATE.players=d.players;
       if(d.results)STATE.results=d.results;
       if(d.tipps)STATE.tipps=d.tipps;
@@ -1080,7 +1080,7 @@ function renderSpielplan(){
 // ── TIPPEN ───────────────────────────────────────────────────────
 function renderTippen(){
   var sel=document.getElementById('tipper-select');
-  sel.innerHTML='<option value="">-- ausw\u00e4hlen --</option>';
+  sel.innerHTML='<option value="">-- auswählen --</option>';
   for(var i=0;i<STATE.players.length;i++)
     sel.innerHTML+='<option value="'+STATE.players[i]+'"'+( ME===STATE.players[i]?' selected':'')+'>'+STATE.players[i]+'</option>';
   if(ME)loadMyTipps();
@@ -1344,6 +1344,30 @@ function delPlayer(i){
   if(!confirm('"'+STATE.players[i]+'" wirklich entfernen?'))return;
   STATE.players.splice(i,1);renderAdmin();
 }
+// Einmalige Reparatur für falsch kodierte Umlaute in der data.json
+function repairEncoding(){
+  function fix(str){
+    if(typeof str !== 'string') return str;
+    try { return decodeURIComponent(escape(str)); } catch(e){ return str; }
+  }
+  function fixObj(obj){
+    if(!obj) return obj;
+    if(typeof obj === 'string') return fix(obj);
+    if(Array.isArray(obj)) return obj.map(fixObj);
+    var out = {};
+    for(var k in obj) out[fix(k)] = fixObj(obj[k]);
+    return out;
+  }
+  STATE.players = STATE.players.map(fix);
+  STATE.sonder  = fixObj(STATE.sonder);
+  STATE.sonderResult = fixObj(STATE.sonderResult);
+  ghSave(function(){
+    showToast('ENCODING REPARIERT ✓');
+    renderRangliste();
+    renderSonder();
+  });
+}
+
 function exportMattermost(){
   var pl=STATE.players.map(function(n){var s=calcStats(n);s.name=n;return s;});
   pl.sort(function(a,b){return b.p-a.p||b.ex-a.ex;});
