@@ -399,7 +399,7 @@ body {
           </td>
         </tr></table>
         <div id="copy-msg" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#336633;margin-top:8px;display:none">
-          &#10003; Kopiert! Jetzt per Matrix versenden.
+          &#10003; Kopiert! Jetzt per Matrix an Domenik versenden.
         </div>
         <div id="error-msg"></div>
       </div>
@@ -701,6 +701,7 @@ function qtOpen(id, home, away){
   qtH = curH !== '' ? +curH : 0;
   qtA = curA !== '' ? +curA : 0;
   qtActive = 'h';
+  qtDoubleMode = false;
 
   document.getElementById('qt-matchname').innerHTML = fl(home)+' <b>'+home+'</b> &ndash; <b>'+away+'</b> '+fl(away);
   document.getElementById('qt-home-label').textContent = home;
@@ -736,12 +737,27 @@ function qtBuildPresets(){
   document.getElementById('qt-presets').innerHTML = html;
 }
 
+var qtDoubleMode = false;
+
 function qtBuildNumpad(){
   var html = '';
-  for(var n = 0; n <= 9; n++){
-    html += '<button class="qt-num-btn" onclick="qtNumPress('+n+')">'+n+'</button>';
+  if(!qtDoubleMode){
+    for(var n = 0; n <= 9; n++){
+      html += '<button class="qt-num-btn" onclick="qtNumPress('+n+')">'+n+'</button>';
+    }
+    html += '<button class="qt-num-btn" onclick="qtToggleDouble()" style="font-size:10px;font-weight:bold;background:#ffe8cc;border-color:#cc8800;color:#663300">2-stellig</button>';
+  } else {
+    for(var n = 10; n <= 20; n++){
+      html += '<button class="qt-num-btn" onclick="qtNumPress('+n+')">'+n+'</button>';
+    }
+    html += '<button class="qt-num-btn" onclick="qtToggleDouble()" style="font-size:10px;font-weight:bold;background:#ccffcc;border-color:#336633;color:#003300">0-9</button>';
   }
   document.getElementById('qt-numpad').innerHTML = html;
+}
+
+function qtToggleDouble(){
+  qtDoubleMode = !qtDoubleMode;
+  qtBuildNumpad();
 }
 
 function qtNumPress(n){
@@ -750,10 +766,12 @@ function qtNumPress(n){
     qtActive = 'a';
   } else {
     qtA = n;
-    qtActive = 'h'; // zurück zu Heim für nächsten Tipp
+    qtActive = 'h';
   }
+  qtDoubleMode = false; // nach Eingabe zurück auf 0-9
   qtUpdateDisplay();
   qtBuildPresets();
+  qtBuildNumpad();
 }
 
 function qtSetPreset(h, a){
