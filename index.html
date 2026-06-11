@@ -3,12 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script type="text/javascript">
-// Weiche: vor WM-Start zu tippen.html, danach bleibt index.html
-// ?admin in der URL überspringt den Redirect
 var WM_START = new Date('2026-06-11T19:00:00Z');
-if(new Date() < WM_START && window.location.search.indexOf('admin') === -1){
-  window.location.replace('tippen.html');
-}
 </script>
 <title>WM 2026 RZ Tippspiel</title>
 <style type="text/css">
@@ -453,7 +448,47 @@ a:visited { color: #660099; }
 }
 .statbar { font-family: "Courier New", Courier, monospace; font-size: 10px; color: #666666; margin-left: auto; }
 .savemsg { font-family: "Courier New", Courier, monospace; font-size: 10px; color: #666666; }
-/* COUNTDOWN */
+/* WILLKOMMENS-POPUP */
+.welcome-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.7); z-index: 2000;
+  align-items: center; justify-content: center;
+}
+.welcome-overlay.open { display: flex; }
+.welcome-box {
+  background: #fff; border: 4px outset #cccccc;
+  max-width: 420px; width: 92%;
+  font-family: Verdana, Arial, sans-serif;
+  text-align: center;
+}
+.welcome-hdr {
+  background: #225522; border-bottom: 3px solid #ffcc00;
+  padding: 10px 14px;
+  font-family: "Comic Sans MS", Impact, sans-serif;
+  font-size: 18px; color: #ffff00; letter-spacing: 2px;
+  text-shadow: 1px 1px 0 #000;
+}
+.welcome-body {
+  padding: 16px 18px 12px;
+  font-size: 12px; line-height: 1.6; color: #333;
+}
+.welcome-body b { color: #003300; }
+.welcome-body .hint {
+  background: #ffffcc; border: 2px solid #ffcc00;
+  padding: 8px 10px; margin: 10px 0 0;
+  font-size: 11px; color: #553300;
+  text-align: left;
+}
+.welcome-btn {
+  background: #336633; color: #ffff00;
+  border: 3px outset #55aa55;
+  font-family: "Comic Sans MS", Verdana, sans-serif;
+  font-size: 13px; font-weight: bold;
+  padding: 8px 24px; cursor: pointer;
+  margin: 10px 0 14px;
+  letter-spacing: 1px;
+}
+.welcome-btn:active { border-style: inset; }
 .cd-wrap{padding:30px 20px;text-align:center;background:#ffffff}
 .cd-title{font-family:"Comic Sans MS",Impact,sans-serif;font-size:20px;font-weight:bold;color:#003300;margin-bottom:6px}
 .cd-sub{font-family:"Comic Sans MS",Verdana,sans-serif;font-size:11px;color:#666666;margin-bottom:20px}
@@ -540,7 +575,7 @@ a:visited { color: #660099; }
       <div class="cd-wrap">
         <span class="cd-ball">&#9917;</span>
         <div class="cd-title">Die Seite &ouml;ffnet am 11. Juni 2026!</div>
-        <div class="cd-sub">Tipps f&uuml;r die Gruppenphase kannst du schon jetzt &uuml;ber den <a href="tippen.html">Tippbogen</a> abgeben&nbsp;&#9733;</div>
+        <div class="cd-sub" style="font-size:13px;font-weight:bold;color:#333333">Tipps f&uuml;r die Gruppenphase kannst du noch &uuml;ber den <a href="tippen.html" style="color:#003399">Tippbogen</a> abgeben&nbsp;&#9733;</div>
         <table class="cd-table" cellpadding="0" cellspacing="0" align="center">
           <tr>
             <td class="cd-cell"><span class="cd-num" id="cd-days">--</span><span class="cd-lbl">Tage</span></td>
@@ -716,6 +751,27 @@ a:visited { color: #660099; }
 </tr>
 </table>
 
+<!-- WILLKOMMENS-POPUP -->
+<div class="welcome-overlay" id="welcome-overlay">
+  <div class="welcome-box">
+    <div class="welcome-hdr">&#9917; Herzlich Willkommen! &#9917;</div>
+    <div class="welcome-body">
+      <div style="font-size:22px;margin-bottom:8px">&#127942;</div>
+      <b>Die WM 2026 hat begonnen!</b><br><br>
+      Willkommen beim <b>WM 2026 RZ Tippspiel</b>.<br>
+      Hier siehst du die Rangliste, den Spielplan und deine Tipps.<br><br>
+      <div class="hint">
+        &#9888; <b>Noch nicht getippt?</b><br>
+        Nachz&uuml;gler k&ouml;nnen ihre Gruppenphase-Tipps noch bis<br>
+        <b>Freitag, 13. Juni 2026 um 23:59 Uhr</b> abgeben &mdash;<br>
+        nat&uuml;rlich nur f&uuml;r noch nicht gespielte Partien.<br>
+        &rarr; <a href="tippen.html">Zum Tippbogen</a>
+      </div>
+    </div>
+    <button class="welcome-btn" onclick="closeWelcome()">&#9733; Los geht&apos;s! &#9733;</button>
+  </div>
+</div>
+
 <div class="toastpop" id="toast"></div>
 
 <script type="text/javascript">
@@ -727,7 +783,7 @@ var GH_FILE = 'data.json';
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 // SHA-256 Hash des Passworts "admin2026" — hier durch eigenen Hash ersetzen
 // Hash erzeugen: https://emn178.github.io/online-tools/sha256.html
-var PW_HASH = '6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6'; // Standard: "admin2026" — unbedingt ersetzen!
+var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; // Standard: "admin2026" — unbedingt ersetzen!
 
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -1382,6 +1438,18 @@ function exportMattermost(){
 }
 
 // ── TOAST & INIT ─────────────────────────────────────────────────
+function closeWelcome(){
+  document.getElementById('welcome-overlay').classList.remove('open');
+  localStorage.setItem('wm_welcomed','1');
+}
+
+function maybeShowWelcome(){
+  // Nur zeigen wenn WM schon gestartet und noch nicht gesehen
+  if(new Date() >= WM_START && !localStorage.getItem('wm_welcomed')){
+    document.getElementById('welcome-overlay').classList.add('open');
+  }
+}
+
 function showToast(msg){
   var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';
   clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none';},2500);
@@ -1406,6 +1474,7 @@ function openMainContent(){
   document.getElementById('countdown-wrap').style.display = 'none';
   document.getElementById('main-content').style.display   = 'block';
   if(window._cdInterval){ clearInterval(window._cdInterval); }
+  maybeShowWelcome();
 }
 
 function init(){
@@ -1413,10 +1482,8 @@ function init(){
   var diff = WM_START - new Date();
 
   if(diff <= 0 || isAdmin){
-    // WM läuft oder Admin-Modus — direkt Hauptinhalt
     openMainContent();
   } else {
-    // Countdown zeigen
     document.getElementById('countdown-wrap').style.display = 'block';
     updateCountdown();
     window._cdInterval = setInterval(updateCountdown, 1000);
@@ -1433,9 +1500,11 @@ function init(){
         document.getElementById('admin-panel').style.display='block';
       }
       renderRangliste();renderSpielplan();renderTippen();if(TOKEN)renderAdmin();
+      if(!isAdmin) maybeShowWelcome();
     });
   }else{
     renderRangliste();renderSpielplan();renderTippen();
+    if(!isAdmin) maybeShowWelcome();
   }
 }
 window.onload=init;
