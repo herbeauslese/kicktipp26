@@ -975,6 +975,10 @@ function calcStats(name){
 
 // ── NAV ──────────────────────────────────────────────────────────
 function showPage(name,btn){
+  // Vor WM-Start keine Navigation möglich (außer ?admin)
+  var isAdmin = window.location.search.indexOf('admin') !== -1;
+  if(new Date() < WM_START && !isAdmin) return;
+
   // Sicherstellen dass main-content sichtbar ist
   document.getElementById('main-content').style.display='block';
   document.getElementById('countdown-wrap').style.display='none';
@@ -1489,20 +1493,23 @@ function init(){
     window._cdInterval = setInterval(updateCountdown, 1000);
   }
 
-  var saved=localStorage.getItem('wm_tok');
+  var saved = localStorage.getItem('wm_tok');
   if(saved){
-    TOKEN=saved;setStatus('VERBINDE...',false);
+    TOKEN=saved;
+    // Token still load data in background, but only show admin panel if ?admin
+    setStatus('VERBINDE...',false);
     ghLoad(function(ok){
       setStatus(ok?'VERBUNDEN':'OFFLINE',ok);
-      if(ok){
+      if(ok && isAdmin){
         document.getElementById('gh-token').value=saved;
         document.getElementById('admin-login-wrap').style.display='none';
         document.getElementById('admin-panel').style.display='block';
       }
-      renderRangliste();renderSpielplan();renderTippen();if(TOKEN)renderAdmin();
+      renderRangliste();renderSpielplan();renderTippen();
+      if(ok && isAdmin) renderAdmin();
       if(!isAdmin) maybeShowWelcome();
     });
-  }else{
+  } else {
     renderRangliste();renderSpielplan();renderTippen();
     if(!isAdmin) maybeShowWelcome();
   }
