@@ -12,7 +12,12 @@
     "Burak",
     "Ronny"
   ],
-  "results": {},
+  "results": {
+    "G1": {
+      "home": 2,
+      "away": 0
+    }
+  },
   "tipps": {
     "Dome": {
       "G1": {
