@@ -20,6 +20,10 @@
     "G2": {
       "home": 2,
       "away": 1
+    },
+    "G7": {
+      "home": 1,
+      "away": 1
     }
   },
   "tipps": {
@@ -3231,7 +3235,7 @@
       "winner": "Spanien",
       "finalist": "Deutschland",
       "third": "Frankreich",
-      "surprise": "Türkei"
+      "surprise": "TÃ¼rkei"
     },
     "3rik": {
       "winner": "Frankreich",
@@ -3261,18 +3265,18 @@
       "winner": "Spanien",
       "finalist": "Argentinien",
       "third": "Deutschland",
-      "surprise": "Türkei"
+      "surprise": "TÃ¼rkei"
     },
     "StefanGPT.ai": {
       "winner": "Deutschland",
       "finalist": "Frankreich",
       "third": "England",
-      "surprise": "Elfenbeinküste"
+      "surprise": "ElfenbeinkÃ¼ste"
     },
     "Burak": {
       "winner": "Deutschland",
       "finalist": "Frankreich",
-      "third": "Türkei",
+      "third": "TÃ¼rkei",
       "surprise": "Marokko"
     },
     "Ronny": {
