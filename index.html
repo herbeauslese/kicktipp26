@@ -782,7 +782,7 @@ var GH_FILE = 'data.json';
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 // SHA-256 Hash des Passworts "admin2026" — hier durch eigenen Hash ersetzen
 // Hash erzeugen: https://emn178.github.io/online-tools/sha256.html
-var PW_HASH = '4a4502d754a5f4b056e90be59f0ae45baf97da1886c3de441a1e08c809e9bfb6'; // Standard: "admin2026" — unbedingt ersetzen!
+var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; // Standard: "admin2026" — unbedingt ersetzen!
 
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
