@@ -615,8 +615,22 @@ a:visited { color: #660099; }
       </div>
       <div class="sectionbox">
         <div class="sectionhdr">PLATZIERUNGSVERLAUF <span style="font-size:10px;font-family:Verdana,Arial,sans-serif;letter-spacing:0;font-weight:normal">pro Spieltag</span></div>
-        <div style="background:#111122;padding:8px">
-          <canvas id="rank-chart" height="200" style="display:block;width:100%"></canvas>
+        <div style="background:#888888;padding:10px 0;text-align:center">
+          <div id="tv-wrap" style="position:relative;display:inline-block;width:100%;max-width:700px">
+            <!-- Canvas: positioniert auf den Bildschirm des TV -->
+            <canvas id="rank-chart" style="
+              position:absolute;
+              left:13.5%;top:15.5%;
+              width:73%;height:57%;
+              display:block;
+            "></canvas>
+            <!-- TV-Bild drüber -->
+            <img src="tv.png" style="
+              position:relative;z-index:2;
+              width:100%;display:block;
+              pointer-events:none;
+            " alt="TV">
+          </div>
         </div>
       </div>
     </div>
@@ -1055,13 +1069,17 @@ function renderRangliste(){
 function renderRankChart(pl){
   var canvas=document.getElementById('rank-chart');
   if(!canvas)return;
-  // Breite vom Parent-Container holen
-  var container=canvas.parentElement;
-  var W=container?container.offsetWidth:880;
-  if(W<100)W=880;
+  // Echte Pixelgröße des Canvas im DOM (durch CSS % gesetzt)
+  var rect=canvas.getBoundingClientRect();
+  var W=Math.round(rect.width)||500;
+  var H=Math.round(rect.height)||220;
+  if(W<50||H<50){
+    // Noch nicht im DOM gerendert, kurz warten
+    setTimeout(function(){renderRankChart(pl);},150);
+    return;
+  }
   canvas.width=W;
-  canvas.style.width='100%';
-  var H=300;canvas.height=H;
+  canvas.height=H;
   var ctx=canvas.getContext('2d');
 
   var off=document.createElement('canvas');
