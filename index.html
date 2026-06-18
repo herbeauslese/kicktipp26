@@ -603,6 +603,7 @@ a:visited { color: #660099; }
             <th>Spieler</th>
             <th>Gesamt</th>
             <th>Gruppe</th>
+            <th>K.O.</th>
             <th>Sonder</th>
             <th>Exakt&nbsp;(3P)</th>
             <th>Diff&nbsp;(2P)</th>
@@ -611,6 +612,12 @@ a:visited { color: #660099; }
           </tr></thead>
           <tbody id="rl-body"></tbody>
         </table>
+      </div>
+      <div class="sectionbox">
+        <div class="sectionhdr">PLATZIERUNGSVERLAUF <span style="font-size:10px;font-family:Verdana,Arial,sans-serif;letter-spacing:0;font-weight:normal">pro Spieltag</span></div>
+        <div style="background:#111122;padding:8px">
+          <canvas id="rank-chart" height="200" style="display:block;width:100%"></canvas>
+        </div>
       </div>
     </div>
 
@@ -986,7 +993,8 @@ function calcStats(name){
     if(v===3)ex++;else if(v===2)df++;else if(v===1)ten++;
   }
   var sp=calcSonderPts(name);
-  return{p:p+sp.sp, base:p, ex:ex,df:df,ten:ten,pl:pl, sp:sp.sp,sw:sp.sw,sf:sp.sf,st:sp.st,sur:sp.sur};
+  var ko = STATE.kopts ? (STATE.kopts[name]||0) : 0;
+  return{p:p+sp.sp+ko, base:p, ko:ko, ex:ex,df:df,ten:ten,pl:pl, sp:sp.sp,sw:sp.sw,sf:sp.sf,st:sp.st,sur:sp.sur};
 }
 
 // ── NAV ──────────────────────────────────────────────────────────
@@ -1031,6 +1039,7 @@ function renderRangliste(){
       +'<td style="font-weight:bold;font-size:12px">'+p.name+'</td>'
       +'<td><div class="ptsnum">'+p.p+'</div><div class="ptssub">'+p.pl+' Spiele</div></td>'
       +'<td style="color:#555555;font-size:12px">'+p.base+'</td>'
+      +'<td style="color:#336699;font-weight:bold;font-size:12px">'+p.ko+'</td>'
       +'<td style="color:#cc8800;font-weight:bold;font-size:12px">'+sonderTip+'</td>'
       +'<td style="color:#336633;font-weight:bold;font-size:13px">'+p.ex+'</td>'
       +'<td style="color:#885500;font-weight:bold;font-size:13px">'+p.df+'</td>'
@@ -1039,6 +1048,108 @@ function renderRangliste(){
       +'</tr>';
   }
   document.getElementById('rl-body').innerHTML=tbody;
+  renderRankChart(pl);
+}
+
+function renderRankChart(pl){
+  var canvas = document.getElementById('rank-chart');
+  if(!canvas) return;
+  var W = canvas.offsetWidth||880; canvas.width=W; var H=200;
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#111122'; ctx.fillRect(0,0,W,H);
+
+  // Spieltage = eindeutige Daten (sortiert)
+  var datesSet = {};
+  for(var i=0;i<MATCHES.length;i++){
+    var m=MATCHES[i];
+    if(STATE.results[m.id]&&STATE.results[m.id].home!=null) datesSet[m.date]=true;
+  }
+  var dates = Object.keys(datesSet).sort(function(a,b){
+    // DD.MM sortieren
+    var ad=a.split('.'),bd=b.split('.');
+    return (+ad[1]*100+ +ad[0]) - (+bd[1]*100+ +bd[0]);
+  });
+
+  if(dates.length===0){
+    ctx.fillStyle='#556655';ctx.font='11px Verdana,Arial,sans-serif';ctx.textAlign='center';
+    ctx.fillText('Noch keine Spieltage ausgewertet',W/2,H/2);
+    return;
+  }
+
+  var COLS=['#ffcc00','#ff4444','#44cc88','#4488ff','#ff8800','#cc44ff','#44ffff','#ff88ff','#88ff44','#ff88aa','#88aaff','#ccffcc'];
+  var mg={t:14,r:90,b:22,l:24};
+  var cw=W-mg.l-mg.r, ch=H-mg.t-mg.b;
+  var nPlayers=pl.length;
+
+  // Grid lines (1 per rank)
+  for(var rank=1;rank<=nPlayers;rank++){
+    var y=mg.t+ch*((rank-1)/(Math.max(nPlayers-1,1)));
+    ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(mg.l,y);ctx.lineTo(mg.l+cw,y);ctx.stroke();
+    ctx.fillStyle='#446644';ctx.font='9px Courier New,monospace';ctx.textAlign='right';
+    ctx.fillText(rank,mg.l-4,y+3);
+  }
+
+  var xs = cw/Math.max(1,dates.length-1);
+
+  pl.forEach(function(p,pi){
+    var col=COLS[pi%COLS.length];
+    // Berechne Platzierung nach jedem Spieltag
+    var rankSeries=[];
+    for(var di=0;di<dates.length;di++){
+      var date=dates[di];
+      // Punkte aller Spieler bis einschließlich diesem Spieltag
+      var scores=pl.map(function(pp){
+        var t=STATE.tipps[pp.name]||{};
+        var pts=0;
+        for(var i=0;i<MATCHES.length;i++){
+          var m2=MATCHES[i];
+          var r2=STATE.results[m2.id];
+          if(!r2||r2.home==null) continue;
+          // Nur Spiele bis zu diesem Datum
+          var md=m2.date;
+          var mVal=(+md.split('.')[1])*100+(+md.split('.')[0]);
+          var dVal=(+date.split('.')[1])*100+(+date.split('.')[0]);
+          if(mVal>dVal) continue;
+          var ti2=t[m2.id];
+          if(ti2&&ti2.home!=null) pts+=calcPts(ti2,r2);
+        }
+        return{name:pp.name,pts:pts};
+      });
+      scores.sort(function(a,b){return b.pts-a.pts;});
+      var myRank=1;
+      for(var si=0;si<scores.length;si++){
+        if(scores[si].name===p.name){myRank=si+1;break;}
+      }
+      rankSeries.push(myRank);
+    }
+
+    ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();
+    rankSeries.forEach(function(rank,di){
+      var x=mg.l+(dates.length===1?cw/2:xs*di);
+      var y=mg.t+ch*((rank-1)/(Math.max(nPlayers-1,1)));
+      di===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // Dot + Label am Ende
+    if(rankSeries.length>0){
+      var ldi=rankSeries.length-1;
+      var lx=mg.l+(dates.length===1?cw/2:xs*ldi);
+      var ly=mg.t+ch*((rankSeries[ldi]-1)/(Math.max(nPlayers-1,1)));
+      ctx.fillStyle=col;ctx.beginPath();ctx.arc(lx,ly,3,0,Math.PI*2);ctx.fill();
+      ctx.font='bold 10px Verdana,Arial,sans-serif';ctx.textAlign='left';
+      ctx.fillText(p.name.substring(0,8),lx+6,ly+3);
+    }
+  });
+
+  // X-Achse: Spieltage
+  ctx.fillStyle='#334433';ctx.font='9px Courier New,monospace';ctx.textAlign='center';
+  dates.forEach(function(d,di){
+    var x=mg.l+(dates.length===1?cw/2:xs*di);
+    ctx.fillText(d,x,H-5);
+  });
 }
 
 // ── SONDERTIPPS ──────────────────────────────────────────────────
@@ -1083,7 +1194,9 @@ function renderSonder(){
     html += '<td style="font-weight:bold;font-size:12px">'+name+'</td>';
     for(var k=0;k<keys.length;k++){
       if(s && s[keys[k]]){
-        html += '<td>'+fl(s[keys[k]])+s[keys[k]]+'</td>';
+        var team = s[keys[k]];
+        try { team = decodeURIComponent(escape(team)); } catch(e){}
+        html += '<td>'+fl(team)+team+'</td>';
       } else {
         html += '<td style="color:#cccccc;font-style:italic;font-size:10px">nicht getippt</td>';
       }
