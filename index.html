@@ -789,7 +789,7 @@ var GH_FILE = 'data.json';
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 // SHA-256 Hash des Passworts "admin2026" — hier durch eigenen Hash ersetzen
 // Hash erzeugen: https://emn178.github.io/online-tools/sha256.html
-var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; // Standard: "admin2026" — unbedingt ersetzen!
+var PW_HASH = '6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6'; // Standard: "admin2026" — unbedingt ersetzen!
 
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -1059,13 +1059,13 @@ function renderRankChart(pl){
   var H=280;canvas.height=H;
   var ctx=canvas.getContext('2d');
 
-  // Offscreen canvas für Linien
+  // Offscreen: alles drauf zeichnen, dann barrel distort auf main canvas
   var off=document.createElement('canvas');
   off.width=W;off.height=H;
   var oc=off.getContext('2d');
   oc.fillStyle='#030803';oc.fillRect(0,0,W,H);
 
-  // Spieltage ermitteln
+  // Spieltage
   var dSet={};
   for(var i=0;i<MATCHES.length;i++){
     var m=MATCHES[i];
@@ -1082,8 +1082,9 @@ function renderRankChart(pl){
 
   if(dates.length===0){
     ctx.fillStyle='#030803';ctx.fillRect(0,0,W,H);
-    ctx.fillStyle='rgba(0,255,60,0.4)';ctx.font='13px "Courier New",monospace';
-    ctx.textAlign='center';ctx.fillText('-- NO DATA --',W/2,H/2);
+    ctx.fillStyle='rgba(0,255,60,0.5)';
+    ctx.font='13px "Courier New",monospace';ctx.textAlign='center';
+    ctx.fillText('-- NO DATA --',W/2,H/2);
     return;
   }
 
@@ -1091,17 +1092,16 @@ function renderRankChart(pl){
   var xs=cw/Math.max(dates.length-1,1);
   for(var rank=1;rank<=nP;rank++){
     var gy=mg.t+ch*((rank-1)/Math.max(nP-1,1));
-    oc.strokeStyle='rgba(0,160,0,0.1)';oc.lineWidth=1;oc.setLineDash([3,7]);
-    oc.beginPath();oc.moveTo(mg.l,gy);oc.lineTo(mg.l+cw,gy);oc.stroke();
-    oc.setLineDash([]);
-    oc.fillStyle='rgba(0,190,0,0.35)';oc.font='9px "Courier New",monospace';
+    oc.strokeStyle='rgba(0,160,0,0.12)';oc.lineWidth=1;oc.setLineDash([3,7]);
+    oc.beginPath();oc.moveTo(mg.l,gy);oc.lineTo(mg.l+cw,gy);oc.stroke();oc.setLineDash([]);
+    oc.fillStyle='rgba(0,190,0,0.4)';oc.font='9px "Courier New",monospace';
     oc.textAlign='right';oc.fillText(rank+'.',mg.l-4,gy+3);
   }
   dates.forEach(function(d,di){
     var x=mg.l+(dates.length===1?cw/2:xs*di);
     oc.strokeStyle='rgba(0,120,0,0.1)';oc.lineWidth=1;oc.setLineDash([2,8]);
     oc.beginPath();oc.moveTo(x,mg.t);oc.lineTo(x,mg.t+ch);oc.stroke();oc.setLineDash([]);
-    oc.fillStyle='rgba(0,170,0,0.4)';oc.font='9px "Courier New",monospace';
+    oc.fillStyle='rgba(0,170,0,0.45)';oc.font='9px "Courier New",monospace';
     oc.textAlign='center';oc.fillText(d,x,H-7);
   });
 
@@ -1109,7 +1109,7 @@ function renderRankChart(pl){
   var COLS=['#ff4444','#44aaff','#ffcc00','#44ff88','#ff8800','#cc44ff',
             '#00ffee','#ff44bb','#aaff00','#ff6622','#66aaff','#ffee44'];
 
-  // Platzierungen berechnen
+  // Platzierungen
   var allSeries=pl.map(function(p){
     return{name:p.name,series:dates.map(function(date){
       var scores=pl.map(function(pp){
@@ -1129,11 +1129,12 @@ function renderRankChart(pl){
     })};
   });
 
-  // Linien mit Glow
+  // Linien zeichnen
   allSeries.forEach(function(ps,pi){
     var col=COLS[pi%COLS.length];
     var pts=ps.series.map(function(rank,di){
-      return{x:mg.l+(dates.length===1?cw/2:xs*di),y:mg.t+ch*((rank-1)/Math.max(nP-1,1))};
+      return{x:mg.l+(dates.length===1?cw/2:xs*di),
+             y:mg.t+ch*((rank-1)/Math.max(nP-1,1))};
     });
     if(!pts.length)return;
 
@@ -1145,20 +1146,32 @@ function renderRankChart(pl){
         var p0=pts[Math.max(i-1,0)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(i+2,pts.length-1)];
         c.bezierCurveTo(p1.x+(p2.x-p0.x)/6,p1.y+(p2.y-p0.y)/6,
           p2.x-(p3.x-p1.x)/6,p2.y-(p3.y-p1.y)/6,p2.x,p2.y);
-      }
-      c.stroke();
+      }c.stroke();
     }
     [[20,0.1,7],[10,0.25,4],[4,0.6,2],[0,1,1.2]].forEach(function(pass){
       oc.save();oc.globalAlpha=pass[1];oc.shadowColor=col;oc.shadowBlur=pass[0];
       oc.strokeStyle=col;oc.lineWidth=pass[2];spline(oc);oc.restore();
     });
-
     var last=pts[pts.length-1];
-    oc.save();oc.shadowColor=col;oc.shadowBlur=12;oc.fillStyle=col;
+    oc.save();oc.shadowColor=col;oc.shadowBlur=10;oc.fillStyle=col;
     oc.beginPath();oc.arc(last.x,last.y,3,0,Math.PI*2);oc.fill();
     oc.font='bold 9px "Courier New",monospace';oc.textAlign='left';
     oc.fillText(ps.name.substring(0,8),last.x+6,last.y+3);oc.restore();
   });
+
+  // Scanlines auf Offscreen (VOR barrel distort, Teil des Bildes)
+  for(var sl=0;sl<H;sl+=2){oc.fillStyle='rgba(0,0,0,0.18)';oc.fillRect(0,sl,W,1);}
+
+  // Noise auf Offscreen
+  var noiseImg=oc.createImageData(W,H);
+  var nd=noiseImg.data;
+  var base=oc.getImageData(0,0,W,H);
+  var bd=base.data;
+  for(var ni=0;ni<bd.length;ni+=4){
+    var v=Math.random()<0.035?(Math.random()*70|0):0;
+    nd[ni]=bd[ni]+v;nd[ni+1]=bd[ni+1]+v+8;nd[ni+2]=bd[ni+2]+v;nd[ni+3]=bd[ni+3]||255;
+  }
+  oc.putImageData(noiseImg,0,0);
 
   // ── BARREL DISTORTION ────────────────────────────────────────
   var src=oc.getImageData(0,0,W,H);
@@ -1169,53 +1182,38 @@ function renderRankChart(pl){
     for(var px=0;px<W;px++){
       var nx=(px/W)*2-1,ny=(py/H)*2-1;
       var r2=nx*nx+ny*ny,f=1+k*r2;
-      var sx=((nx*f+1)/2)*W,sy=((ny*f+1)/2)*H;
-      var sxi=Math.round(sx),syi=Math.round(sy);
+      var sxf=((nx*f+1)/2)*W,syf=((ny*f+1)/2)*H;
+      var sxi=Math.round(sxf),syi=Math.round(syf);
       var di=(py*W+px)*4;
       if(sxi>=0&&sxi<W&&syi>=0&&syi<H){
         var si=(syi*W+sxi)*4;
-        dd[di]=sd[si];dd[di+1]=sd[si+1];dd[di+2]=sd[si+2];dd[di+3]=sd[si+3];
-      } else {dd[di]=dd[di+1]=dd[di+2]=0;dd[di+3]=255;}
+        dd[di]=sd[si];dd[di+1]=sd[si+1];dd[di+2]=sd[si+2];dd[di+3]=255;
+      }else{dd[di]=dd[di+1]=dd[di+2]=0;dd[di+3]=255;}
     }
   }
   ctx.putImageData(dst,0,0);
 
-  // ── SCANLINES ────────────────────────────────────────────────
-  for(var sl=0;sl<H;sl+=2){ctx.fillStyle='rgba(0,0,0,0.2)';ctx.fillRect(0,sl,W,1);}
-
-  // ── NOISE / GRAIN ────────────────────────────────────────────
-  var noiseImg=ctx.createImageData(W,H);
-  var nd=noiseImg.data;
-  for(var ni=0;ni<nd.length;ni+=4){
-    if(Math.random()<0.035){
-      var v=Math.random()*80|0;
-      nd[ni]=v;nd[ni+1]=v+15;nd[ni+2]=v;nd[ni+3]=35;
-    }
-  }
-  ctx.putImageData(noiseImg,0,0);
-
-  // ── VIGNETTE ─────────────────────────────────────────────────
+  // ── VIGNETTE (fillRect, kein putImageData) ───────────────────
   var vig=ctx.createRadialGradient(W/2,H/2,H*0.2,W/2,H/2,W*0.72);
   vig.addColorStop(0,'rgba(0,0,0,0)');
-  vig.addColorStop(0.65,'rgba(0,0,0,0.12)');
-  vig.addColorStop(1,'rgba(0,0,0,0.78)');
+  vig.addColorStop(0.65,'rgba(0,0,0,0.15)');
+  vig.addColorStop(1,'rgba(0,0,0,0.8)');
   ctx.fillStyle=vig;ctx.fillRect(0,0,W,H);
 
-  // ── GLASREFLEXION ─────────────────────────────────────────────
-  var gl=ctx.createLinearGradient(0,0,W*0.35,H*0.5);
-  gl.addColorStop(0,'rgba(255,255,255,0.035)');
-  gl.addColorStop(1,'rgba(255,255,255,0)');
+  // ── GLASREFLEXION ────────────────────────────────────────────
+  var gl=ctx.createLinearGradient(0,0,W*0.35,H*0.45);
+  gl.addColorStop(0,'rgba(255,255,255,0.04)');
+  gl.addColorStop(1,'rgba(0,0,0,0)');
   ctx.fillStyle=gl;ctx.fillRect(0,0,W,H);
 
-  // ── ECKEN ABDUNKELN ───────────────────────────────────────────
+  // ── ECKEN ────────────────────────────────────────────────────
   [[0,0],[W,0],[0,H],[W,H]].forEach(function(c){
     var cg=ctx.createRadialGradient(c[0],c[1],0,c[0],c[1],100);
-    cg.addColorStop(0,'rgba(0,0,0,0.55)');
-    cg.addColorStop(1,'rgba(0,0,0,0)');
+    cg.addColorStop(0,'rgba(0,0,0,0.6)');cg.addColorStop(1,'rgba(0,0,0,0)');
     ctx.fillStyle=cg;ctx.fillRect(c[0]-100,c[1]-100,200,200);
   });
 
-  // ── BEZEL ─────────────────────────────────────────────────────
+  // ── BEZEL ────────────────────────────────────────────────────
   ctx.strokeStyle='rgba(0,60,0,0.6)';ctx.lineWidth=2;
   ctx.strokeRect(1,1,W-2,H-2);
 }
