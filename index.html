@@ -1054,102 +1054,182 @@ function renderRangliste(){
 function renderRankChart(pl){
   var canvas = document.getElementById('rank-chart');
   if(!canvas) return;
-  var W = canvas.offsetWidth||880; canvas.width=W; var H=200;
+  var W = canvas.offsetWidth||880; canvas.width=W;
+  var H = 260; canvas.height=H;
   var ctx = canvas.getContext('2d');
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#111122'; ctx.fillRect(0,0,W,H);
 
-  // Spieltage = eindeutige Daten (sortiert)
-  var datesSet = {};
+  // ── CRT HINTERGRUND ──────────────────────────────────────────
+  // Dunkel mit leicht grünlichem Schimmer
+  var bg = ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,W*0.7);
+  bg.addColorStop(0,'#0a1a0a');
+  bg.addColorStop(1,'#010801');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  // Scanlines
+  for(var sy=0;sy<H;sy+=2){
+    ctx.fillStyle='rgba(0,0,0,0.18)';
+    ctx.fillRect(0,sy,W,1);
+  }
+
+  // Vignette (dunkle Ränder wie CRT)
+  var vig = ctx.createRadialGradient(W/2,H/2,H*0.3,W/2,H/2,W*0.75);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(1,'rgba(0,0,0,0.7)');
+  ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
+
+  // Spieltage ermitteln
+  var datesSet={};
   for(var i=0;i<MATCHES.length;i++){
     var m=MATCHES[i];
     if(STATE.results[m.id]&&STATE.results[m.id].home!=null) datesSet[m.date]=true;
   }
-  var dates = Object.keys(datesSet).sort(function(a,b){
-    // DD.MM sortieren
+  var dates=Object.keys(datesSet).sort(function(a,b){
     var ad=a.split('.'),bd=b.split('.');
-    return (+ad[1]*100+ +ad[0]) - (+bd[1]*100+ +bd[0]);
+    return(+ad[1]*100+ +ad[0])-(+bd[1]*100+ +bd[0]);
   });
 
   if(dates.length===0){
-    ctx.fillStyle='#556655';ctx.font='11px Verdana,Arial,sans-serif';ctx.textAlign='center';
-    ctx.fillText('Noch keine Spieltage ausgewertet',W/2,H/2);
+    ctx.fillStyle='#00ff41';ctx.font='12px "Courier New",monospace';
+    ctx.textAlign='center';ctx.shadowColor='#00ff41';ctx.shadowBlur=8;
+    ctx.fillText('NO SIGNAL',W/2,H/2);
+    ctx.shadowBlur=0;
     return;
   }
 
-  var COLS=['#ffcc00','#ff4444','#44cc88','#4488ff','#ff8800','#cc44ff','#44ffff','#ff88ff','#88ff44','#ff88aa','#88aaff','#ccffcc'];
-  var mg={t:14,r:90,b:22,l:24};
+  var mg={t:18,r:85,b:26,l:28};
   var cw=W-mg.l-mg.r, ch=H-mg.t-mg.b;
-  var nPlayers=pl.length;
+  var nP=pl.length;
 
-  // Grid lines (1 per rank)
-  for(var rank=1;rank<=nPlayers;rank++){
-    var y=mg.t+ch*((rank-1)/(Math.max(nPlayers-1,1)));
-    ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(mg.l,y);ctx.lineTo(mg.l+cw,y);ctx.stroke();
-    ctx.fillStyle='#446644';ctx.font='9px Courier New,monospace';ctx.textAlign='right';
-    ctx.fillText(rank,mg.l-4,y+3);
+  // ── GRID ─────────────────────────────────────────────────────
+  for(var rank=1;rank<=nP;rank++){
+    var gy=mg.t+ch*((rank-1)/Math.max(nP-1,1));
+    ctx.strokeStyle='rgba(0,180,0,0.12)';ctx.lineWidth=1;
+    ctx.setLineDash([3,5]);
+    ctx.beginPath();ctx.moveTo(mg.l,gy);ctx.lineTo(mg.l+cw,gy);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(0,200,0,0.4)';
+    ctx.font='9px "Courier New",monospace';ctx.textAlign='right';
+    ctx.fillText(rank+'.',mg.l-4,gy+3);
   }
 
-  var xs = cw/Math.max(1,dates.length-1);
+  // Vertikale Spieltag-Linien
+  var xs=cw/Math.max(dates.length-1,1);
+  dates.forEach(function(d,di){
+    var x=mg.l+(dates.length===1?cw/2:xs*di);
+    ctx.strokeStyle='rgba(0,150,0,0.15)';ctx.lineWidth=1;
+    ctx.setLineDash([2,6]);
+    ctx.beginPath();ctx.moveTo(x,mg.t);ctx.lineTo(x,mg.t+ch);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(0,200,0,0.5)';
+    ctx.font='9px "Courier New",monospace';ctx.textAlign='center';
+    ctx.fillText(d,x,H-6);
+  });
 
-  pl.forEach(function(p,pi){
-    var col=COLS[pi%COLS.length];
-    // Berechne Platzierung nach jedem Spieltag
-    var rankSeries=[];
-    for(var di=0;di<dates.length;di++){
-      var date=dates[di];
-      // Punkte aller Spieler bis einschließlich diesem Spieltag
+  // ── LINIEN ───────────────────────────────────────────────────
+  // Alle Platzierungsverläufe berechnen
+  var allSeries=[];
+  pl.forEach(function(p){
+    var series=[];
+    dates.forEach(function(date){
       var scores=pl.map(function(pp){
-        var t=STATE.tipps[pp.name]||{};
-        var pts=0;
+        var t=STATE.tipps[pp.name]||{},pts=0;
         for(var i=0;i<MATCHES.length;i++){
-          var m2=MATCHES[i];
-          var r2=STATE.results[m2.id];
-          if(!r2||r2.home==null) continue;
-          // Nur Spiele bis zu diesem Datum
-          var md=m2.date;
-          var mVal=(+md.split('.')[1])*100+(+md.split('.')[0]);
-          var dVal=(+date.split('.')[1])*100+(+date.split('.')[0]);
-          if(mVal>dVal) continue;
+          var m2=MATCHES[i],r2=STATE.results[m2.id];
+          if(!r2||r2.home==null)continue;
+          var md=m2.date.split('.'),dd=date.split('.');
+          if((+md[1]*100+ +md[0])>(+dd[1]*100+ +dd[0]))continue;
           var ti2=t[m2.id];
-          if(ti2&&ti2.home!=null) pts+=calcPts(ti2,r2);
+          if(ti2&&ti2.home!=null)pts+=calcPts(ti2,r2);
         }
         return{name:pp.name,pts:pts};
       });
       scores.sort(function(a,b){return b.pts-a.pts;});
       var myRank=1;
-      for(var si=0;si<scores.length;si++){
-        if(scores[si].name===p.name){myRank=si+1;break;}
-      }
-      rankSeries.push(myRank);
-    }
-
-    ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();
-    rankSeries.forEach(function(rank,di){
-      var x=mg.l+(dates.length===1?cw/2:xs*di);
-      var y=mg.t+ch*((rank-1)/(Math.max(nPlayers-1,1)));
-      di===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      for(var si=0;si<scores.length;si++){if(scores[si].name===p.name){myRank=si+1;break;}}
+      series.push(myRank);
     });
-    ctx.stroke();
-
-    // Dot + Label am Ende
-    if(rankSeries.length>0){
-      var ldi=rankSeries.length-1;
-      var lx=mg.l+(dates.length===1?cw/2:xs*ldi);
-      var ly=mg.t+ch*((rankSeries[ldi]-1)/(Math.max(nPlayers-1,1)));
-      ctx.fillStyle=col;ctx.beginPath();ctx.arc(lx,ly,3,0,Math.PI*2);ctx.fill();
-      ctx.font='bold 10px Verdana,Arial,sans-serif';ctx.textAlign='left';
-      ctx.fillText(p.name.substring(0,8),lx+6,ly+3);
-    }
+    allSeries.push({name:p.name,series:series});
   });
 
-  // X-Achse: Spieltage
-  ctx.fillStyle='#334433';ctx.font='9px Courier New,monospace';ctx.textAlign='center';
-  dates.forEach(function(d,di){
-    var x=mg.l+(dates.length===1?cw/2:xs*di);
-    ctx.fillText(d,x,H-5);
+  // Phosphor-Farben (alle grün/blaugrün wie echter CRT)
+  var PHOSCOLS=[
+    '#00ff41','#00e836','#39ff14','#00ff9f','#00ffcc',
+    '#7fff00','#adff2f','#00fa9a','#00ff7f','#50fa7b','#69ff47','#ccff00'
+  ];
+
+  allSeries.forEach(function(ps,pi){
+    if(ps.series.length<1)return;
+    var col=PHOSCOLS[pi%PHOSCOLS.length];
+    var pts=ps.series.map(function(rank,di){
+      return{
+        x:mg.l+(dates.length===1?cw/2:xs*di),
+        y:mg.t+ch*((rank-1)/Math.max(nP-1,1))
+      };
+    });
+
+    // Glow-Effekt: mehrfach mit verschiedenen Blur-Radien
+    [[6,0.15],[3,0.35],[1,1.0]].forEach(function(pass){
+      ctx.shadowColor=col;
+      ctx.shadowBlur=pass[0]*4;
+      ctx.globalAlpha=pass[1];
+      ctx.strokeStyle=col;
+      ctx.lineWidth=pass[0]===1?1.5:pass[0]===3?2.5:4;
+      ctx.beginPath();
+
+      // Catmull-Rom Spline für weiche Kurven
+      if(pts.length===1){
+        ctx.arc(pts[0].x,pts[0].y,3,0,Math.PI*2);
+        ctx.fill();
+      } else {
+        ctx.moveTo(pts[0].x,pts[0].y);
+        for(var i=0;i<pts.length-1;i++){
+          var p0=pts[Math.max(i-1,0)];
+          var p1=pts[i];
+          var p2=pts[i+1];
+          var p3=pts[Math.min(i+2,pts.length-1)];
+          var cp1x=p1.x+(p2.x-p0.x)/6;
+          var cp1y=p1.y+(p2.y-p0.y)/6;
+          var cp2x=p2.x-(p3.x-p1.x)/6;
+          var cp2y=p2.y-(p3.y-p1.y)/6;
+          ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,p2.x,p2.y);
+        }
+      }
+      ctx.stroke();
+      ctx.shadowBlur=0;
+    });
+    ctx.globalAlpha=1;
+
+    // Endpunkt-Dot mit Glow
+    var last=pts[pts.length-1];
+    ctx.shadowColor=col;ctx.shadowBlur=12;
+    ctx.fillStyle=col;ctx.beginPath();
+    ctx.arc(last.x,last.y,3.5,0,Math.PI*2);ctx.fill();
+    ctx.shadowBlur=0;
+
+    // Name-Label
+    ctx.shadowColor=col;ctx.shadowBlur=6;
+    ctx.fillStyle=col;
+    ctx.font='bold 9px "Courier New",monospace';ctx.textAlign='left';
+    ctx.fillText(ps.name.substring(0,8),last.x+7,last.y+3);
+    ctx.shadowBlur=0;
   });
+
+  // ── CRT OVERLAY ──────────────────────────────────────────────
+  // Nochmal Scanlines drüber für mehr Tiefe
+  for(var sy=0;sy<H;sy+=2){
+    ctx.fillStyle='rgba(0,0,0,0.08)';
+    ctx.fillRect(0,sy,W,1);
+  }
+  // Horizontaler Glanz oben
+  var shine=ctx.createLinearGradient(0,0,0,H*0.4);
+  shine.addColorStop(0,'rgba(0,255,60,0.04)');
+  shine.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=shine;ctx.fillRect(0,0,W,H*0.4);
+
+  // Rand
+  ctx.strokeStyle='rgba(0,100,0,0.4)';ctx.lineWidth=2;
+  ctx.strokeRect(0,0,W,H);
 }
 
 // ── SONDERTIPPS ──────────────────────────────────────────────────
