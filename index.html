@@ -613,30 +613,24 @@ a:visited { color: #660099; }
           <tbody id="rl-body"></tbody>
         </table>
       </div>
-      <div class="sectionbox">
-        <div class="sectionhdr">PLATZIERUNGSVERLAUF <span style="font-size:10px;font-family:Verdana,Arial,sans-serif;letter-spacing:0;font-weight:normal">pro Spieltag</span></div>
-        <div style="background:#2a2a2a;padding:16px 0;text-align:center">
-          <div id="tv-wrap" style="position:relative;display:inline-block;width:90%;max-width:600px">
-            <!-- Canvas: in der Bounding Box des Bildschirms, per clip-path auf Trapezform beschnitten -->
-            <canvas id="rank-chart" style="
-              position:absolute;
-              left:26.5%;
-              top:22.6%;
-              width:42.5%;
-              height:49.7%;
-              display:block;
-              clip-path:polygon(0% 0%, 100% 7.5%, 96.6% 100%, 1.7% 79.3%);
-              transform-origin:top left;
-            "></canvas>
-            <!-- TV-Bild drüber -->
-            <img src="tv.png" style="
-              position:relative;
-              z-index:2;
-              width:100%;
-              display:block;
-              pointer-events:none;
-            " alt="TV">
-          </div>
+      <div style="background:#2a2a2a;padding:20px 0;text-align:center;margin-bottom:10px">
+        <div id="tv-wrap" style="position:relative;display:inline-block;width:70%;max-width:520px">
+          <canvas id="rank-chart" style="
+            position:absolute;
+            left:26.49%;
+            top:22.57%;
+            width:42.48%;
+            height:49.71%;
+            display:block;
+            clip-path:polygon(0% 0%, 100% 7.47%, 96.63% 100%, 1.69% 79.31%);
+          "></canvas>
+          <img src="tv.png" style="
+            position:relative;
+            z-index:2;
+            width:100%;
+            display:block;
+            pointer-events:none;
+          " alt="TV">
         </div>
       </div>
     </div>
@@ -1104,8 +1098,9 @@ function renderRankChart(pl){
     return(+ad[1]*100+ +ad[0])-(+bd[1]*100+ +bd[0]);
   });
 
-  var LABEL_W=85;
-  var mg={t:16,r:LABEL_W+8,b:22,l:22};
+  // Perspektiv-Offset: Bildschirm ist oben rechts höher als links
+  // TR ist 7.47% tiefer → Inhalt leicht nach rechts-unten compensieren
+  var mg={t:22,r:92,b:28,l:18};
   var cw=W-mg.l-mg.r,ch=H-mg.t-mg.b;
   var nP=pl.length;
 
