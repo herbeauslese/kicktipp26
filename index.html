@@ -1052,86 +1052,66 @@ function renderRangliste(){
 }
 
 function renderRankChart(pl){
-  var canvas = document.getElementById('rank-chart');
-  if(!canvas) return;
-  var W = canvas.offsetWidth||880; canvas.width=W;
-  var H = 260; canvas.height=H;
-  var ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,W,H);
+  var canvas=document.getElementById('rank-chart');
+  if(!canvas)return;
+  var W=canvas.offsetWidth||880;
+  canvas.width=W;
+  var H=280;canvas.height=H;
+  var ctx=canvas.getContext('2d');
 
-  // ── CRT HINTERGRUND ──────────────────────────────────────────
-  // Dunkel mit leicht grünlichem Schimmer
-  var bg = ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,W*0.7);
-  bg.addColorStop(0,'#0a1a0a');
-  bg.addColorStop(1,'#010801');
-  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
-
-  // Scanlines
-  for(var sy=0;sy<H;sy+=2){
-    ctx.fillStyle='rgba(0,0,0,0.18)';
-    ctx.fillRect(0,sy,W,1);
-  }
-
-  // Vignette (dunkle Ränder wie CRT)
-  var vig = ctx.createRadialGradient(W/2,H/2,H*0.3,W/2,H/2,W*0.75);
-  vig.addColorStop(0,'rgba(0,0,0,0)');
-  vig.addColorStop(1,'rgba(0,0,0,0.7)');
-  ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
+  // Offscreen canvas für Linien
+  var off=document.createElement('canvas');
+  off.width=W;off.height=H;
+  var oc=off.getContext('2d');
+  oc.fillStyle='#030803';oc.fillRect(0,0,W,H);
 
   // Spieltage ermitteln
-  var datesSet={};
+  var dSet={};
   for(var i=0;i<MATCHES.length;i++){
     var m=MATCHES[i];
-    if(STATE.results[m.id]&&STATE.results[m.id].home!=null) datesSet[m.date]=true;
+    if(STATE.results[m.id]&&STATE.results[m.id].home!=null)dSet[m.date]=true;
   }
-  var dates=Object.keys(datesSet).sort(function(a,b){
+  var dates=Object.keys(dSet).sort(function(a,b){
     var ad=a.split('.'),bd=b.split('.');
     return(+ad[1]*100+ +ad[0])-(+bd[1]*100+ +bd[0]);
   });
 
+  var mg={t:20,r:90,b:28,l:28};
+  var cw=W-mg.l-mg.r,ch=H-mg.t-mg.b;
+  var nP=pl.length;
+
   if(dates.length===0){
-    ctx.fillStyle='#00ff41';ctx.font='12px "Courier New",monospace';
-    ctx.textAlign='center';ctx.shadowColor='#00ff41';ctx.shadowBlur=8;
-    ctx.fillText('NO SIGNAL',W/2,H/2);
-    ctx.shadowBlur=0;
+    ctx.fillStyle='#030803';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(0,255,60,0.4)';ctx.font='13px "Courier New",monospace';
+    ctx.textAlign='center';ctx.fillText('-- NO DATA --',W/2,H/2);
     return;
   }
 
-  var mg={t:18,r:85,b:26,l:28};
-  var cw=W-mg.l-mg.r, ch=H-mg.t-mg.b;
-  var nP=pl.length;
-
-  // ── GRID ─────────────────────────────────────────────────────
+  // Grid
+  var xs=cw/Math.max(dates.length-1,1);
   for(var rank=1;rank<=nP;rank++){
     var gy=mg.t+ch*((rank-1)/Math.max(nP-1,1));
-    ctx.strokeStyle='rgba(0,180,0,0.12)';ctx.lineWidth=1;
-    ctx.setLineDash([3,5]);
-    ctx.beginPath();ctx.moveTo(mg.l,gy);ctx.lineTo(mg.l+cw,gy);ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle='rgba(0,200,0,0.4)';
-    ctx.font='9px "Courier New",monospace';ctx.textAlign='right';
-    ctx.fillText(rank+'.',mg.l-4,gy+3);
+    oc.strokeStyle='rgba(0,160,0,0.1)';oc.lineWidth=1;oc.setLineDash([3,7]);
+    oc.beginPath();oc.moveTo(mg.l,gy);oc.lineTo(mg.l+cw,gy);oc.stroke();
+    oc.setLineDash([]);
+    oc.fillStyle='rgba(0,190,0,0.35)';oc.font='9px "Courier New",monospace';
+    oc.textAlign='right';oc.fillText(rank+'.',mg.l-4,gy+3);
   }
-
-  // Vertikale Spieltag-Linien
-  var xs=cw/Math.max(dates.length-1,1);
   dates.forEach(function(d,di){
     var x=mg.l+(dates.length===1?cw/2:xs*di);
-    ctx.strokeStyle='rgba(0,150,0,0.15)';ctx.lineWidth=1;
-    ctx.setLineDash([2,6]);
-    ctx.beginPath();ctx.moveTo(x,mg.t);ctx.lineTo(x,mg.t+ch);ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle='rgba(0,200,0,0.5)';
-    ctx.font='9px "Courier New",monospace';ctx.textAlign='center';
-    ctx.fillText(d,x,H-6);
+    oc.strokeStyle='rgba(0,120,0,0.1)';oc.lineWidth=1;oc.setLineDash([2,8]);
+    oc.beginPath();oc.moveTo(x,mg.t);oc.lineTo(x,mg.t+ch);oc.stroke();oc.setLineDash([]);
+    oc.fillStyle='rgba(0,170,0,0.4)';oc.font='9px "Courier New",monospace';
+    oc.textAlign='center';oc.fillText(d,x,H-7);
   });
 
-  // ── LINIEN ───────────────────────────────────────────────────
-  // Alle Platzierungsverläufe berechnen
-  var allSeries=[];
-  pl.forEach(function(p){
-    var series=[];
-    dates.forEach(function(date){
+  // Farben
+  var COLS=['#ff4444','#44aaff','#ffcc00','#44ff88','#ff8800','#cc44ff',
+            '#00ffee','#ff44bb','#aaff00','#ff6622','#66aaff','#ffee44'];
+
+  // Platzierungen berechnen
+  var allSeries=pl.map(function(p){
+    return{name:p.name,series:dates.map(function(date){
       var scores=pl.map(function(pp){
         var t=STATE.tipps[pp.name]||{},pts=0;
         for(var i=0;i<MATCHES.length;i++){
@@ -1139,153 +1119,107 @@ function renderRankChart(pl){
           if(!r2||r2.home==null)continue;
           var md=m2.date.split('.'),dd=date.split('.');
           if((+md[1]*100+ +md[0])>(+dd[1]*100+ +dd[0]))continue;
-          var ti2=t[m2.id];
-          if(ti2&&ti2.home!=null)pts+=calcPts(ti2,r2);
+          var ti2=t[m2.id];if(ti2&&ti2.home!=null)pts+=calcPts(ti2,r2);
         }
         return{name:pp.name,pts:pts};
       });
       scores.sort(function(a,b){return b.pts-a.pts;});
-      var myRank=1;
-      for(var si=0;si<scores.length;si++){if(scores[si].name===p.name){myRank=si+1;break;}}
-      series.push(myRank);
-    });
-    allSeries.push({name:p.name,series:series});
+      for(var si=0;si<scores.length;si++)if(scores[si].name===p.name)return si+1;
+      return nP;
+    })};
   });
 
-  // Phosphor-Farben (alle grün/blaugrün wie echter CRT)
-  var PHOSCOLS=[
-    '#00ff41','#00e836','#39ff14','#00ff9f','#00ffcc',
-    '#7fff00','#adff2f','#00fa9a','#00ff7f','#50fa7b','#69ff47','#ccff00'
-  ];
-
+  // Linien mit Glow
   allSeries.forEach(function(ps,pi){
-    if(ps.series.length<1)return;
-    var col=PHOSCOLS[pi%PHOSCOLS.length];
+    var col=COLS[pi%COLS.length];
     var pts=ps.series.map(function(rank,di){
-      return{
-        x:mg.l+(dates.length===1?cw/2:xs*di),
-        y:mg.t+ch*((rank-1)/Math.max(nP-1,1))
-      };
+      return{x:mg.l+(dates.length===1?cw/2:xs*di),y:mg.t+ch*((rank-1)/Math.max(nP-1,1))};
     });
+    if(!pts.length)return;
 
-    // Glow-Effekt: mehrfach mit verschiedenen Blur-Radien
-    [[6,0.15],[3,0.35],[1,1.0]].forEach(function(pass){
-      ctx.shadowColor=col;
-      ctx.shadowBlur=pass[0]*4;
-      ctx.globalAlpha=pass[1];
-      ctx.strokeStyle=col;
-      ctx.lineWidth=pass[0]===1?1.5:pass[0]===3?2.5:4;
-      ctx.beginPath();
-
-      // Catmull-Rom Spline für weiche Kurven
-      if(pts.length===1){
-        ctx.arc(pts[0].x,pts[0].y,3,0,Math.PI*2);
-        ctx.fill();
-      } else {
-        ctx.moveTo(pts[0].x,pts[0].y);
-        for(var i=0;i<pts.length-1;i++){
-          var p0=pts[Math.max(i-1,0)];
-          var p1=pts[i];
-          var p2=pts[i+1];
-          var p3=pts[Math.min(i+2,pts.length-1)];
-          var cp1x=p1.x+(p2.x-p0.x)/6;
-          var cp1y=p1.y+(p2.y-p0.y)/6;
-          var cp2x=p2.x-(p3.x-p1.x)/6;
-          var cp2y=p2.y-(p3.y-p1.y)/6;
-          ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,p2.x,p2.y);
-        }
+    function spline(c){
+      c.beginPath();
+      if(pts.length===1){c.arc(pts[0].x,pts[0].y,3,0,Math.PI*2);c.fill();return;}
+      c.moveTo(pts[0].x,pts[0].y);
+      for(var i=0;i<pts.length-1;i++){
+        var p0=pts[Math.max(i-1,0)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(i+2,pts.length-1)];
+        c.bezierCurveTo(p1.x+(p2.x-p0.x)/6,p1.y+(p2.y-p0.y)/6,
+          p2.x-(p3.x-p1.x)/6,p2.y-(p3.y-p1.y)/6,p2.x,p2.y);
       }
-      ctx.stroke();
-      ctx.shadowBlur=0;
+      c.stroke();
+    }
+    [[20,0.1,7],[10,0.25,4],[4,0.6,2],[0,1,1.2]].forEach(function(pass){
+      oc.save();oc.globalAlpha=pass[1];oc.shadowColor=col;oc.shadowBlur=pass[0];
+      oc.strokeStyle=col;oc.lineWidth=pass[2];spline(oc);oc.restore();
     });
-    ctx.globalAlpha=1;
 
-    // Endpunkt-Dot mit Glow
     var last=pts[pts.length-1];
-    ctx.shadowColor=col;ctx.shadowBlur=12;
-    ctx.fillStyle=col;ctx.beginPath();
-    ctx.arc(last.x,last.y,3.5,0,Math.PI*2);ctx.fill();
-    ctx.shadowBlur=0;
-
-    // Name-Label
-    ctx.shadowColor=col;ctx.shadowBlur=6;
-    ctx.fillStyle=col;
-    ctx.font='bold 9px "Courier New",monospace';ctx.textAlign='left';
-    ctx.fillText(ps.name.substring(0,8),last.x+7,last.y+3);
-    ctx.shadowBlur=0;
+    oc.save();oc.shadowColor=col;oc.shadowBlur=12;oc.fillStyle=col;
+    oc.beginPath();oc.arc(last.x,last.y,3,0,Math.PI*2);oc.fill();
+    oc.font='bold 9px "Courier New",monospace';oc.textAlign='left';
+    oc.fillText(ps.name.substring(0,8),last.x+6,last.y+3);oc.restore();
   });
 
-  // ── CRT OVERLAY ──────────────────────────────────────────────
-  // Nochmal Scanlines drüber für mehr Tiefe
-  for(var sy=0;sy<H;sy+=2){
-    ctx.fillStyle='rgba(0,0,0,0.08)';
-    ctx.fillRect(0,sy,W,1);
-  }
-  // Horizontaler Glanz oben
-  var shine=ctx.createLinearGradient(0,0,0,H*0.4);
-  shine.addColorStop(0,'rgba(0,255,60,0.04)');
-  shine.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=shine;ctx.fillRect(0,0,W,H*0.4);
-
-  // Rand
-  ctx.strokeStyle='rgba(0,100,0,0.4)';ctx.lineWidth=2;
-  ctx.strokeRect(0,0,W,H);
-}
-
-// ── SONDERTIPPS ──────────────────────────────────────────────────
-function renderSonder(){
-  var container = document.getElementById('sonder-inner');
-  var players = STATE.players;
-
-  if(!players.length){
-    container.innerHTML = '<div style="padding:16px;font-size:11px;color:#999999;font-family:Verdana,Arial,sans-serif">Noch keine Spieler vorhanden.</div>';
-    return;
-  }
-
-  // Prüfen ob überhaupt jemand Sondertipps abgegeben hat
-  var hasSonder = false;
-  for(var i=0;i<players.length;i++){
-    if(STATE.sonder[players[i]]) { hasSonder=true; break; }
-  }
-  if(!hasSonder){
-    container.innerHTML = '<div style="padding:16px;font-size:11px;color:#999999;font-family:Verdana,Arial,sans-serif;font-style:italic">Noch keine Sondertipps eingegangen.</div>';
-    return;
-  }
-
-  var labels = {
-    winner:   '&#127942; WM-Sieger',
-    finalist: '&#129352; Finalist',
-    third:    '&#129353; Dritter Platz',
-    surprise: '&#128293; &Uuml;berraschungsteam'
-  };
-  var keys = ['winner','finalist','third','surprise'];
-
-  var html = '<table width="100%" cellpadding="0" cellspacing="0" class="rltable">';
-  // Header
-  html += '<thead><tr>';
-  html += '<th style="width:160px">Spieler</th>';
-  for(var k=0;k<keys.length;k++) html += '<th>'+labels[keys[k]]+'</th>';
-  html += '</tr></thead><tbody>';
-
-  for(var i=0;i<players.length;i++){
-    var name = players[i];
-    var s = STATE.sonder[name];
-    html += '<tr class="'+(i%2===0?'even':'odd')+'">';
-    html += '<td style="font-weight:bold;font-size:12px">'+name+'</td>';
-    for(var k=0;k<keys.length;k++){
-      if(s && s[keys[k]]){
-        var team = s[keys[k]];
-        try { team = decodeURIComponent(escape(team)); } catch(e){}
-        html += '<td>'+fl(team)+team+'</td>';
-      } else {
-        html += '<td style="color:#cccccc;font-style:italic;font-size:10px">nicht getippt</td>';
-      }
+  // ── BARREL DISTORTION ────────────────────────────────────────
+  var src=oc.getImageData(0,0,W,H);
+  var dst=ctx.createImageData(W,H);
+  var sd=src.data,dd=dst.data;
+  var k=0.10;
+  for(var py=0;py<H;py++){
+    for(var px=0;px<W;px++){
+      var nx=(px/W)*2-1,ny=(py/H)*2-1;
+      var r2=nx*nx+ny*ny,f=1+k*r2;
+      var sx=((nx*f+1)/2)*W,sy=((ny*f+1)/2)*H;
+      var sxi=Math.round(sx),syi=Math.round(sy);
+      var di=(py*W+px)*4;
+      if(sxi>=0&&sxi<W&&syi>=0&&syi<H){
+        var si=(syi*W+sxi)*4;
+        dd[di]=sd[si];dd[di+1]=sd[si+1];dd[di+2]=sd[si+2];dd[di+3]=sd[si+3];
+      } else {dd[di]=dd[di+1]=dd[di+2]=0;dd[di+3]=255;}
     }
-    html += '</tr>';
   }
-  html += '</tbody></table>';
-  container.innerHTML = html;
+  ctx.putImageData(dst,0,0);
+
+  // ── SCANLINES ────────────────────────────────────────────────
+  for(var sl=0;sl<H;sl+=2){ctx.fillStyle='rgba(0,0,0,0.2)';ctx.fillRect(0,sl,W,1);}
+
+  // ── NOISE / GRAIN ────────────────────────────────────────────
+  var noiseImg=ctx.createImageData(W,H);
+  var nd=noiseImg.data;
+  for(var ni=0;ni<nd.length;ni+=4){
+    if(Math.random()<0.035){
+      var v=Math.random()*80|0;
+      nd[ni]=v;nd[ni+1]=v+15;nd[ni+2]=v;nd[ni+3]=35;
+    }
+  }
+  ctx.putImageData(noiseImg,0,0);
+
+  // ── VIGNETTE ─────────────────────────────────────────────────
+  var vig=ctx.createRadialGradient(W/2,H/2,H*0.2,W/2,H/2,W*0.72);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(0.65,'rgba(0,0,0,0.12)');
+  vig.addColorStop(1,'rgba(0,0,0,0.78)');
+  ctx.fillStyle=vig;ctx.fillRect(0,0,W,H);
+
+  // ── GLASREFLEXION ─────────────────────────────────────────────
+  var gl=ctx.createLinearGradient(0,0,W*0.35,H*0.5);
+  gl.addColorStop(0,'rgba(255,255,255,0.035)');
+  gl.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=gl;ctx.fillRect(0,0,W,H);
+
+  // ── ECKEN ABDUNKELN ───────────────────────────────────────────
+  [[0,0],[W,0],[0,H],[W,H]].forEach(function(c){
+    var cg=ctx.createRadialGradient(c[0],c[1],0,c[0],c[1],100);
+    cg.addColorStop(0,'rgba(0,0,0,0.55)');
+    cg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=cg;ctx.fillRect(c[0]-100,c[1]-100,200,200);
+  });
+
+  // ── BEZEL ─────────────────────────────────────────────────────
+  ctx.strokeStyle='rgba(0,60,0,0.6)';ctx.lineWidth=2;
+  ctx.strokeRect(1,1,W-2,H-2);
 }
+
 
 // ── SPIELPLAN ────────────────────────────────────────────────────
 function setPhase(p,btn){
@@ -1511,15 +1445,6 @@ function fillSonderDropdowns(){
   }
   if(!surHtml) surHtml='<span style="font-size:10px;color:#aaa;font-style:italic">Noch keine Überraschungsteam-Tipps eingegangen.</span>';
   document.getElementById('sr-surprise-rows').innerHTML=surHtml;
-}
-function saveResult(id){
-  for(var i=0;i<STATE.players.length;i++){
-    phtml+='<table cellpadding="0" cellspacing="2" style="margin-bottom:5px;width:100%"><tr>'
-      +'<td><input type="text" style="border:2px inset #aaa;font-family:Verdana,Arial,sans-serif;font-size:11px;padding:4px 6px;background:#ffffee;width:100%" value="'+STATE.players[i]+'" onchange="STATE.players['+i+']=this.value"/></td>'
-      +'<td width="40"><button class="btnred" onclick="delPlayer('+i+')">&#10005;</button></td>'
-      +'</tr></table>';
-  }
-  document.getElementById('admin-players').innerHTML=phtml;
 }
 function importTipps(){
   var raw = document.getElementById('import-json').value.trim();
