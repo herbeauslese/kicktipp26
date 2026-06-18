@@ -1080,7 +1080,7 @@ function renderRankChart(pl){
     return(+ad[1]*100+ +ad[0])-(+bd[1]*100+ +bd[0]);
   });
 
-  var LABEL_W=70;
+  var LABEL_W=85;
   var mg={t:16,r:LABEL_W+8,b:22,l:22};
   var cw=W-mg.l-mg.r,ch=H-mg.t-mg.b;
   var nP=pl.length;
@@ -1163,18 +1163,23 @@ function renderRankChart(pl){
 
     // Label am Ende — gut lesbar mit Hintergrund
     var last=pts[pts.length-1];
-    var lx=mg.l+cw+6;
+    var lx=mg.l+cw+8;
     var ly=last.y;
-    // Schwarzer Hintergrund für Label
-    var label=ps.name.substring(0,9);
+    var label=ps.name.substring(0,10);
     oc.save();
-    oc.font='bold 10px "Courier New",monospace';
+    oc.font='bold 11px Verdana,Arial,sans-serif';
     var tw=oc.measureText(label).width;
-    oc.fillStyle='rgba(0,0,0,0.7)';
-    oc.fillRect(lx-1,ly-9,tw+4,13);
-    oc.shadowColor=col;oc.shadowBlur=6;
-    oc.fillStyle=col;
+    // Solider schwarzer Hintergrund
+    oc.fillStyle='rgba(0,0,0,0.92)';
+    oc.fillRect(lx-3,ly-10,tw+8,16);
+    // Heller Text mit Glow
+    oc.shadowColor=col;oc.shadowBlur=8;
+    oc.fillStyle='#ffffff';
     oc.textAlign='left';
+    oc.fillText(label,lx+1,ly+1);
+    // Farbiger Text drüber für Glow-Effekt
+    oc.shadowBlur=4;
+    oc.fillStyle=col;
     oc.fillText(label,lx+1,ly+1);
     oc.restore();
 
