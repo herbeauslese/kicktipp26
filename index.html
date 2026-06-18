@@ -613,25 +613,12 @@ a:visited { color: #660099; }
           <tbody id="rl-body"></tbody>
         </table>
       </div>
-      <div style="float:right;margin:-40px 0px -30px 0;width:62%;max-width:480px;position:relative;z-index:10">
-        <div id="tv-wrap" style="position:relative;display:block">
-          <canvas id="rank-chart" style="
-            position:absolute;
-            left:0;top:0;
-            width:100%;height:100%;
-            display:block;
-            clip-path:polygon(26.49% 22.86%, 68.74% 26.57%, 67.06% 71.43%, 27.45% 61.71%);
-          "></canvas>
-          <img src="tv.png" style="
-            position:relative;
-            z-index:2;
-            width:100%;
-            display:block;
-            pointer-events:none;
-          " alt="TV">
+      <div class="sectionbox">
+        <div class="sectionhdr">PLATZIERUNGSVERLAUF <span style="font-size:10px;font-family:Verdana,Arial,sans-serif;letter-spacing:0;font-weight:normal">pro Spieltag</span></div>
+        <div style="background:#111122;padding:8px">
+          <canvas id="rank-chart" style="display:block;width:100%"></canvas>
         </div>
       </div>
-      <div style="clear:both"></div>
     </div>
 
     <!-- ═══ SPIELPLAN ═══ -->
@@ -1078,8 +1065,6 @@ function renderRankChart(pl){
     return;
   }
   canvas.width=W;
-  // Aspektverhältnis 419:350 erzwingen (TV-Bild-Proportionen)
-  H = Math.round(W * 350 / 419);
   canvas.height=H;
   var ctx=canvas.getContext('2d');
 
@@ -1088,8 +1073,6 @@ function renderRankChart(pl){
   var oc=off.getContext('2d');
   oc.fillStyle='#020602';oc.fillRect(0,0,W,H);
 
-  // Kein transform nötig — Canvas = volle TV-Größe
-  // Margins positionieren den Inhalt exakt auf den Bildschirmbereich
 
   // Spieltage
   var dSet={};
@@ -1102,15 +1085,8 @@ function renderRankChart(pl){
     return(+ad[1]*100+ +ad[0])-(+bd[1]*100+ +bd[0]);
   });
 
-  // Margins: Bildschirmbereich des TV exakt gemessen
-  // Bildschirm: X 26.49%-68.74%, Y 22.86%-61.71% des TV-Bildes
-  // Canvas-Aspekt: 419:350 = H = W * (350/419)
-  var mg={
-    l: Math.round(W * 0.2649),
-    t: Math.round(H * 0.2286),
-    r: Math.round(W * 0.3126) + Math.round(W * 0.18),
-    b: Math.round(H * 0.3829)
-  };
+  var LABEL_W=90;
+  var mg={t:18,r:LABEL_W+10,b:24,l:24};
   var cw=W-mg.l-mg.r,ch=H-mg.t-mg.b;
   var nP=pl.length;
 
