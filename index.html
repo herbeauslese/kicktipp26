@@ -789,7 +789,7 @@ var GH_FILE = 'data.json';
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 // SHA-256 Hash des Passworts "admin2026" — hier durch eigenen Hash ersetzen
 // Hash erzeugen: https://emn178.github.io/online-tools/sha256.html
-var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; // Standard: "admin2026" — unbedingt ersetzen!
+var PW_HASH = '6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6'; // Standard: "admin2026" — unbedingt ersetzen!
 
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -1055,8 +1055,211 @@ function renderRankChart(pl){
   var canvas = document.getElementById('rank-chart');
   if(!canvas) return;
   var W = canvas.offsetWidth||880; canvas.width=W;
-  var H = 260; canvas.height=H;
+  var H = 280; canvas.height=H;
   var ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  // ── CRT WÖLBUNG simulieren via CSS (einmalig setzen) ──────────
+  canvas.style.borderRadius='12px';
+  canvas.style.boxShadow='0 0 0 3px #1a1a1a, 0 0 0 6px #333, 0 0 20px rgba(0,255,60,0.15), inset 0 0 60px rgba(0,0,0,0.5)';
+
+  // ── HINTERGRUND ───────────────────────────────────────────────
+  // Dunkles Grün-Schwarz mit Mitte etwas heller (Phosphor-Glow)
+  var bg = ctx.createRadialGradient(W*0.5,H*0.45,20,W*0.5,H*0.45,W*0.65);
+  bg.addColorStop(0,'#061206');
+  bg.addColorStop(0.5,'#040d04');
+  bg.addColorStop(1,'#010301');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  // Rauschen/Noise auf den Hintergrund
+  var noise = ctx.createImageData(W,H);
+  var nd = noise.data;
+  for(var ni=0;ni<nd.length;ni+=4){
+    var n = Math.random()*18;
+    nd[ni]=0; nd[ni+1]=Math.floor(n); nd[ni+2]=0; nd[ni+3]=Math.floor(Math.random()*22);
+  }
+  ctx.putImageData(noise,0,0);
+
+  // Scanlines — horizontal, leicht variierend
+  for(var sy=0;sy<H;sy++){
+    var alpha = sy%2===0 ? 0.12 : 0.04;
+    ctx.fillStyle='rgba(0,0,0,'+alpha+')';
+    ctx.fillRect(0,sy,W,1);
+  }
+
+  // Vertikale Interferenzstreifen (wie Zeilenflimmern)
+  for(var vx=0;vx<W;vx+=Math.floor(W/18)){
+    ctx.fillStyle='rgba(0,255,0,0.012)';
+    ctx.fillRect(vx,0,1,H);
+  }
+
+  // ── SPIELTAGE ────────────────────────────────────────────────
+  var datesSet={};
+  for(var i=0;i<MATCHES.length;i++){
+    var m=MATCHES[i];
+    if(STATE.results[m.id]&&STATE.results[m.id].home!=null) datesSet[m.date]=true;
+  }
+  var dates=Object.keys(datesSet).sort(function(a,b){
+    var ad=a.split('.'),bd=b.split('.');
+    return(+ad[1]*100+ +ad[0])-(+bd[1]*100+ +bd[0]);
+  });
+
+  if(dates.length===0){
+    ctx.fillStyle='rgba(0,200,0,0.6)';
+    ctx.font='11px "Courier New",monospace';ctx.textAlign='center';
+    ctx.shadowColor='#00ff41';ctx.shadowBlur=10;
+    ctx.fillText('NO SIGNAL',W/2,H/2);
+    ctx.shadowBlur=0; return;
+  }
+
+  var mg={t:20,r:88,b:26,l:28};
+  var cw=W-mg.l-mg.r, ch=H-mg.t-mg.b;
+  var nP=pl.length;
+  var xs=cw/Math.max(dates.length-1,1);
+
+  // ── GRID ─────────────────────────────────────────────────────
+  for(var rank=1;rank<=nP;rank++){
+    var gy=mg.t+ch*((rank-1)/Math.max(nP-1,1));
+    ctx.strokeStyle='rgba(0,120,0,0.2)';ctx.lineWidth=1;
+    ctx.setLineDash([2,8]);
+    ctx.beginPath();ctx.moveTo(mg.l,gy);ctx.lineTo(mg.l+cw,gy);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(0,180,0,0.5)';
+    ctx.font='9px "Courier New",monospace';ctx.textAlign='right';ctx.shadowBlur=0;
+    ctx.fillText(rank+'.',mg.l-4,gy+3);
+  }
+  dates.forEach(function(d,di){
+    var x=mg.l+(dates.length===1?cw/2:xs*di);
+    ctx.strokeStyle='rgba(0,100,0,0.2)';ctx.lineWidth=1;
+    ctx.setLineDash([1,8]);
+    ctx.beginPath();ctx.moveTo(x,mg.t);ctx.lineTo(x,mg.t+ch);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(0,160,0,0.45)';
+    ctx.font='9px "Courier New",monospace';ctx.textAlign='center';
+    ctx.fillText(d,x,H-7);
+  });
+
+  // ── FARBEN — bunt, gesättigt, leicht fluoreszierend ──────────
+  var COLS=[
+    '#ff3a3a','#ffcc00','#00e5ff','#ff6600','#cc44ff',
+    '#00ff88','#ff4da6','#4d94ff','#aaff00','#ff9900',
+    '#00ccff','#ff44aa'
+  ];
+
+  // Platzierungen berechnen
+  var allSeries=pl.map(function(p){
+    var series=dates.map(function(date){
+      var scores=pl.map(function(pp){
+        var t=STATE.tipps[pp.name]||{},pts=0;
+        for(var i=0;i<MATCHES.length;i++){
+          var m2=MATCHES[i],r2=STATE.results[m2.id];
+          if(!r2||r2.home==null)continue;
+          var md=m2.date.split('.'),dd=date.split('.');
+          if((+md[1]*100+ +md[0])>(+dd[1]*100+ +dd[0]))continue;
+          var ti2=t[m2.id];
+          if(ti2&&ti2.home!=null)pts+=calcPts(ti2,r2);
+        }
+        return{name:pp.name,pts:pts};
+      });
+      scores.sort(function(a,b){return b.pts-a.pts;});
+      var r=1;for(var si=0;si<scores.length;si++){if(scores[si].name===p.name){r=si+1;break;}}
+      return r;
+    });
+    return{name:p.name,series:series};
+  });
+
+  // ── LINIEN ZEICHNEN ───────────────────────────────────────────
+  allSeries.forEach(function(ps,pi){
+    if(!ps.series.length)return;
+    var col=COLS[pi%COLS.length];
+
+    var pts=ps.series.map(function(rank,di){
+      return{
+        x:mg.l+(dates.length===1?cw/2:xs*di),
+        y:mg.t+ch*((rank-1)/Math.max(nP-1,1))
+      };
+    });
+
+    // Rauschen auf die Linie (CRT-Zittern)
+    var jitter=pts.map(function(p2){
+      return{x:p2.x+(Math.random()-0.5)*1.2, y:p2.y+(Math.random()-0.5)*1.5};
+    });
+
+    // Outer glow (breit, sehr transparent)
+    ctx.globalAlpha=0.18;
+    ctx.strokeStyle=col;ctx.lineWidth=8;
+    ctx.shadowColor=col;ctx.shadowBlur=18;
+    drawSpline(ctx,jitter);ctx.stroke();
+
+    // Mid glow
+    ctx.globalAlpha=0.45;
+    ctx.strokeStyle=col;ctx.lineWidth=3;
+    ctx.shadowColor=col;ctx.shadowBlur=8;
+    drawSpline(ctx,jitter);ctx.stroke();
+
+    // Core line (scharf)
+    ctx.globalAlpha=1.0;
+    ctx.strokeStyle=col;ctx.lineWidth=1.5;
+    ctx.shadowColor=col;ctx.shadowBlur=4;
+    drawSpline(ctx,jitter);ctx.stroke();
+
+    ctx.shadowBlur=0;ctx.globalAlpha=1;
+
+    // Endpunkt
+    var last=pts[pts.length-1];
+    ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=10;
+    ctx.beginPath();ctx.arc(last.x,last.y,3,0,Math.PI*2);ctx.fill();
+    ctx.shadowBlur=0;
+
+    // Label
+    ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=5;
+    ctx.font='bold 9px "Courier New",monospace';ctx.textAlign='left';
+    ctx.fillText(ps.name.substring(0,8),last.x+7,last.y+3);
+    ctx.shadowBlur=0;
+  });
+
+  // ── GLAS-REFLEXION ────────────────────────────────────────────
+  // Heller Schimmer oben links — wie Licht auf Glasscheibe
+  var glass=ctx.createRadialGradient(W*0.25,H*0.15,0,W*0.35,H*0.35,W*0.4);
+  glass.addColorStop(0,'rgba(255,255,255,0.04)');
+  glass.addColorStop(0.4,'rgba(255,255,255,0.015)');
+  glass.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=glass;ctx.fillRect(0,0,W,H);
+
+  // Zweiter Glanzfleck unten rechts
+  var glass2=ctx.createRadialGradient(W*0.85,H*0.82,0,W*0.8,H*0.75,W*0.25);
+  glass2.addColorStop(0,'rgba(255,255,255,0.025)');
+  glass2.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=glass2;ctx.fillRect(0,0,W,H);
+
+  // Vignette (Wölbungseffekt — Ränder dunkler)
+  var vig=ctx.createRadialGradient(W*0.5,H*0.5,H*0.2,W*0.5,H*0.5,W*0.72);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(0.7,'rgba(0,0,0,0.1)');
+  vig.addColorStop(1,'rgba(0,0,0,0.65)');
+  ctx.fillStyle=vig;ctx.fillRect(0,0,W,H);
+
+  // Scanlines nochmal drüber für finalen CRT-Look
+  for(var sy=0;sy<H;sy+=2){
+    ctx.fillStyle='rgba(0,0,0,0.06)';
+    ctx.fillRect(0,sy,W,1);
+  }
+}
+
+function drawSpline(ctx,pts){
+  if(!pts.length)return;
+  ctx.beginPath();
+  if(pts.length===1){ctx.arc(pts[0].x,pts[0].y,2,0,Math.PI*2);return;}
+  ctx.moveTo(pts[0].x,pts[0].y);
+  for(var i=0;i<pts.length-1;i++){
+    var p0=pts[Math.max(i-1,0)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(i+2,pts.length-1)];
+    var cp1x=p1.x+(p2.x-p0.x)/5.5;
+    var cp1y=p1.y+(p2.y-p0.y)/5.5;
+    var cp2x=p2.x-(p3.x-p1.x)/5.5;
+    var cp2y=p2.y-(p3.y-p1.y)/5.5;
+    ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,p2.x,p2.y);
+  }
+}
   ctx.clearRect(0,0,W,H);
 
   // ── CRT HINTERGRUND ──────────────────────────────────────────
@@ -1224,14 +1427,6 @@ function renderRankChart(pl){
   // Horizontaler Glanz oben
   var shine=ctx.createLinearGradient(0,0,0,H*0.4);
   shine.addColorStop(0,'rgba(0,255,60,0.04)');
-  shine.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=shine;ctx.fillRect(0,0,W,H*0.4);
-
-  // Rand
-  ctx.strokeStyle='rgba(0,100,0,0.4)';ctx.lineWidth=2;
-  ctx.strokeRect(0,0,W,H);
-}
-
 // ── SONDERTIPPS ──────────────────────────────────────────────────
 function renderSonder(){
   var container = document.getElementById('sonder-inner');
