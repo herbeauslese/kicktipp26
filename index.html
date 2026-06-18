@@ -613,7 +613,7 @@ a:visited { color: #660099; }
           <tbody id="rl-body"></tbody>
         </table>
       </div>
-      <div style="float:right;margin:-80px -10px 0 0;width:58%;max-width:440px;position:relative;z-index:10">
+      <div style="float:right;margin:-120px -10px -20px 0;width:68%;max-width:520px;position:relative;z-index:10">
         <div id="tv-wrap" style="position:relative;display:block">
           <canvas id="rank-chart" style="
             position:absolute;
@@ -623,8 +623,6 @@ a:visited { color: #660099; }
             height:49.71%;
             display:block;
             clip-path:polygon(0% 0%, 100% 7.47%, 96.63% 100%, 1.69% 79.31%);
-            transform:rotate(4deg) translateY(-3%);
-            transform-origin:center center;
           "></canvas>
           <img src="tv.png" style="
             position:relative;
@@ -1090,6 +1088,16 @@ function renderRankChart(pl){
   var oc=off.getContext('2d');
   oc.fillStyle='#020602';oc.fillRect(0,0,W,H);
 
+  // Affine Transformation: Rechteck-Inhalt → Trapez-Form des Bildschirms
+  // Trapez: TL(0,0) TR(W,H*0.0747) BL(W*0.0169,H*0.7931) BR(W*0.9663,H)
+  // Matrix: [a=1, b=sh_y, c=sh_x, d=sc_y, e=0, f=0]
+  var sh_x = 0.0169 * W / H;   // horizontale Scherung (links-Neigung)
+  var sh_y = 0.0747 * H / W;   // vertikale Scherung (oben-Neigung)  
+  var sc_y = 1 / 0.7931;       // Y-Skalierung damit unten voll gefüllt
+  var sc_x = 1 / 0.9663;       // X-Skalierung damit rechts voll gefüllt
+  oc.save();
+  oc.transform(sc_x, sh_y * sc_y, sh_x * sc_x, sc_y, 0, 0);
+
   // Spieltage
   var dSet={};
   for(var i=0;i<MATCHES.length;i++){
@@ -1210,7 +1218,9 @@ function renderRankChart(pl){
     oc.beginPath();oc.arc(last.x,last.y,3,0,Math.PI*2);oc.fill();oc.restore();
   });
 
-  // Scanlines auf Offscreen
+  oc.restore();  // Transformation zurücksetzen
+
+  // Scanlines auf Offscreen (ohne Transformation)
   for(var sl=0;sl<H;sl+=2){oc.fillStyle='rgba(0,0,0,0.2)';oc.fillRect(0,sl,W,1);}
 
   // Noise auf Offscreen (in den Pixel-Daten mischen)
