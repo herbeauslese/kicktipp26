@@ -615,19 +615,25 @@ a:visited { color: #660099; }
       </div>
       <div class="sectionbox">
         <div class="sectionhdr">PLATZIERUNGSVERLAUF <span style="font-size:10px;font-family:Verdana,Arial,sans-serif;letter-spacing:0;font-weight:normal">pro Spieltag</span></div>
-        <div style="background:#888888;padding:10px 0;text-align:center">
-          <div id="tv-wrap" style="position:relative;display:inline-block;width:100%;max-width:700px">
-            <!-- Canvas: positioniert auf den Bildschirm des TV -->
+        <div style="background:#2a2a2a;padding:16px 0;text-align:center">
+          <div id="tv-wrap" style="position:relative;display:inline-block;width:90%;max-width:600px">
+            <!-- Canvas: in der Bounding Box des Bildschirms, per clip-path auf Trapezform beschnitten -->
             <canvas id="rank-chart" style="
               position:absolute;
-              left:13.5%;top:15.5%;
-              width:73%;height:57%;
+              left:26.5%;
+              top:22.6%;
+              width:42.5%;
+              height:49.7%;
               display:block;
+              clip-path:polygon(0% 0%, 100% 7.5%, 96.6% 100%, 1.7% 79.3%);
+              transform-origin:top left;
             "></canvas>
             <!-- TV-Bild drüber -->
             <img src="tv.png" style="
-              position:relative;z-index:2;
-              width:100%;display:block;
+              position:relative;
+              z-index:2;
+              width:100%;
+              display:block;
               pointer-events:none;
             " alt="TV">
           </div>
