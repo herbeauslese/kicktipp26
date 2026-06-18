@@ -613,8 +613,8 @@ a:visited { color: #660099; }
           <tbody id="rl-body"></tbody>
         </table>
       </div>
-      <div style="background:#2a2a2a;padding:20px 0;text-align:center;margin-bottom:10px">
-        <div id="tv-wrap" style="position:relative;display:inline-block;width:70%;max-width:520px">
+      <div style="float:right;margin:-80px -10px 0 0;width:58%;max-width:440px;position:relative;z-index:10">
+        <div id="tv-wrap" style="position:relative;display:block">
           <canvas id="rank-chart" style="
             position:absolute;
             left:26.49%;
@@ -623,6 +623,8 @@ a:visited { color: #660099; }
             height:49.71%;
             display:block;
             clip-path:polygon(0% 0%, 100% 7.47%, 96.63% 100%, 1.69% 79.31%);
+            transform:rotate(4deg) translateY(-3%);
+            transform-origin:center center;
           "></canvas>
           <img src="tv.png" style="
             position:relative;
@@ -633,6 +635,7 @@ a:visited { color: #660099; }
           " alt="TV">
         </div>
       </div>
+      <div style="clear:both"></div>
     </div>
 
     <!-- ═══ SPIELPLAN ═══ -->
