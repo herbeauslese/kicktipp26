@@ -2,9 +2,6 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script type="text/javascript">
-var WM_START = new Date('2026-06-11T19:00:00Z');
-</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <title>WM 2026 RZ Tippspiel</title>
 <style type="text/css">
@@ -19,522 +16,131 @@ body {
 a { color: #003399; text-decoration: underline; }
 a:hover { color: #ff0000; text-decoration: underline; }
 a:visited { color: #660099; }
-
-.maintable {
-  background-color: #ffffff;
-  border: 4px outset #cccccc;
-}
+.maintable { background-color: #ffffff; border: 4px outset #cccccc; }
 .headertable {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='2' height='2' fill='%23004400'/%3E%3Crect x='2' y='2' width='2' height='2' fill='%23003300'/%3E%3C/svg%3E");
-  background-color: #003300;
-  width: 100%;
-  border-bottom: 4px solid #ffcc00;
+  background-color: #003300; width: 100%; border-bottom: 4px solid #ffcc00;
 }
-.title {
-  font-family: "Comic Sans MS", "Arial Black", Impact, sans-serif;
-  font-size: 32px;
-  font-weight: bold;
-  color: #ffff00;
-  text-shadow: 3px 3px 0px #ff6600, -1px -1px 0 #000;
-  letter-spacing: 3px;
-}
-.subtitle {
-  font-family: "Comic Sans MS", Verdana, Arial, sans-serif;
-  font-size: 11px;
-  color: #00ff88;
-  letter-spacing: 2px;
-}
-.navtable {
-  background: #336633;
-  width: 100%;
-  border-bottom: 4px solid #ffcc00;
-  border-top: 2px solid #ffcc00;
-}
-.navbtn {
-  font-family: "Comic Sans MS", Verdana, Arial, sans-serif;
-  font-size: 13px;
-  font-weight: bold;
-  color: #ffff00;
-  background: #336633;
-  border: 3px outset #88cc88;
-  padding: 6px 16px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+.title { font-family: "Comic Sans MS","Arial Black",Impact,sans-serif; font-size: 32px; font-weight: bold; color: #ffff00; text-shadow: 3px 3px 0px #ff6600,-1px -1px 0 #000; letter-spacing: 3px; }
+.subtitle { font-family: "Comic Sans MS",Verdana,Arial,sans-serif; font-size: 11px; color: #00ff88; letter-spacing: 2px; }
+.navtable { background: #336633; width: 100%; border-bottom: 4px solid #ffcc00; border-top: 2px solid #ffcc00; }
+.navbtn { font-family: "Comic Sans MS",Verdana,Arial,sans-serif; font-size: 13px; font-weight: bold; color: #ffff00; background: #336633; border: 3px outset #88cc88; padding: 6px 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
 .navbtn:hover { background: #004400; color: #ffffff; border-color: #ffcc00; }
-.navbtn.active {
-  background: #ffffcc;
-  color: #003300;
-  border-style: inset;
-  font-style: italic;
-}
-/* MARQUEE AREA */
-.marqueebar {
-  background: #000033;
-  border-top: 2px solid #ffcc00;
-  border-bottom: 2px solid #ffcc00;
-  color: #ffff00;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 11px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  padding: 3px 0;
-}
-/* CONTENT */
-.contentbg {
-  background-color: #cccc99;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='4' height='4' fill='%23c8c895'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%23c8c895'/%3E%3Crect x='4' y='0' width='4' height='4' fill='%23d4d4a0'/%3E%3Crect x='0' y='4' width='4' height='4' fill='%23d4d4a0'/%3E%3C/svg%3E");
-}
-/* SECTION HEADERS */
-.sectionhdr {
-  font-family: "Comic Sans MS", "Arial Black", sans-serif;
-  font-size: 15px;
-  font-weight: bold;
-  color: #ffff00;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='3' height='3' fill='%23225522'/%3E%3Crect x='3' y='3' width='3' height='3' fill='%23225522'/%3E%3Crect x='3' y='0' width='3' height='3' fill='%231a441a'/%3E%3Crect x='0' y='3' width='3' height='3' fill='%231a441a'/%3E%3C/svg%3E");
-  background-color: #225522;
-  border-top: 2px solid #ffcc00;
-  border-bottom: 3px solid #ffcc00;
-  padding: 5px 10px;
-  letter-spacing: 2px;
-  text-shadow: 1px 1px 0 #000000;
-}
-.sectionbox {
-  background: #ffffff;
-  border: 3px outset #cccccc;
-  margin-bottom: 10px;
-}
-/* RANGLISTE */
-.rltable {
-  width: 100%;
-  border-collapse: collapse;
-}
-.rltable th {
-  background: #336633;
-  color: #ffcc00;
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 10px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 5px 8px;
-  border: 1px solid #225522;
-  text-align: left;
-}
-.rltable td {
-  padding: 5px 8px;
-  border: 1px solid #ccccaa;
-  font-size: 11px;
-  vertical-align: middle;
-}
+.navbtn.active { background: #ffffcc; color: #003300; border-style: inset; font-style: italic; }
+.marqueebar { background: #000033; border-top: 2px solid #ffcc00; border-bottom: 2px solid #ffcc00; color: #ffff00; font-family: "Courier New",Courier,monospace; font-size: 11px; font-weight: bold; letter-spacing: 2px; padding: 3px 0; }
+.contentbg { background-color: #cccc99; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='4' height='4' fill='%23c8c895'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%23c8c895'/%3E%3Crect x='4' y='0' width='4' height='4' fill='%23d4d4a0'/%3E%3Crect x='0' y='4' width='4' height='4' fill='%23d4d4a0'/%3E%3C/svg%3E"); }
+.sectionhdr { font-family: "Comic Sans MS","Arial Black",sans-serif; font-size: 15px; font-weight: bold; color: #ffff00; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='3' height='3' fill='%23225522'/%3E%3Crect x='3' y='3' width='3' height='3' fill='%23225522'/%3E%3Crect x='3' y='0' width='3' height='3' fill='%231a441a'/%3E%3Crect x='0' y='3' width='3' height='3' fill='%231a441a'/%3E%3C/svg%3E"); background-color: #225522; border-top: 2px solid #ffcc00; border-bottom: 3px solid #ffcc00; padding: 5px 10px; letter-spacing: 2px; text-shadow: 1px 1px 0 #000000; }
+.sectionbox { background: #ffffff; border: 3px outset #cccccc; margin-bottom: 10px; }
+.rltable { width: 100%; border-collapse: collapse; }
+.rltable th { background: #336633; color: #ffcc00; font-family: Verdana,Arial,sans-serif; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; padding: 5px 8px; border: 1px solid #225522; text-align: left; }
+.rltable td { padding: 5px 8px; border: 1px solid #ccccaa; font-size: 11px; vertical-align: middle; }
 .rltable tr.even td { background: #f5f5ee; }
 .rltable tr.odd  td { background: #eaeadb; }
 .rltable tr:hover td { background: #ffffcc !important; }
-.rank-no {
-  font-family: Impact, "Arial Black", sans-serif;
-  font-size: 20px;
-  color: #aaaaaa;
-  text-align: center;
-  width: 32px;
-}
+.rank-no { font-family: Impact,"Arial Black",sans-serif; font-size: 20px; color: #aaaaaa; text-align: center; width: 32px; }
 .rank-1 .rank-no { color: #cc9900; font-size: 24px; }
 .rank-2 .rank-no { color: #999999; font-size: 22px; }
 .rank-3 .rank-no { color: #885522; font-size: 20px; }
-.ptsnum {
-  font-family: Impact, "Arial Black", sans-serif;
-  font-size: 26px;
-  color: #003300;
-  line-height: 1;
-}
-.ptssub {
-  font-size: 9px;
-  color: #999999;
-}
-/* PILL FILTER */
-.pillrow {
-  background: #eeeecc;
-  border-bottom: 1px solid #ccccaa;
-  padding: 5px 6px;
-}
-.pill {
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 10px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  background: #ffffff;
-  border: 2px outset #aaaaaa;
-  padding: 2px 8px;
-  cursor: pointer;
-  color: #555555;
-}
+.ptsnum { font-family: Impact,"Arial Black",sans-serif; font-size: 26px; color: #003300; line-height: 1; }
+.ptssub { font-size: 9px; color: #999999; }
+.pillrow { background: #eeeecc; border-bottom: 1px solid #ccccaa; padding: 5px 6px; }
+.pill { font-family: Verdana,Arial,sans-serif; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: #ffffff; border: 2px outset #aaaaaa; padding: 2px 8px; cursor: pointer; color: #555555; }
 .pill:hover { background: #ffffcc; }
-.pill.active {
-  background: #336633;
-  color: #ffff00;
-  border-style: inset;
-}
-/* GROUP GRID */
-.groupgrid {
-  border-top: 1px solid #bbbbaa;
-}
-.groupcard {
-  background: #ffffff;
-  border-right: 1px solid #ccccaa;
-  border-bottom: 1px solid #ccccaa;
-  vertical-align: top;
-  width: 25%;
-}
-.groupcardhdr {
-  background: #336633;
-  border-bottom: 2px solid #ffcc00;
-  padding: 4px 8px;
-  font-family: Impact, "Arial Black", sans-serif;
-  font-size: 13px;
-  color: #ffcc00;
-  letter-spacing: 2px;
-}
-.groupcardhdr small {
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 8px;
-  color: #aaccaa;
-  font-weight: normal;
-  letter-spacing: 0;
-  display: block;
-  margin-top: 1px;
-}
-.gmrow {
-  border-bottom: 1px solid #f0f0e8;
-  padding: 2px 6px;
-  font-size: 10px;
-}
+.pill.active { background: #336633; color: #ffff00; border-style: inset; }
+.groupgrid { border-top: 1px solid #bbbbaa; }
+.groupcard { background: #ffffff; border-right: 1px solid #ccccaa; border-bottom: 1px solid #ccccaa; vertical-align: top; width: 25%; }
+.groupcardhdr { background: #336633; border-bottom: 2px solid #ffcc00; padding: 4px 8px; font-family: Impact,"Arial Black",sans-serif; font-size: 13px; color: #ffcc00; letter-spacing: 2px; }
+.groupcardhdr small { font-family: Verdana,Arial,sans-serif; font-size: 8px; color: #aaccaa; font-weight: normal; letter-spacing: 0; display: block; margin-top: 1px; }
+.gmrow { border-bottom: 1px solid #f0f0e8; padding: 2px 6px; font-size: 10px; }
 .gmrow table { table-layout: fixed; }
-.gmdate { color: #aaaaaa; font-size: 9px; font-family: "Courier New", monospace; width: 32px; }
+.gmdate { color: #aaaaaa; font-size: 9px; font-family: "Courier New",monospace; width: 32px; }
 .gmhome { font-weight: bold; color: #333333; }
 .gmaway { color: #888888; }
 .gmteams { width: auto; overflow: hidden; }
-.gmscore {
-  font-family: Impact, "Arial Black", sans-serif;
-  font-size: 15px;
-  text-align: center;
-  white-space: nowrap;
-  width: 36px;
-}
-.gmtipp {
-  white-space: nowrap;
-  text-align: right;
-  width: 54px;
-  font-size: 9px;
-}
+.gmscore { font-family: Impact,"Arial Black",sans-serif; font-size: 15px; text-align: center; white-space: nowrap; width: 36px; }
+.gmtipp { white-space: nowrap; text-align: right; width: 54px; font-size: 9px; }
 .gmscore.done { color: #336633; }
 .gmscore.open { color: #dddddd; }
-/* TIPPEN */
-.tipselbar {
-  background: #eeeecc;
-  border-bottom: 2px groove #aaaaaa;
-  padding: 7px 8px;
-}
-.retroselect {
-  border: 2px inset #aaaaaa;
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 12px;
-  padding: 4px 6px;
-  background: #ffffff;
-}
-.tippcard {
-  background: #ffffff;
-  border-right: 1px solid #ccccaa;
-  border-bottom: 1px solid #ccccaa;
-  vertical-align: top;
-  width: 25%;
-}
-.tippcardhdr {
-  background: #225522;
-  border-bottom: 2px solid #ffcc00;
-  padding: 4px 8px;
-  font-family: Impact, "Arial Black", sans-serif;
-  font-size: 12px;
-  color: #ffcc00;
-  letter-spacing: 2px;
-}
-.tipprow {
-  border-bottom: 1px solid #f0f0e8;
-  padding: 4px 7px;
-  font-size: 10px;
-}
-.tipprow.locked { background: #f8f8f0; }
-.tipprow:nth-child(odd) { background: #fafaf5; }
-.tipprow.locked:nth-child(odd) { background: #f5f5ec; }
-.tippinp {
-  width: 44px;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 14px;
-  font-weight: bold;
-  text-align: center;
-  border: 2px inset #cccccc;
-  background: #f5f5ee;
-  color: #555555;
-  padding: 2px;
-  cursor: default;
-  pointer-events: none;
-}
-.tippinp:focus { outline: none; }
-.tippinp::-webkit-inner-spin-button,
-.tippinp::-webkit-outer-spin-button { display: none; }
-.tippinp[type=number] { -moz-appearance: textfield; }
-.ptstag {
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 9px;
-  font-weight: bold;
-  padding: 1px 5px;
-  border: 1px solid;
-}
+.tipselbar { background: #eeeecc; border-bottom: 2px groove #aaaaaa; padding: 7px 8px; }
+.retroselect { border: 2px inset #aaaaaa; font-family: Verdana,Arial,sans-serif; font-size: 12px; padding: 4px 6px; background: #ffffff; }
+.tipprow { border-bottom: 1px solid #f0f0e8; padding: 4px 7px; font-size: 10px; }
+.tippinp { width: 44px; font-family: "Courier New",Courier,monospace; font-size: 14px; font-weight: bold; text-align: center; border: 2px inset #cccccc; background: #f5f5ee; color: #555555; padding: 2px; cursor: default; pointer-events: none; }
+.ptstag { font-family: Verdana,Arial,sans-serif; font-size: 9px; font-weight: bold; padding: 1px 5px; border: 1px solid; }
 .p3 { background: #ccffcc; color: #003300; border-color: #66cc66; }
 .p2 { background: #ffeecc; color: #663300; border-color: #cc8800; }
 .p1 { background: #ffcccc; color: #660000; border-color: #cc6666; }
 .p0 { background: #eeeeee; color: #999999; border-color: #cccccc; }
-.savebar {
-  background: #eeeecc;
-  border-top: 2px groove #aaaaaa;
-  padding: 7px 8px;
-}
-.btngreen {
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 11px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  background: #336633;
-  color: #ffcc00;
-  border: 2px outset #66aa66;
-  padding: 5px 14px;
-  cursor: pointer;
-}
+.savebar { background: #eeeecc; border-top: 2px groove #aaaaaa; padding: 7px 8px; }
+.btngreen { font-family: Verdana,Arial,sans-serif; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: #336633; color: #ffcc00; border: 2px outset #66aa66; padding: 5px 14px; cursor: pointer; }
 .btngreen:hover { background: #225522; }
 .btngreen:active { border-style: inset; }
-.btngrey {
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 10px;
-  font-weight: bold;
-  background: #888888;
-  color: #ffffff;
-  border: 2px outset #aaaaaa;
-  padding: 4px 12px;
-  cursor: pointer;
-}
+.btngrey { font-family: Verdana,Arial,sans-serif; font-size: 10px; font-weight: bold; background: #888888; color: #ffffff; border: 2px outset #aaaaaa; padding: 4px 12px; cursor: pointer; }
 .btngrey:active { border-style: inset; }
-.btnred {
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 10px;
-  font-weight: bold;
-  background: #aa2222;
-  color: #ffffff;
-  border: 2px outset #cc5555;
-  padding: 3px 8px;
-  cursor: pointer;
-}
+.btnred { font-family: Verdana,Arial,sans-serif; font-size: 10px; font-weight: bold; background: #aa2222; color: #ffffff; border: 2px outset #cc5555; padding: 3px 8px; cursor: pointer; }
 .btnred:active { border-style: inset; }
-.btnok {
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 9px;
-  font-weight: bold;
-  background: #336633;
-  color: #ffffff;
-  border: 2px outset #55aa55;
-  padding: 2px 7px;
-  cursor: pointer;
-}
+.btnok { font-family: Verdana,Arial,sans-serif; font-size: 9px; font-weight: bold; background: #336633; color: #ffffff; border: 2px outset #55aa55; padding: 2px 7px; cursor: pointer; }
 .btnok:active { border-style: inset; }
-/* ADMIN */
-.loginbox {
-  background: #ffffff;
-  border: 3px outset #cccccc;
-  padding: 14px;
-  max-width: 320px;
-  margin: 16px auto;
-}
-.loginbox h3 {
-  font-family: "Comic Sans MS", Impact, sans-serif;
-  font-size: 16px;
-  color: #003300;
-  border-bottom: 2px solid #ffcc00;
-  padding-bottom: 6px;
-  margin-bottom: 10px;
-}
-.retroinput {
-  border: 2px inset #aaaaaa;
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 12px;
-  padding: 5px 7px;
-  background: #ffffee;
-  width: 100%;
-  display: block;
-  margin-bottom: 8px;
-}
+.sp-tipp-btn { font-family: Verdana,Arial,sans-serif; font-size: 9px; font-weight: bold; background: #ffffcc; color: #333333; border: 2px outset #aaaaaa; padding: 2px 6px; cursor: pointer; }
+.sp-tipp-btn:hover { background: #ffff99; }
+.loginbox { background: #ffffff; border: 3px outset #cccccc; padding: 14px; max-width: 320px; margin: 16px auto; }
+.loginbox h3 { font-family: "Comic Sans MS",Impact,sans-serif; font-size: 16px; color: #003300; border-bottom: 2px solid #ffcc00; padding-bottom: 6px; margin-bottom: 10px; }
+.retroinput { border: 2px inset #aaaaaa; font-family: Verdana,Arial,sans-serif; font-size: 12px; padding: 5px 7px; background: #ffffee; width: 100%; display: block; margin-bottom: 8px; }
 .retroinput:focus { outline: 2px solid #336633; background: #ffffcc; }
-.admgrphdr {
-  background: #eeeecc;
-  border-bottom: 1px solid #ccccaa;
-  font-size: 9px;
-  font-weight: bold;
-  color: #666666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  padding: 3px 8px;
-}
-.admrow {
-  border-bottom: 1px solid #f0f0e8;
-  padding: 4px 8px;
-  font-size: 10px;
-  font-family: Verdana, Arial, sans-serif;
-}
+.admgrphdr { background: #eeeecc; border-bottom: 1px solid #ccccaa; font-size: 9px; font-weight: bold; color: #666666; text-transform: uppercase; letter-spacing: 2px; padding: 3px 8px; }
+.admrow { border-bottom: 1px solid #f0f0e8; padding: 4px 8px; font-size: 10px; font-family: Verdana,Arial,sans-serif; }
 .admrow:nth-child(even) { background: #fafaf5; }
 .admlabel { font-size: 10px; }
 .admlabel small { font-size: 9px; color: #aaaaaa; display: block; }
-.adminp {
-  width: 32px;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 13px;
-  font-weight: bold;
-  text-align: center;
-  border: 2px inset #aaaaaa;
-  background: #ffffee;
-  padding: 2px;
-}
+.adminp { width: 32px; font-family: "Courier New",Courier,monospace; font-size: 13px; font-weight: bold; text-align: center; border: 2px inset #aaaaaa; background: #ffffee; padding: 2px; }
 .adminp:focus { outline: 2px solid #336633; }
-/* TOAST */
-.toastpop {
-  position: fixed;
-  bottom: 12px;
-  right: 12px;
-  z-index: 9999;
-  background: #000033;
-  color: #ffff00;
-  border: 3px outset #4444cc;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 11px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 7px 16px;
-  display: none;
-}
-/* FOOTER */
-.footerbar {
-  background: #003300;
-  border-top: 3px solid #ffcc00;
-  text-align: center;
-  padding: 6px;
-  font-size: 9px;
-  color: #336633;
-  font-family: "Courier New", Courier, monospace;
-  letter-spacing: 2px;
-}
-/* TABS */
-.phasetab {
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 10px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  background: #eeeecc;
-  border: 2px outset #aaaaaa;
-  border-bottom: none;
-  padding: 4px 14px;
-  cursor: pointer;
-  color: #555555;
-  margin-right: 2px;
-}
-.phasetab.active {
-  background: #ffffff;
-  color: #003300;
-  border-style: inset;
-  border-bottom: 2px solid #ffffff;
-}
-.phasetabrow {
-  background: #eeeecc;
-  border-bottom: 1px solid #ccccaa;
-  padding: 5px 6px 0;
-}
-.statbar { font-family: "Courier New", Courier, monospace; font-size: 10px; color: #666666; margin-left: auto; }
-.savemsg { font-family: "Courier New", Courier, monospace; font-size: 10px; color: #666666; }
-/* WILLKOMMENS-POPUP */
-.welcome-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.7); z-index: 2000;
-  align-items: center; justify-content: center;
-}
-.welcome-overlay.open { display: flex; }
-.welcome-box {
-  background: #fff; border: 4px outset #cccccc;
-  max-width: 420px; width: 92%;
-  font-family: Verdana, Arial, sans-serif;
-  text-align: center;
-}
-.welcome-hdr {
-  background: #225522; border-bottom: 3px solid #ffcc00;
-  padding: 10px 14px;
-  font-family: "Comic Sans MS", Impact, sans-serif;
-  font-size: 18px; color: #ffff00; letter-spacing: 2px;
-  text-shadow: 1px 1px 0 #000;
-}
-.welcome-body {
-  padding: 16px 18px 12px;
-  font-size: 12px; line-height: 1.6; color: #333;
-}
-.welcome-body b { color: #003300; }
-.welcome-body .hint {
-  background: #ffffcc; border: 2px solid #ffcc00;
-  padding: 8px 10px; margin: 10px 0 0;
-  font-size: 11px; color: #553300;
-  text-align: left;
-}
-.welcome-btn {
-  background: #336633; color: #ffff00;
-  border: 3px outset #55aa55;
-  font-family: "Comic Sans MS", Verdana, sans-serif;
-  font-size: 13px; font-weight: bold;
-  padding: 8px 24px; cursor: pointer;
-  margin: 10px 0 14px;
-  letter-spacing: 1px;
-}
-.welcome-btn:active { border-style: inset; }
-.cd-wrap{padding:30px 20px;text-align:center;background:#ffffff}
-.cd-title{font-family:"Comic Sans MS",Impact,sans-serif;font-size:20px;font-weight:bold;color:#003300;margin-bottom:6px}
-.cd-sub{font-family:"Comic Sans MS",Verdana,sans-serif;font-size:11px;color:#666666;margin-bottom:20px}
-.cd-table{border-collapse:separate;border-spacing:8px;margin:0 auto 16px}
-.cd-cell{background:#003300;border:3px outset #336633;padding:8px 14px;text-align:center;min-width:60px}
-.cd-num{font-family:"Courier New",Courier,monospace;font-size:34px;font-weight:bold;color:#ffcc00;display:block;line-height:1;text-shadow:0 0 8px #ffcc00}
-.cd-lbl{font-family:"Comic Sans MS",Verdana,sans-serif;font-size:9px;color:#99cc99;text-transform:uppercase;letter-spacing:1px;display:block;margin-top:4px}
-.cd-info{font-family:"Comic Sans MS",Verdana,sans-serif;font-size:11px;color:#666666;font-style:italic;margin-top:8px}
-@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
-.cd-ball{font-size:44px;display:block;margin-bottom:10px;animation:bounce .9s infinite alternate}
-/* STARS ANIMATION */
+.toastpop { position: fixed; bottom: 12px; right: 12px; z-index: 9999; background: #000033; color: #ffff00; border: 3px outset #4444cc; font-family: "Courier New",Courier,monospace; font-size: 11px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; padding: 7px 16px; display: none; }
+.footerbar { background: #003300; border-top: 3px solid #ffcc00; text-align: center; padding: 6px; font-size: 9px; color: #336633; font-family: "Courier New",Courier,monospace; letter-spacing: 2px; }
+.phasetab { font-family: Verdana,Arial,sans-serif; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: #eeeecc; border: 2px outset #aaaaaa; border-bottom: none; padding: 4px 14px; cursor: pointer; color: #555555; margin-right: 2px; }
+.phasetab.active { background: #ffffff; color: #003300; border-style: inset; border-bottom: 2px solid #ffffff; }
+.phasetabrow { background: #eeeecc; border-bottom: 1px solid #ccccaa; padding: 5px 6px 0; }
+.statbar { font-family: "Courier New",Courier,monospace; font-size: 10px; color: #666666; margin-left: auto; }
+/* QT POPUP */
+.qt-box { background: #fff; border: 4px outset #cccccc; max-width: 340px; width: 92%; font-family: Verdana,Arial,sans-serif; }
+.qt-hdr { background: #225522; border-bottom: 3px solid #ffcc00; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-family: "Comic Sans MS",Impact,sans-serif; font-size: 15px; color: #ffff00; letter-spacing: 2px; }
+.qt-close { background: transparent; border: 2px outset #88cc88; color: #ffff00; cursor: pointer; font-size: 14px; padding: 2px 7px; }
+.qt-matchname { padding: 8px 12px 4px; font-size: 11px; color: #333; border-bottom: 1px solid #eee; }
+.qt-section-label { padding: 5px 12px 2px; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #888; }
+.qt-presets { padding: 4px 8px; display: flex; flex-wrap: wrap; gap: 3px; }
+.qt-preset { font-family: "Courier New",monospace; font-size: 11px; font-weight: bold; background: #ffffee; border: 2px outset #aaa; padding: 3px 7px; cursor: pointer; color: #333; }
+.qt-preset.sel { background: #ccffcc; border-style: inset; color: #003300; }
+.qt-preset:hover { background: #ffffcc; }
+.qt-numpad-wrap { padding: 8px 12px 12px; }
+.qt-score-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px; }
+.qt-score-side { text-align: center; }
+.qt-score-label { display: block; font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+.qt-score-val { display: block; font-family: Impact,"Arial Black",sans-serif; font-size: 42px; color: #333; background: #f5f5ee; border: 3px inset #ccc; width: 64px; line-height: 1.1; text-align: center; cursor: pointer; }
+.qt-score-val.active { color: #003300; background: #ccffcc; border-color: #336633; }
+.qt-score-colon { font-family: Impact,sans-serif; font-size: 36px; color: #888; }
+.qt-numpad-hint { font-size: 9px; color: #aaa; text-align: center; margin-bottom: 4px; }
+.qt-numpad-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 3px; margin-bottom: 8px; }
+.qt-num-btn { font-family: "Courier New",monospace; font-size: 13px; font-weight: bold; background: #ffffee; border: 2px outset #aaa; padding: 5px 0; cursor: pointer; color: #333; text-align: center; }
+.qt-num-btn:hover { background: #ffffcc; }
+.qt-confirm { width: 100%; font-family: "Comic Sans MS",Verdana,sans-serif; font-size: 13px; font-weight: bold; background: #336633; color: #ffff00; border: 3px outset #55aa55; padding: 7px; cursor: pointer; letter-spacing: 1px; }
+.qt-confirm:active { border-style: inset; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
 @keyframes blink2 { 0%,100%{opacity:1} 40%{opacity:0.0} }
 @keyframes blink3 { 0%{color:#ff0000}25%{color:#ffff00}50%{color:#00ff00}75%{color:#0088ff}100%{color:#ff0000} }
 .blink { animation: blink 1.2s infinite; }
 .blink2 { animation: blink2 0.7s infinite; }
 .rainbow { animation: blink3 2s infinite; font-weight:bold; }
-/* STATUS DOT */
 .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#999999; margin-right:4px; vertical-align:middle; }
 .dot.on { background:#00cc00; box-shadow: 0 0 5px #00cc00; }
-/* phase display */
-.phase-gruppe { display: block; }
-.phase-ko { display: none; }
 </style>
 </head>
 <body>
 
 <table width="980" align="center" cellpadding="0" cellspacing="0" class="maintable">
 <tr>
-  <!-- HEADER -->
   <td>
     <table width="100%" cellpadding="0" cellspacing="0" class="headertable">
     <tr>
-      <td width="72" align="center" valign="middle" style="padding:10px;background:transparent">
-        <img src="ball.gif" width="56" height="56" alt="Fussball" style="display:block;border:0;background:transparent">
+      <td width="72" align="center" valign="middle" style="padding:10px">
+        <img src="ball.gif" width="56" height="56" alt="Fussball" style="display:block;border:0">
       </td>
       <td valign="middle" style="padding:8px 4px">
         <div class="title">&#9917; WM 2026 RZ Tippspiel &#9917;</div>
@@ -553,18 +159,11 @@ a:visited { color: #660099; }
       </td>
     </tr>
     </table>
-    <!-- MARQUEE -->
     <div class="marqueebar">
       <marquee behavior="scroll" direction="left" scrollamount="3" style="height:18px">
-        &#9733;&nbsp; WM 2026 RZ TIPPSPIEL &nbsp;&#9733;&nbsp;
-        48 MANNSCHAFTEN &middot; 12 GRUPPEN &middot; 104 SPIELE &nbsp;&#9733;&nbsp;
-        3 PUNKTE EXAKTES ERGEBNIS &middot; 2 PUNKTE RICHTIGE TORDIFFERENZ &middot; 1 PUNKT RICHTIGE TENDENZ &nbsp;&#9733;&nbsp;
-        WM-AUFTAKT: 11. JUNI 2026 IM AZTEKENSTADION &nbsp;&#9733;&nbsp;
-        FINALE: 19. JULI 2026, METLIFE STADIUM NEW JERSEY &nbsp;&#9733;&nbsp;
-        VIEL ERFOLG BEIM TIPPEN! &nbsp;&#9733;
+        &#9733;&nbsp; WM 2026 RZ TIPPSPIEL &nbsp;&#9733;&nbsp; 48 MANNSCHAFTEN &middot; 12 GRUPPEN &middot; 104 SPIELE &nbsp;&#9733;&nbsp; 3 PUNKTE EXAKTES ERGEBNIS &middot; 2 PUNKTE RICHTIGE TORDIFFERENZ &middot; 1 PUNKT RICHTIGE TENDENZ &nbsp;&#9733;&nbsp; FINALE: 19. JULI 2026, METLIFE STADIUM NEW JERSEY &nbsp;&#9733;
       </marquee>
     </div>
-    <!-- NAV -->
     <table width="100%" cellpadding="0" cellspacing="0" class="navtable">
     <tr>
       <td width="1%" nowrap><button class="navbtn active" onclick="showPage('rangliste',this)">&#9733; Rangliste</button></td>
@@ -577,54 +176,21 @@ a:visited { color: #660099; }
 </tr>
 <tr>
   <td class="contentbg" style="padding:8px">
-
-    <!-- ══ COUNTDOWN (verschwindet ab 11. Juni) ══ -->
-    <div id="countdown-wrap" class="sectionbox">
-      <div class="sectionhdr">&#9733; WM 2026 STARTET BALD! &#9733; <span class="blink2">&#9733;</span></div>
-      <div class="cd-wrap">
-        <span class="cd-ball">&#9917;</span>
-        <div class="cd-title">Die Seite &ouml;ffnet am 11. Juni 2026!</div>
-        <div class="cd-sub" style="font-size:13px;font-weight:bold;color:#333333">Tipps f&uuml;r die Gruppenphase kannst du noch &uuml;ber den <a href="tippen.html" style="color:#003399">Tippbogen</a> abgeben&nbsp;&#9733;</div>
-        <table class="cd-table" cellpadding="0" cellspacing="0" align="center">
-          <tr>
-            <td class="cd-cell"><span class="cd-num" id="cd-days">--</span><span class="cd-lbl">Tage</span></td>
-            <td class="cd-cell"><span class="cd-num" id="cd-hours">--</span><span class="cd-lbl">Stunden</span></td>
-            <td class="cd-cell"><span class="cd-num" id="cd-mins">--</span><span class="cd-lbl">Minuten</span></td>
-            <td class="cd-cell"><span class="cd-num" id="cd-secs">--</span><span class="cd-lbl">Sekunden</span></td>
-          </tr>
-        </table>
-        <div class="cd-info">
-          <span class="blink">&#9733;</span>
-          Er&ouml;ffnungsspiel: Mexiko vs. Kanada &mdash; 11. Juni 2026, 21:00 Uhr MEZ
-          <span class="blink">&#9733;</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ HAUPTINHALT (versteckt bis 11. Juni) ══ -->
-    <div id="main-content" style="display:none">
+    <div id="main-content">
     <div id="page-rangliste">
       <div class="sectionbox">
         <div class="sectionhdr">&#9733; AKTUELLE RANGLISTE &#9733; <span class="blink" style="color:#ff4444">&#9733;</span> <span class="blink2" style="color:#ffff00">&#9733;</span> <span class="blink" style="color:#00ff88">&#9733;</span></div>
         <table class="rltable">
           <thead><tr>
-            <th width="36">#</th>
-            <th>Spieler</th>
-            <th>Gesamt</th>
-            <th>Gruppe</th>
-            <th>K.O.</th>
-            <th>Sonder</th>
-            <th>Exakt&nbsp;(3P)</th>
-            <th>Diff&nbsp;(2P)</th>
-            <th>Tend.&nbsp;(1P)</th>
-            <th>Getippt</th>
+            <th width="36">#</th><th>Spieler</th><th>Gesamt</th><th>Gruppe</th>
+            <th>K.O.</th><th>Sonder</th><th>Exakt&nbsp;(3P)</th><th>Diff&nbsp;(2P)</th>
+            <th>Tend.&nbsp;(1P)</th><th>Getippt</th>
           </tr></thead>
           <tbody id="rl-body"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- ═══ SPIELPLAN + TIPPS ═══ -->
     <div id="page-spielplan" style="display:none">
       <div class="sectionbox">
         <div class="sectionhdr">SPIELPLAN WM 2026</div>
@@ -654,11 +220,8 @@ a:visited { color: #660099; }
       </div>
     </div>
 
-
-    <!-- ═══ ADMIN ═══ -->
     <div id="page-admin" style="display:none">
       <div id="admin-login-wrap">
-        <!-- SCHRITT 1: Passwort -->
         <div class="loginbox" id="login-step1">
           <h3>&#128274; Admin-Bereich</h3>
           <div style="font-size:10px;color:#666666;margin-bottom:8px;font-family:Verdana,Arial,sans-serif">Bitte Passwort eingeben:</div>
@@ -666,7 +229,6 @@ a:visited { color: #660099; }
           <button class="btngreen" onclick="checkPassword()">Weiter &raquo;</button>
           <div id="pw-error" style="color:#cc0000;font-size:10px;font-family:Verdana,Arial,sans-serif;margin-top:6px;display:none">&#10007; Falsches Passwort!</div>
         </div>
-        <!-- SCHRITT 2: GitHub Token (nur sichtbar nach korrektem PW) -->
         <div class="loginbox" id="login-step2" style="display:none">
           <h3>&#9881; GitHub-Token</h3>
           <div style="font-size:10px;color:#666666;margin-bottom:8px;font-family:Verdana,Arial,sans-serif">GitHub Personal Access Token:</div>
@@ -684,10 +246,9 @@ a:visited { color: #660099; }
           <div class="sectionhdr">&#128229; TIPPS IMPORTIEREN</div>
           <div style="padding:10px;background:#fffff8;border-bottom:1px solid #ccccaa">
             <div style="font-family:'Comic Sans MS',Verdana,sans-serif;font-size:11px;color:#444444;margin-bottom:8px">
-              Den <b>Import-Block</b> aus der Mail hier reinkopieren und auf <b>Importieren</b> klicken.<br>
-              <span style="font-size:10px;color:#888888">Spieler wird automatisch angelegt falls noch nicht vorhanden.</span>
+              Den <b>Import-Block</b> aus der Mail hier reinkopieren und auf <b>Importieren</b> klicken.
             </div>
-            <textarea id="import-json" style="width:100%;height:80px;border:2px inset #aaaaaa;font-family:'Courier New',Courier,monospace;font-size:10px;background:#ffffee;padding:5px;resize:vertical" placeholder='{"name":"Max Mustermann","tipps":{"G1":{"home":2,"away":1},...}}'></textarea>
+            <textarea id="import-json" style="width:100%;height:80px;border:2px inset #aaaaaa;font-family:'Courier New',Courier,monospace;font-size:10px;background:#ffffee;padding:5px;resize:vertical" placeholder='{"name":"Max","tipps":{"G1":{"home":2,"away":1},...}}'></textarea>
             <div style="margin-top:6px;display:flex;align-items:center;gap:8px">
               <button class="btngreen" onclick="importTipps()">&#128229; Importieren</button>
               <span id="import-msg" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#336633"></span>
@@ -697,31 +258,18 @@ a:visited { color: #660099; }
         <div class="sectionbox">
           <div class="sectionhdr">&#9733; SONDERWERTUNG AUFL&Ouml;SEN</div>
           <div style="padding:10px;background:#fffff8;font-family:Verdana,Arial,sans-serif;font-size:11px">
-            <div style="margin-bottom:10px;color:#555555">Hier tr&auml;gst du am Ende ein wer was wirklich erreicht hat.</div>
             <table cellpadding="4" cellspacing="0" width="100%">
-              <tr>
-                <td style="font-weight:bold;width:160px">&#127942; WM-Sieger:</td>
-                <td><select class="retroselect" id="sr-winner" style="min-width:180px"><option value="">-- Team --</option></select></td>
-              </tr>
-              <tr>
-                <td style="font-weight:bold">&#129352; Finalist:</td>
-                <td><select class="retroselect" id="sr-finalist"><option value="">-- Team --</option></select></td>
-              </tr>
-              <tr>
-                <td style="font-weight:bold">&#129353; Dritter Platz:</td>
-                <td><select class="retroselect" id="sr-third"><option value="">-- Team --</option></select></td>
-              </tr>
-              <tr>
-                <td style="font-weight:bold;vertical-align:top;padding-top:6px">&#128293; &Uuml;berraschungsteam<br><span style="font-size:9px;color:#888888;font-weight:normal">pro Team die erreichte Runde</span></td>
-                <td id="sr-surprise-rows" style="padding-top:4px"></td>
-              </tr>
+              <tr><td style="font-weight:bold;width:160px">&#127942; WM-Sieger:</td><td><select class="retroselect" id="sr-winner" style="min-width:180px"><option value="">-- Team --</option></select></td></tr>
+              <tr><td style="font-weight:bold">&#129352; Finalist:</td><td><select class="retroselect" id="sr-finalist"><option value="">-- Team --</option></select></td></tr>
+              <tr><td style="font-weight:bold">&#129353; Dritter Platz:</td><td><select class="retroselect" id="sr-third"><option value="">-- Team --</option></select></td></tr>
+              <tr><td style="font-weight:bold;vertical-align:top;padding-top:6px">&#128293; &Uuml;berraschungsteam</td><td id="sr-surprise-rows" style="padding-top:4px"></td></tr>
             </table>
             <div style="margin-top:10px">
               <button class="btngreen" onclick="saveSonderResult()">&#128190; Sonderwertung speichern</button>
               <span id="sr-msg" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#336633;margin-left:8px"></span>
             </div>
           </div>
-        </div><!-- /sectionbox Sonderwertung -->
+        </div>
         <div class="sectionbox">
           <div class="sectionhdr">SPIELER VERWALTEN</div>
           <div style="padding:10px">
@@ -731,11 +279,11 @@ a:visited { color: #660099; }
               <td width="120" style="padding-left:6px"><button class="btngreen" onclick="addPlayer()">+ Hinzuf&uuml;gen</button></td>
             </tr></table>
           </div>
-        </div><!-- /sectionbox Spieler -->
+        </div>
         <div class="sectionbox">
           <div class="sectionhdr">&#9889; K.O.-PHASE</div>
           <div style="padding:6px 8px;background:#fffff8;font-family:Verdana,Arial,sans-serif;font-size:10px;color:#666;border-bottom:1px solid #ddd">
-            Sechzehntelfinale: Teams eintragen. Ergebnisse eintragen → n&auml;chste Runde wird automatisch bef&uuml;llt.
+            Sechzehntelfinale: Teams eintragen. Ergebnisse eintragen &rarr; n&auml;chste Runde wird automatisch bef&uuml;llt.
           </div>
           <div id="ko-admin-bracket" style="padding:6px">
             <div style="font-size:11px;color:#999;font-style:italic">Lade...</div>
@@ -748,31 +296,20 @@ a:visited { color: #660099; }
         </div>
       </div>
     </div>
-
-  </div><!-- /main-content -->
-
+    </div><!-- /main-content -->
 
 <!-- SCHNELLTIPP POPUP -->
 <div class="qt-overlay" id="qt-overlay" onclick="qtCloseIfBg(event)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center">
   <div class="qt-box">
-    <div class="qt-hdr">
-      <span>&#9917; Schnelltipp</span>
-      <button class="qt-close" onclick="qtClose()">&#10005;</button>
-    </div>
+    <div class="qt-hdr"><span>&#9917; Schnelltipp</span><button class="qt-close" onclick="qtClose()">&#10005;</button></div>
     <div class="qt-matchname" id="qt-matchname"></div>
     <div class="qt-section-label">H&auml;ufige Ergebnisse</div>
     <div class="qt-presets" id="qt-presets"></div>
     <div class="qt-numpad-wrap">
       <div class="qt-score-row">
-        <div class="qt-score-side">
-          <span class="qt-score-label" id="qt-home-label">Heim</span>
-          <span class="qt-score-val" id="qt-h" onclick="qtActivate('h')">0</span>
-        </div>
+        <div class="qt-score-side"><span class="qt-score-label" id="qt-home-label">Heim</span><span class="qt-score-val" id="qt-h" onclick="qtActivate('h')">0</span></div>
         <div class="qt-score-colon">:</div>
-        <div class="qt-score-side">
-          <span class="qt-score-label" id="qt-away-label">Gast</span>
-          <span class="qt-score-val" id="qt-a" onclick="qtActivate('a')">0</span>
-        </div>
+        <div class="qt-score-side"><span class="qt-score-label" id="qt-away-label">Gast</span><span class="qt-score-val" id="qt-a" onclick="qtActivate('a')">0</span></div>
       </div>
       <div class="qt-numpad-hint">Aktives Feld antippen &rarr; Zahl w&auml;hlen</div>
       <div class="qt-numpad-grid" id="qt-numpad"></div>
@@ -789,27 +326,6 @@ a:visited { color: #660099; }
   </td>
 </tr>
 </table>
-
-<!-- WILLKOMMENS-POPUP -->
-<div class="welcome-overlay" id="welcome-overlay">
-  <div class="welcome-box">
-    <div class="welcome-hdr">&#9917; Herzlich Willkommen! &#9917;</div>
-    <div class="welcome-body">
-      <div style="font-size:22px;margin-bottom:8px">&#127942;</div>
-      <b>Die WM 2026 hat begonnen!</b><br><br>
-      Willkommen beim <b>WM 2026 RZ Tippspiel</b>.<br>
-      Hier siehst du die Rangliste, den Spielplan und deine Tipps.<br><br>
-      <div class="hint">
-        &#9888; <b>Noch nicht getippt?</b><br>
-        Nachz&uuml;gler k&ouml;nnen ihre Gruppenphase-Tipps noch bis<br>
-        <b>Freitag, 13. Juni 2026 um 23:59 Uhr</b> abgeben &mdash;<br>
-        nat&uuml;rlich nur f&uuml;r noch nicht gespielte Partien.<br>
-        &rarr; <a href="tippen.html">Zum Tippbogen</a>
-      </div>
-    </div>
-    <button class="welcome-btn" onclick="closeWelcome()">&#9733; Los geht&apos;s! &#9733;</button>
-  </div>
-</div>
 
 <div class="toastpop" id="toast"></div>
 
@@ -1060,11 +576,6 @@ function calcStats(name){
 function showPage(name,btn){
   // Vor WM-Start keine Navigation möglich (außer ?admin)
   var isAdmin = window.location.search.indexOf('admin') !== -1;
-  if(new Date() < WM_START && !isAdmin) return;
-
-  // Sicherstellen dass main-content sichtbar ist
-  document.getElementById('main-content').style.display='block';
-  document.getElementById('countdown-wrap').style.display='none';
   var pages=['rangliste','spielplan','admin'];
   for(var i=0;i<pages.length;i++){
     var el=document.getElementById('page-'+pages[i]);
@@ -1653,12 +1164,7 @@ function setPhase(p,btn){
   document.getElementById('sp-ko').style.display=p==='ko'?'block':'none';
 }
 // ── SPIELPLAN ────────────────────────────────────────────────────
-function setPhase(p,btn){
-  var tabs=document.querySelectorAll('.phasetab');
-  for(var i=0;i<tabs.length;i++)tabs[i].classList.toggle('active',i===(p==='gruppe'?0:1));
-  document.getElementById('sp-gruppe').style.display=p==='gruppe'?'block':'none';
-  document.getElementById('sp-ko').style.display=p==='ko'?'block':'none';
-}
+
 function renderSpielplan(){
   var grps=['A','B','C','D','E','F','G','H','I','J','K','L'];
   var rows=[];
@@ -1761,14 +1267,14 @@ function adminLogin(){
   ghLoad(function(ok){
     if(!ok){showToast('VERBINDUNG FEHLGESCHLAGEN');TOKEN=null;setStatus('FEHLER',false);return;}
     setStatus('VERBUNDEN',true);
-    localStorage.setItem('wm_tok',t);
+    localStorage.setItem('wm_tok',t); localStorage.setItem('wm_tok_exp', Date.now()+86400000);localStorage.setItem('wm_tok_exp',Date.now()+86400000);localStorage.setItem('wm_tok_exp',Date.now()+86400000);
     document.getElementById('admin-login-wrap').style.display='none';
     document.getElementById('admin-panel').style.display='block';
     renderAdmin();renderRangliste();renderSpielplan();renderTippen();
   });
 }
 function adminLogout(){
-  TOKEN=null;localStorage.removeItem('wm_tok');
+  TOKEN=null;localStorage.removeItem('wm_tok');localStorage.removeItem('wm_tok_exp');localStorage.removeItem('wm_tok_exp');localStorage.removeItem('wm_tok_exp');
   document.getElementById('admin-login-wrap').style.display='block';
   document.getElementById('admin-panel').style.display='none';
   document.getElementById('gh-token').value='';
@@ -1973,17 +1479,7 @@ function exportMattermost(){
 }
 
 // ── TOAST & INIT ─────────────────────────────────────────────────
-function closeWelcome(){
-  document.getElementById('welcome-overlay').classList.remove('open');
-  localStorage.setItem('wm_welcomed','1');
-}
 
-function maybeShowWelcome(){
-  // Nur zeigen wenn WM schon gestartet und noch nicht gesehen
-  if(new Date() >= WM_START && !localStorage.getItem('wm_welcomed')){
-    document.getElementById('welcome-overlay').classList.add('open');
-  }
-}
 
 function showToast(msg){
   var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';
@@ -1992,39 +1488,12 @@ function showToast(msg){
 
 function pad(n){ return n < 10 ? '0'+n : ''+n; }
 
-function updateCountdown(){
-  var diff = WM_START - new Date();
-  if(diff <= 0){ openMainContent(); return; }
-  var days  = Math.floor(diff / 86400000);
-  var hours = Math.floor((diff % 86400000) / 3600000);
-  var mins  = Math.floor((diff % 3600000)  / 60000);
-  var secs  = Math.floor((diff % 60000)    / 1000);
-  document.getElementById('cd-days').textContent  = pad(days);
-  document.getElementById('cd-hours').textContent = pad(hours);
-  document.getElementById('cd-mins').textContent  = pad(mins);
-  document.getElementById('cd-secs').textContent  = pad(secs);
-}
 
-function openMainContent(){
-  document.getElementById('countdown-wrap').style.display = 'none';
-  document.getElementById('main-content').style.display   = 'block';
-  if(window._cdInterval){ clearInterval(window._cdInterval); }
-  maybeShowWelcome();
-}
 
 function init(){
   var isAdmin = window.location.search.indexOf('admin') !== -1;
-  var diff = WM_START - new Date();
 
-  if(diff <= 0 || isAdmin){
-    openMainContent();
-  } else {
-    document.getElementById('countdown-wrap').style.display = 'block';
-    updateCountdown();
-    window._cdInterval = setInterval(updateCountdown, 1000);
-  }
-
-  var saved = localStorage.getItem('wm_tok');
+  var saved=localStorage.getItem('wm_tok');var sexp=+localStorage.getItem('wm_tok_exp')||0;if(saved&&sexp&&Date.now()>sexp){saved=null;localStorage.removeItem('wm_tok');localStorage.removeItem('wm_tok_exp');}
   if(saved){
     TOKEN=saved;
     setStatus('VERBINDE...',false);
@@ -2037,7 +1506,6 @@ function init(){
       }
       renderRangliste();renderSpielplan();renderTippen();
       if(ok && isAdmin) renderAdmin();
-      if(!isAdmin) maybeShowWelcome();
       loadKoCache(function(){ renderRangliste(); renderKoBracket(); });
     });
   } else {
@@ -2046,12 +1514,12 @@ function init(){
     ghLoad(function(ok){
       setStatus(ok?'Online':'Offline',false);
       renderRangliste();renderSpielplan();renderTippen();
-      if(!isAdmin) maybeShowWelcome();
       loadKoCache(function(){ renderRangliste(); renderKoBracket(); });
     });
   }
 }
 window.onload=init;
+
 </script>
 </body>
 </html>
