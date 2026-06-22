@@ -781,6 +781,8 @@ var GH_REPO = 'kicktipp26';
 var GH_FILE = 'data.json';
 
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
+// SHA-256 Hash des Passworts "admin2026" — hier durch eigenen Hash ersetzen
+// Hash erzeugen: https://emn178.github.io/online-tools/sha256.html
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; // Standard: "admin2026" — unbedingt ersetzen!
 
 async function hashString(str){
@@ -1011,6 +1013,46 @@ function showPage(name,btn){
   if(name==='tippen')renderTippen();
   if(name==='sonder')renderSonder();
   if(name==='admin')renderAdmin();
+}
+
+// ── SONDERTIPPS ──────────────────────────────────────────────────
+function renderSonder(){
+  var container=document.getElementById('sonder-inner');
+  var players=STATE.players;
+  if(!players.length){
+    container.innerHTML='<div style="padding:16px;font-size:11px;color:#999999;font-family:Verdana,Arial,sans-serif">Noch keine Spieler vorhanden.</div>';
+    return;
+  }
+  var hasSonder=false;
+  for(var i=0;i<players.length;i++){if(STATE.sonder[players[i]]){hasSonder=true;break;}}
+  if(!hasSonder){
+    container.innerHTML='<div style="padding:16px;font-size:11px;color:#999999;font-family:Verdana,Arial,sans-serif;font-style:italic">Noch keine Sondertipps eingegangen.</div>';
+    return;
+  }
+  var labels={winner:'&#127942; WM-Sieger',finalist:'&#129352; Finalist',third:'&#129353; Dritter Platz',surprise:'&#128293; &Uuml;berraschungsteam'};
+  var keys=['winner','finalist','third','surprise'];
+  var html='<table width="100%" cellpadding="0" cellspacing="0" class="rltable"><thead><tr>';
+  html+='<th style="width:160px">Spieler</th>';
+  for(var k=0;k<keys.length;k++)html+='<th>'+labels[keys[k]]+'</th>';
+  html+='</tr></thead><tbody>';
+  for(var i=0;i<players.length;i++){
+    var name=players[i];
+    var s=STATE.sonder[name];
+    html+='<tr class="'+(i%2===0?'even':'odd')+'">';
+    html+='<td style="font-weight:bold;font-size:12px">'+name+'</td>';
+    for(var k=0;k<keys.length;k++){
+      if(s&&s[keys[k]]){
+        var team=s[keys[k]];
+        try{team=decodeURIComponent(escape(team));}catch(e){}
+        html+='<td>'+fl(team)+team+'</td>';
+      }else{
+        html+='<td style="color:#cccccc;font-style:italic;font-size:10px">nicht getippt</td>';
+      }
+    }
+    html+='</tr>';
+  }
+  html+='</tbody></table>';
+  container.innerHTML=html;
 }
 
 // ── RANGLISTE ────────────────────────────────────────────────────
