@@ -633,7 +633,6 @@ a:visited { color: #660099; }
         </div>
         <div id="sp-gruppe">
           <table width="100%" cellpadding="0" cellspacing="0" id="group-outer-table" class="groupgrid"></table>
-          <div id="tipp-form"></div>
         </div>
         <div id="sp-ko" style="display:none">
           <div id="ko-bracket"></div>
@@ -827,7 +826,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; 
-  
+
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -1668,9 +1667,15 @@ function setPhase(p,btn){
   document.getElementById('sp-gruppe').style.display=p==='gruppe'?'block':'none';
   document.getElementById('sp-ko').style.display=p==='ko'?'block':'none';
 }
+// ── SPIELPLAN ────────────────────────────────────────────────────
+function setPhase(p,btn){
+  var tabs=document.querySelectorAll('.phasetab');
+  for(var i=0;i<tabs.length;i++)tabs[i].classList.toggle('active',i===(p==='gruppe'?0:1));
+  document.getElementById('sp-gruppe').style.display=p==='gruppe'?'block':'none';
+  document.getElementById('sp-ko').style.display=p==='ko'?'block':'none';
+}
 function renderSpielplan(){
   var grps=['A','B','C','D','E','F','G','H','I','J','K','L'];
-  // 4 columns per row
   var rows=[];
   for(var i=0;i<grps.length;i+=4)rows.push(grps.slice(i,i+4));
   var html='';
@@ -1681,91 +1686,78 @@ function renderSpielplan(){
       var ms=MATCHES.filter(function(m){return m.group===g;});
       html+='<td class="groupcard"><div class="groupcardhdr">GRUPPE '+g+'<small>'+GROUPS[g].map(function(t){return fl(t)+t;}).join(' &middot; ')+'</small></div>';
       for(var mi=0;mi<ms.length;mi++){
-        var m=ms[mi],r=STATE.results[m.id]||{},done=r.home!=null;
+        var m=ms[mi];
+        var r=STATE.results[m.id]||{};
+        var done=r.home!=null;
+        var ti=ME&&STATE.tipps[ME]?STATE.tipps[ME][m.id]:null;
+        var pts=null;
+        if(done&&ti&&ti.home!=null) pts=calcPts(ti,r);
         html+='<table width="100%" cellpadding="0" cellspacing="0" class="gmrow"><tr>'
           +'<td class="gmdate">'+m.date+'</td>'
-          +'<td><span class="gmhome">'+fl(m.home)+m.home+'</span><br><span class="gmaway">'+fl(m.away)+m.away+'</span></td>'
-          +'<td align="right" class="gmscore '+(done?'done':'open')+'">'+(done?r.home+':'+r.away:'&ndash;:&ndash;')+'</td>'
-          +'</tr></table>';
+          +'<td><span class="gmhome">'+fl(m.home)+m.home+'</span><br>'
+          +'<span class="gmaway">'+fl(m.away)+m.away+'</span></td>'
+          +'<td align="right" class="gmscore '+(done?'done':'open')+'">'+(done?r.home+':'+r.away:'&ndash;:&ndash;')+'</td>';
+        // Tipp-Spalte — nur wenn Spieler gewählt
+        if(ME){
+          if(ti&&ti.home!=null){
+            var pcol=pts===3?'#336600':pts===2?'#886600':pts===1?'#664400':'#888888';
+            html+='<td align="right" style="padding:2px 4px;white-space:nowrap">'
+              +'<span style="font-family:\'Courier New\',monospace;font-size:10px;color:#555">'+ti.home+':'+ti.away+'</span>';
+            if(pts!=null) html+='<span style="background:'+pcol+';color:#fff;font-size:8px;font-weight:bold;padding:1px 3px;border-radius:2px;margin-left:2px">'+pts+'P</span>';
+            if(!done) html+='<button class="sp-tipp-btn" onclick="qtOpen(\''+m.id+'\',\''+m.home.replace(/\'/g,"\\\'")+'\',\''+m.away.replace(/\'/g,"\\\'")+'\')">&#9998;</button>';
+            html+='</td>';
+          } else if(!done){
+            html+='<td align="right" style="padding:2px 4px">'
+              +'<button class="sp-tipp-btn" onclick="qtOpen(\''+m.id+'\',\''+m.home.replace(/\'/g,"\\\'")+'\',\''+m.away.replace(/\'/g,"\\\'")+'\')">'
+              +'Tippen</button>'
+              +'<input type="hidden" id="h_'+m.id+'" value="">'
+              +'<input type="hidden" id="a_'+m.id+'" value=""></td>';
+          } else {
+            html+='<td style="padding:2px 4px;font-size:9px;color:#aaa;text-align:right">–</td>';
+          }
+        }
+        html+='</tr></table>';
       }
       html+='</td>';
     }
-    // fill empty cells
     for(var ci=rows[ri].length;ci<4;ci++)html+='<td></td>';
     html+='</tr>';
   }
   document.getElementById('group-outer-table').innerHTML=html;
+  renderKoBracket();
 }
 
 // ── TIPPEN ───────────────────────────────────────────────────────
 function renderTippen(){
   var sel=document.getElementById('tipper-select');
-  sel.innerHTML='<option value="">-- auswählen --</option>';
+  sel.innerHTML='<option value="">-- ausw\u00e4hlen --</option>';
   for(var i=0;i<STATE.players.length;i++)
-    sel.innerHTML+='<option value="'+STATE.players[i]+'"'+( ME===STATE.players[i]?' selected':'')+'>'+STATE.players[i]+'</option>';
+    sel.innerHTML+='<option value="'+STATE.players[i]+'"'+(ME===STATE.players[i]?' selected':'')+'>'+STATE.players[i]+'</option>';
   if(ME)loadMyTipps();
 }
 function loadMyTipps(){
   ME=document.getElementById('tipper-select').value;
+  var sb2=document.getElementById('sonder-box');
   if(!ME){
-    document.getElementById('tipp-form').innerHTML='';
-    document.getElementById('tipp-stat').textContent='';
-    var sb2=document.getElementById('sonder-box');
+    var statEl=document.getElementById('tipp-stat');
+    if(statEl)statEl.textContent='';
     if(sb2)sb2.style.display='none';
+    renderSpielplan();
+    renderKo();
     return;
   }
-  var myT=STATE.tipps[ME]||{};
-  var done=MATCHES.filter(function(m){return STATE.results[m.id]&&STATE.results[m.id].home!=null;}).length;
-  var tipped=MATCHES.filter(function(m){return myT[m.id]&&myT[m.id].home!=null;}).length;
   var st=calcStats(ME);
-  document.getElementById('tipp-stat').textContent=tipped+'/'+MATCHES.length+' getippt  |  '+done+' ausgewertet  |  '+st.p+' Punkte';
-
-  var grps=['A','B','C','D','E','F','G','H','I','J','K','L'];
-  var rows=[];
-  for(var i=0;i<grps.length;i+=4)rows.push(grps.slice(i,i+4));
-  var html='<table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #bbbbaa">';
-  for(var ri=0;ri<rows.length;ri++){
-    html+='<tr>';
-    for(var ci=0;ci<rows[ri].length;ci++){
-      var g=rows[ri][ci];
-      var ms=MATCHES.filter(function(m){return m.group===g;});
-      html+='<td class="tippcard"><div class="tippcardhdr">GRUPPE '+g+'</div>';
-      for(var mi=0;mi<ms.length;mi++){
-        var m=ms[mi],r=STATE.results[m.id]||{},locked=r.home!=null;
-        var ti=myT[m.id]||{},pv=locked?calcPts(ti,r):null;
-        var ph=pv!=null?'<span class="ptstag p'+pv+'">'+pv+'P</span>':'';
-        var hv=ti.home!=null?ti.home:'',av=ti.away!=null?ti.away:'';
-        if(locked){
-          html+='<table width="100%" cellpadding="0" cellspacing="0" class="tipprow locked"><tr>'
-            +'<td><b>'+fl(m.home)+m.home+'</b> &ndash; '+fl(m.away)+m.away+'<br><span style="font-size:9px;color:#aaa">'+m.date+'</span></td>'
-            +'<td align="right" nowrap>'
-            +'<span style="font-family:\'Courier New\',monospace;font-size:15px;font-weight:bold;color:#555">'+(hv!==''?hv:'?')+':'+(av!==''?av:'?')+'</span> '+ph
-            +'<br><span style="font-family:\'Courier New\',monospace;font-size:13px;color:#aaa">('+r.home+':'+r.away+')</span>'
-            +'</td>'
-            +'</tr></table>';
-        }else{
-          html+='<table width="100%" cellpadding="0" cellspacing="0" class="tipprow"><tr>'
-            +'<td><b>'+fl(m.home)+m.home+'</b> &ndash; '+fl(m.away)+m.away+'<br><span style="font-size:9px;color:#aaa">'+m.date+'</span></td>'
-            +'<td align="right" nowrap>'
-            +'<input class="tippinp" type="number" readonly value="'+hv+'" id="t_'+m.id+'_h"/>'
-            +' <span style="font-family:\'Courier New\',monospace;font-weight:bold">:</span> '
-            +'<input class="tippinp" type="number" readonly value="'+av+'" id="t_'+m.id+'_a"/>'
-            +'</td></tr></table>';
-        }
-      }
-      html+='</td>';
-    }
-    for(var ci=rows[ri].length;ci<4;ci++)html+='<td></td>';
-    html+='</tr>';
-  }
-  html+='</table>';
-  document.getElementById('tipp-form').innerHTML=html;
-  // KO-Tipps und Sondertipps auch aktualisieren
+  var myT=STATE.tipps[ME]||{};
+  var tipped=MATCHES.filter(function(m){return myT[m.id]&&myT[m.id].home!=null;}).length;
+  var done2=MATCHES.filter(function(m){return STATE.results[m.id]&&STATE.results[m.id].home!=null;}).length;
+  var statEl=document.getElementById('tipp-stat');
+  if(statEl)statEl.textContent=tipped+'/'+MATCHES.length+' getippt  |  '+done2+' ausgewertet  |  '+st.p+' Punkte';
+  renderSpielplan();
   renderKo();
-  var sb2=document.getElementById('sonder-box');
   if(sb2)sb2.style.display='block';
   renderSonder();
 }
+
 function saveTipps(){
   if(!ME)return;
   document.getElementById('save-msg').textContent='Speichere...';
