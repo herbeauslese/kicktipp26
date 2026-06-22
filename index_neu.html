@@ -206,16 +206,26 @@ a:visited { color: #660099; }
 }
 .gmrow {
   border-bottom: 1px solid #f0f0e8;
-  padding: 4px 8px;
+  padding: 2px 6px;
   font-size: 10px;
 }
-.gmdate { color: #aaaaaa; font-size: 9px; font-family: "Courier New", monospace; }
+.gmrow table { table-layout: fixed; }
+.gmdate { color: #aaaaaa; font-size: 9px; font-family: "Courier New", monospace; width: 32px; }
 .gmhome { font-weight: bold; color: #333333; }
 .gmaway { color: #888888; }
+.gmteams { width: auto; overflow: hidden; }
 .gmscore {
   font-family: Impact, "Arial Black", sans-serif;
   font-size: 15px;
   text-align: center;
+  white-space: nowrap;
+  width: 36px;
+}
+.gmtipp {
+  white-space: nowrap;
+  text-align: right;
+  width: 54px;
+  font-size: 9px;
 }
 .gmscore.done { color: #336633; }
 .gmscore.open { color: #dddddd; }
@@ -1377,6 +1387,12 @@ function renderKoBracket(){
           +(pts!=null?'<span style="background:'+pcol+';color:#fff;font-size:8px;font-weight:bold;padding:1px 3px;border-radius:2px;margin-left:2px">'+pts+'P</span>':'');
       }
 
+      // Deadline prüfen
+      var sbMatch=KO_CACHE.matches.filter(function(x){return x.match_num===m.num;})[0];
+      var deadline=sbMatch&&sbMatch.deadline?new Date(sbMatch.deadline):null;
+      var locked=deadline&&new Date()>=deadline;
+      var sbId=sbMatch?sbMatch.id:null;
+
       html+='<div style="background:#f5f0dc;border:2px outset #999;padding:5px 7px;'
            +'font-family:Verdana,Arial,sans-serif;font-size:10px;position:relative">'
            +'<span style="position:absolute;top:2px;right:4px;font-size:8px;color:#bbb;'
@@ -1395,8 +1411,13 @@ function renderKoBracket(){
            +(res&&res.away_score!=null?res.away_score:'')+'</span>'
            +'</div>'
            // Tipp
-           +(ME?'<div style="margin-top:4px;padding-top:3px;border-top:1px dashed #ccc;font-size:9px;color:#888">'
-           +(ti?'Tipp: '+tippHtml:'<span style="color:#ccc">kein Tipp</span>')
+           +(ME?'<div style="margin-top:4px;padding-top:3px;border-top:1px dashed #ccc;font-size:9px;display:flex;align-items:center;justify-content:space-between">'
+           +'<span style="color:#888">'+(ti?'Tipp: '+tippHtml:'<span style="color:#ccc">kein Tipp</span>')+'</span>'
+           +(sbId&&!locked?'<button class="sp-tipp-btn" style="font-size:9px;padding:2px 6px" onclick="koTippOpen('
+             +sbId+',\''+realName(m.num,'h',m.h).replace(/<[^>]+>/g,'').replace(/'/g,"\\'")
+             +'\',\''+realName(m.num,'a',m.a).replace(/<[^>]+>/g,'').replace(/'/g,"\\'")
+             +'\','+(ti?ti.home_score:'null')+','+(ti?ti.away_score:'null')
+             +')">&#9998;</button>':'')
            +'</div>':'')
            +'</div>';
     });
@@ -1452,12 +1473,14 @@ function renderKoAdmin(){
   if(!cont)return;
   sb.from('ko_matches').select('*, ko_results(*)').order('match_num')
     .then(function(res){
-      if(res.error||!res.data||!res.data.length){
-        cont.innerHTML='<div style="font-size:11px;color:#999;font-style:italic;padding:8px">Keine Spiele gefunden.</div>';
+      if(res.error){
+        cont.innerHTML='<div style="padding:10px;font-size:11px;color:#cc0000">Supabase-Fehler: '+res.error.message+'<br><small>Bitte SUPABASE_URL und SUPABASE_ANON prüfen.</small></div>';
         return;
       }
-
-      // Lookup match_num → row
+      if(!res.data||!res.data.length){
+        cont.innerHTML='<div style="padding:10px;font-size:11px;color:#999;font-style:italic">Keine Spiele in Supabase gefunden. SQL ausgeführt?</div>';
+        return;
+      }
       var byNum={};
       res.data.forEach(function(m){ byNum[m.match_num]=m; });
 
@@ -1635,8 +1658,9 @@ function renderSpielplan(){
     for(var ci=0;ci<rows[ri].length;ci++){
       var g=rows[ri][ci];
       var ms=MATCHES.filter(function(m){return m.group===g;});
-      html+='<td class="groupcard"><div class="groupcardhdr">GRUPPE '+g
-        +'<small>'+GROUPS[g].map(function(t){return fl(t)+t;}).join(' &middot; ')+'</small></div>';
+      html+='<td class="groupcard">'
+           +'<div class="groupcardhdr">GRUPPE '+g
+           +'<small>'+GROUPS[g].map(function(t){return fl(t)+t;}).join(' &middot; ')+'</small></div>';
       for(var mi=0;mi<ms.length;mi++){
         var m=ms[mi];
         var r=STATE.results[m.id]||{};
@@ -1644,27 +1668,25 @@ function renderSpielplan(){
         var ti=ME&&STATE.tipps[ME]?STATE.tipps[ME][m.id]:null;
         var pts=null;
         if(done&&ti&&ti.home!=null) pts=calcPts(ti,r);
+        var pcol=pts===3?'#2a6600':pts===2?'#886600':pts===1?'#664400':'#888';
 
-        html+='<table width="100%" cellpadding="0" cellspacing="0" class="gmrow"><tr>'
+        html+='<div class="gmrow"><table width="100%" cellpadding="0" cellspacing="0"><tr>'
           +'<td class="gmdate">'+m.date+'</td>'
-          +'<td><span class="gmhome">'+fl(m.home)+m.home+'</span>'
-          +'<br><span class="gmaway">'+fl(m.away)+m.away+'</span></td>'
-          +'<td align="right" class="gmscore '+(done?'done':'open')+'">'
-          +(done?r.home+':'+r.away:'&ndash;:&ndash;')+'</td>';
+          +'<td class="gmteams"><span class="gmhome">'+fl(m.home)+m.home+'</span>'
+          +' <span class="gmaway">'+fl(m.away)+m.away+'</span></td>'
+          +'<td class="gmscore '+(done?'done':'open')+'">'+(done?r.home+':'+r.away:'–:–')+'</td>';
 
-        // Tipp + Punkte nur wenn Spieler gewählt — kein Tippen-Button (Gruppenphase schon vorbei)
         if(ME){
           if(ti&&ti.home!=null){
-            var pcol=pts===3?'#336600':pts===2?'#886600':pts===1?'#664400':'#888';
-            html+='<td align="right" style="padding:2px 3px;white-space:nowrap;font-size:10px">'
-              +'<span style="font-family:\'Courier New\',monospace;color:#555">'+ti.home+':'+ti.away+'</span>'
-              +(pts!=null?'<span style="background:'+pcol+';color:#fff;font-size:8px;font-weight:bold;padding:1px 3px;border-radius:2px;margin-left:2px">'+pts+'P</span>':'')
+            html+='<td class="gmtipp">'
+              +'<span style="font-family:monospace;color:#666">'+ti.home+':'+ti.away+'</span>'
+              +(pts!=null?' <span style="background:'+pcol+';color:#fff;font-size:8px;font-weight:bold;padding:1px 3px;border-radius:2px">'+pts+'P</span>':'')
               +'</td>';
           } else {
-            html+='<td style="padding:2px 3px;font-size:9px;color:#ccc;text-align:right">–</td>';
+            html+='<td class="gmtipp" style="color:#ddd">–</td>';
           }
         }
-        html+='</tr></table>';
+        html+='</tr></table></div>';
       }
       html+='</td>';
     }
