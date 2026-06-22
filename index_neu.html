@@ -6,13 +6,13 @@
 var WM_START = new Date('2026-06-11T19:00:00Z');
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<title>WM 2026 RZ Tippspiel</title> 
+<title>WM 2026 RZ Tippspiel</title>
 <style type="text/css">
 body {
   background-color: #003300;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='1' fill='%23005500'/%3E%3C/svg%3E");
   font-family: Verdana, Arial, sans-serif;
-  font-size: 12px; 
+  font-size: 12px;
   color: #000000;
   margin: 4px;
 }
@@ -1467,75 +1467,86 @@ function updateKoTeams(matchId){
         });
 }
 
-// Admin: KO-Phase komplett in Bracket-Ansicht
 function renderKoAdmin(){
   var cont=document.getElementById('ko-admin-bracket');
   if(!cont)return;
+
+  // Sechzehntelfinale sofort aus KO_BRACKET_FIXED zeigen — kein Supabase nötig
+  var sfRd=KO_BRACKET_FIXED[0]; // sechzehntelfinale
+  var html='<div style="background:linear-gradient(90deg,#2a4a1a,#1a2a0a);color:#ffd700;'
+          +'font-family:Impact,Arial,sans-serif;font-size:11px;letter-spacing:2px;'
+          +'padding:3px 8px;border-left:3px solid #ffd700;margin:0 0 4px">SECHZEHNTELFINALE</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px">';
+  sfRd.matches.forEach(function(m){
+    html+='<div style="background:#f5f0dc;border:2px outset #aaa;padding:5px 6px;font-size:10px;font-family:Verdana,sans-serif">'
+         +'<div style="font-family:\'Courier New\',monospace;font-size:8px;color:#bbb;margin-bottom:3px">#'+m.num+'</div>'
+         +'<input id="sf-h-'+m.num+'" style="border:1px inset #aaa;width:100%;font-size:10px;padding:2px 3px;background:#ffffee;box-sizing:border-box;margin-bottom:2px" placeholder="'+m.h+'">'
+         +'<input id="sf-a-'+m.num+'" style="border:1px inset #aaa;width:100%;font-size:10px;padding:2px 3px;background:#ffffee;box-sizing:border-box;margin-bottom:3px" placeholder="'+m.a+'">'
+         +'<button class="btnok" style="width:100%;font-size:9px" onclick="saveSfTeams('+m.num+')">&#128190; Speichern</button>'
+         +'</div>';
+  });
+  html+='</div>';
+
+  // Ergebnisse aller Runden aus Supabase laden
+  html+='<div id="ko-admin-results"><div style="font-size:11px;color:#999;padding:6px;font-style:italic">Lade Ergebnisse...</div></div>';
+  cont.innerHTML=html;
+
+  // Dann Supabase für Ergebnisse laden
   sb.from('ko_matches').select('*, ko_results(*)').order('match_num')
     .then(function(res){
-      if(res.error){
-        cont.innerHTML='<div style="padding:10px;font-size:11px;color:#cc0000">Supabase-Fehler: '+res.error.message+'<br><small>Bitte SUPABASE_URL und SUPABASE_ANON prüfen.</small></div>';
+      var rCont=document.getElementById('ko-admin-results');
+      if(!rCont)return;
+      if(res.error||!res.data||!res.data.length){
+        rCont.innerHTML='<div style="font-size:10px;color:#cc6600;padding:4px">⚠ Supabase nicht erreichbar oder SQL noch nicht ausgeführt.<br>Teams können trotzdem eingetragen und gespeichert werden sobald URL/Key korrekt.</div>';
         return;
       }
-      if(!res.data||!res.data.length){
-        cont.innerHTML='<div style="padding:10px;font-size:11px;color:#999;font-style:italic">Keine Spiele in Supabase gefunden. SQL ausgeführt?</div>';
-        return;
-      }
+      // Bereits eingetragene Teams in Inputs einfügen
+      res.data.filter(function(m){return m.round==='sechzehntelfinale';}).forEach(function(m){
+        var hi=document.getElementById('sf-h-'+m.match_num);
+        var ai=document.getElementById('sf-a-'+m.match_num);
+        if(hi&&m.team_home&&!m.team_home.match(/^[12]\./))hi.value=m.team_home;
+        if(ai&&m.team_away&&!m.team_away.match(/^[123]\./))ai.value=m.team_away;
+      });
       var byNum={};
-      res.data.forEach(function(m){ byNum[m.match_num]=m; });
-
-      var html='';
+      res.data.forEach(function(m){byNum[m.match_num]=m;});
+      var rhtml='<div style="background:linear-gradient(90deg,#2a4a1a,#1a2a0a);color:#ffd700;'
+               +'font-family:Impact,Arial,sans-serif;font-size:11px;letter-spacing:2px;'
+               +'padding:3px 8px;border-left:3px solid #ffd700;margin:8px 0 4px">ERGEBNISSE</div>';
       KO_BRACKET_FIXED.forEach(function(rd){
         var label=KO_ROUNDS[rd.round]||rd.round;
-        var isSF=rd.round==='sechzehntelfinale';
-        var cols=rd.round==='finale'||rd.round==='dritter'?1:rd.matches.length<=2?rd.matches.length:2;
-
-        html+='<div style="background:linear-gradient(90deg,#2a4a1a,#1a2a0a);color:#ffd700;'
-             +'font-family:Impact,Arial,sans-serif;font-size:11px;letter-spacing:2px;'
-             +'padding:3px 8px;border-left:3px solid #ffd700;margin:6px 0 3px">'
-             +label.toUpperCase()+'</div>';
-        html+='<div style="display:grid;grid-template-columns:repeat('+cols+',1fr);gap:4px;margin-bottom:2px">';
-
+        rhtml+='<div style="font-size:9px;font-weight:bold;color:#555;padding:3px 0;border-bottom:1px solid #ddd;margin-top:4px">'+label+'</div>';
+        rhtml+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:2px">';
         rd.matches.forEach(function(m){
-          var row=byNum[m.num];
-          if(!row){html+='<div style="background:#eee;padding:6px;font-size:10px;color:#aaa">#'+m.num+' fehlt</div>';return;}
+          var row=byNum[m.match_num];
+          if(!row){rhtml+='<div style="background:#eee;padding:4px;font-size:9px;color:#aaa">#'+m.num+' –</div>';return;}
           var r=row.ko_results&&row.ko_results[0]||{};
-
-          html+='<div style="background:#f5f0dc;border:2px outset #aaa;padding:5px 6px;font-size:10px;font-family:Verdana,sans-serif">';
-          html+='<div style="font-family:\'Courier New\',monospace;font-size:8px;color:#bbb;text-align:right">#'+m.num+'</div>';
-
-          if(isSF){
-            // Teamnamen editierbar
-            html+='<input style="border:1px inset #aaa;width:100%;font-size:10px;padding:2px 3px;background:#ffffee;box-sizing:border-box;margin-bottom:2px" '
-                 +'value="'+row.team_home+'" id="kotn-h-'+row.id+'" placeholder="'+m.h+'">'
-                 +'<input style="border:1px inset #aaa;width:100%;font-size:10px;padding:2px 3px;background:#ffffee;box-sizing:border-box;margin-bottom:3px" '
-                 +'value="'+row.team_away+'" id="kotn-a-'+row.id+'" placeholder="'+m.a+'">'
-                 +'<button class="btnok" style="width:100%;font-size:9px" onclick="updateKoTeams('+row.id+')">Teams speichern</button>';
-          } else {
-            // Nur Anzeige der Teams
-            html+='<div style="font-weight:bold;font-size:10px;padding:1px 0">'+row.team_home+'</div>'
-                 +'<div style="font-size:10px;padding:1px 0;border-bottom:1px solid #ddd;margin-bottom:3px">'+row.team_away+'</div>';
-          }
-
-          // Ergebnis für alle Runden
-          html+='<div style="display:flex;align-items:center;gap:3px;margin-top:3px">'
-               +'<input class="adminp" type="number" min="0" max="30" style="width:32px" '
-               +'value="'+(r.home_score!=null?r.home_score:'')+'" id="kor-h-'+row.id+'">'
-               +'<b style="color:#888;font-size:11px">:</b>'
-               +'<input class="adminp" type="number" min="0" max="30" style="width:32px" '
-               +'value="'+(r.away_score!=null?r.away_score:'')+'" id="kor-a-'+row.id+'">'
-               +'<button class="btnok" style="font-size:9px" onclick="saveKoResult('+row.id+')">&#9654;</button>'
-               +(r.home_score!=null?'<span style="font-family:\'Courier New\',monospace;font-size:10px;color:#336633;font-weight:bold;margin-left:2px">'+r.home_score+':'+r.away_score+'</span>':'')
-               +'</div>';
-
-          html+='</div>';
+          rhtml+='<div style="background:#f5f0dc;border:1px outset #aaa;padding:4px 5px;font-size:10px">'
+               +'<div style="font-size:9px;color:#888;margin-bottom:2px">#'+m.num+' '+row.team_home+' vs '+row.team_away+'</div>'
+               +'<div style="display:flex;align-items:center;gap:3px">'
+               +'<input class="adminp" type="number" min="0" max="30" style="width:30px" value="'+(r.home_score!=null?r.home_score:'')+'" id="kor-h-'+row.id+'">'
+               +'<b style="color:#888">:</b>'
+               +'<input class="adminp" type="number" min="0" max="30" style="width:30px" value="'+(r.away_score!=null?r.away_score:'')+'" id="kor-a-'+row.id+'">'
+               +'<button class="btnok" style="font-size:9px;padding:2px 5px" onclick="saveKoResult('+row.id+')">&#9654;</button>'
+               +(r.home_score!=null?'<span style="color:#336633;font-weight:bold;font-size:10px;margin-left:2px">'+r.home_score+':'+r.away_score+'</span>':'')
+               +'</div></div>';
         });
-        html+='</div>';
+        rhtml+='</div>';
       });
-      cont.innerHTML=html;
+      rCont.innerHTML=rhtml;
     });
 }
 
+function saveSfTeams(matchNum){
+  var h=document.getElementById('sf-h-'+matchNum).value.trim();
+  var a=document.getElementById('sf-a-'+matchNum).value.trim();
+  if(!h&&!a){showToast('Bitte Teams eintragen');return;}
+  sb.from('ko_matches').update({team_home:h||undefined,team_away:a||undefined}).eq('match_num',matchNum)
+    .then(function(res){
+      if(res.error){showToast('Fehler: '+res.error.message);return;}
+      showToast('#'+matchNum+' gespeichert ✓');
+      loadKoCache(function(){renderKoBracket();});
+    });
+}
 // Nach Ergebnis eintragen: nächste Runde automatisch updaten
 function saveKoResult(matchId){
   var h=document.getElementById('kor-h-'+matchId).value;
