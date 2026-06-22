@@ -636,8 +636,6 @@ a:visited { color: #660099; }
         </div>
         <div id="sp-ko" style="display:none">
           <div id="ko-bracket"></div>
-          <div class="sectionhdr" style="margin-top:8px">&#9889; K.O.-PHASE TIPPS</div>
-          <div id="ko-content"><div style="padding:12px;font-size:11px;color:#999;font-style:italic">Lade...</div></div>
         </div>
       </div>
       <div class="sectionbox" id="sonder-box" style="display:none">
@@ -725,19 +723,12 @@ a:visited { color: #660099; }
           </div>
         </div><!-- /sectionbox Spieler -->
         <div class="sectionbox">
-          <div class="sectionhdr">&#9889; SECHZEHNTELFINALE &mdash; TEAMS EINTRAGEN</div>
-          <div style="padding:8px;background:#fffff8;font-family:Verdana,Arial,sans-serif;font-size:11px;color:#555">
-            Trage die echten Teamnamen ein sobald die Gruppenphase abgeschlossen ist.
-            Die weiteren Runden werden automatisch berechnet.
+          <div class="sectionhdr">&#9889; K.O.-PHASE</div>
+          <div style="padding:6px 8px;background:#fffff8;font-family:Verdana,Arial,sans-serif;font-size:10px;color:#666;border-bottom:1px solid #ddd">
+            Sechzehntelfinale: Teams eintragen. Ergebnisse eintragen → n&auml;chste Runde wird automatisch bef&uuml;llt.
           </div>
-          <div id="ko-teams-admin" style="padding:8px">
+          <div id="ko-admin-bracket" style="padding:6px">
             <div style="font-size:11px;color:#999;font-style:italic">Lade...</div>
-          </div>
-        </div>
-        <div class="sectionbox">
-          <div class="sectionhdr">&#9889; K.O.-ERGEBNISSE EINTRAGEN</div>
-          <div id="ko-results-admin" style="padding:10px">
-            <div style="font-size:11px;color:#999;font-style:italic">Lade K.O.-Spiele...</div>
           </div>
         </div>
         <div style="padding:8px;display:flex;gap:6px;flex-wrap:wrap">
@@ -1073,7 +1064,7 @@ function showPage(name,btn){
   for(var i=0;i<btns.length;i++)btns[i].classList.remove('active');
   if(btn)btn.classList.add('active');
   if(name==='rangliste')renderRangliste();
-  if(name==='spielplan'){renderSpielplan();renderKoBracket();renderKo();renderSonder();}
+  if(name==='spielplan'){renderSpielplan();renderKoBracket();renderSonder();}
   if(name==='admin')renderAdmin();
 }
 
@@ -1332,69 +1323,89 @@ function renderKoBracket(){
   var cont = document.getElementById('ko-bracket');
   if(!cont) return;
 
-  // Baue Lookup: match_num → echte Teams aus Supabase
-  var teamLookup = {};
+  // Lookups aus KO_CACHE
+  var teamLookup={}, resultLookup={}, matchIdLookup={}, tippLookup={};
   KO_CACHE.matches.forEach(function(m){
-    teamLookup[m.match_num] = { h: m.team_home, a: m.team_away };
+    teamLookup[m.match_num]   = {h:m.team_home, a:m.team_away};
+    matchIdLookup[m.match_num] = m.id;
   });
-  // Ergebnis-Lookup
-  var resultLookup = {};
   KO_CACHE.results.forEach(function(r){
-    var m = KO_CACHE.matches.filter(function(x){return x.id===r.ko_match_id;})[0];
-    if(m) resultLookup[m.match_num] = r;
+    var m=KO_CACHE.matches.filter(function(x){return x.id===r.ko_match_id;})[0];
+    if(m) resultLookup[m.match_num]=r;
   });
+  if(ME){
+    KO_CACHE.tipps.filter(function(t){return t.player_name===ME;}).forEach(function(t){
+      var m=KO_CACHE.matches.filter(function(x){return x.id===t.ko_match_id;})[0];
+      if(m) tippLookup[m.match_num]=t;
+    });
+  }
 
-  function teamName(num, side, fallback){
-    // Wenn echte Teams eingetragen → zeige echten Namen
+  function realName(num, side, fallback){
     if(teamLookup[num]){
-      var t = side==='h' ? teamLookup[num].h : teamLookup[num].a;
-      // Prüfe ob es noch ein Platzhalter ist ("Sieger Spiel X" o.ä.)
-      if(t && !t.match(/^(Sieger|Verlierer|[12]\. Gruppe|[13]\. Gruppe|3\. [A-L])/)){
-        return '<span style="color:#ffcc00;font-weight:bold">'+t+'</span>';
-      }
+      var t=side==='h'?teamLookup[num].h:teamLookup[num].a;
+      if(t&&!t.match(/^(Sieger|Verlierer|[12]\. Gruppe|3\. [A-L\/]+$)/))
+        return '<b>'+t+'</b>';
     }
-    return '<span style="color:#aaaaaa;font-style:italic">'+fallback+'</span>';
+    return '<span style="color:#aaa;font-style:italic;font-weight:normal">'+fallback+'</span>';
   }
 
-  function resultStr(num){
-    var r = resultLookup[num];
-    if(!r || r.home_score==null) return '';
-    var pts = r.home_score > r.away_score ? 'h' : r.home_score < r.away_score ? 'a' : 'u';
-    return '<span style="font-family:\'Courier New\',monospace;font-size:11px;color:#44cc44;font-weight:bold"> '+r.home_score+':'+r.away_score+'</span>';
-  }
-
-  var html = '<div style="overflow-x:auto;padding:8px">';
+  var html='<div style="padding:6px">';
 
   KO_BRACKET_FIXED.forEach(function(rd){
-    var label = KO_ROUNDS[rd.round] || rd.round;
-    var isFinal  = rd.round==='finale';
-    var isDritter = rd.round==='dritter';
+    var label=KO_ROUNDS[rd.round]||rd.round;
+    var isFinal=rd.round==='finale'||rd.round==='dritter';
+    var cols=isFinal?1:rd.matches.length<=2?rd.matches.length:2;
 
-    html += '<div style="margin-bottom:6px">';
-    html += '<div style="background:linear-gradient(90deg,#2a4a1a,#1a2a0a);color:#ffd700;font-family:Impact,Arial,sans-serif;'
-          + 'font-size:12px;letter-spacing:2px;padding:4px 10px;border-left:4px solid #ffd700;margin-bottom:4px">'
-          + label.toUpperCase() + '</div>';
-
-    // Grid: 2 Spiele pro Zeile (außer Finale/Platz3 → 1 pro Zeile)
-    var cols = (isFinal||isDritter) ? 1 : rd.matches.length <= 2 ? rd.matches.length : 2;
-    html += '<div style="display:grid;grid-template-columns:repeat('+cols+',1fr);gap:4px;margin-bottom:2px">';
+    html+='<div style="background:linear-gradient(90deg,#2a4a1a,#1a2a0a);color:#ffd700;'
+         +'font-family:Impact,Arial,sans-serif;font-size:12px;letter-spacing:2px;'
+         +'padding:4px 10px;border-left:4px solid #ffd700;margin:6px 0 3px">'
+         +label.toUpperCase()+'</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat('+cols+',1fr);gap:4px;margin-bottom:2px">';
 
     rd.matches.forEach(function(m){
-      var r = resultStr(m.num);
-      html += '<div style="background:#f5f0dc;border:2px outset #999999;padding:5px 7px;font-family:Verdana,Arial,sans-serif;font-size:10px;position:relative">'
-            + '<span style="position:absolute;top:3px;right:5px;font-size:8px;color:#999999;font-family:\'Courier New\',monospace">#'+m.num+'</span>'
-            + '<div style="border-bottom:1px solid #cccccc;padding-bottom:3px;margin-bottom:3px">'
-            + teamName(m.num,'h',m.h) + r
-            + '</div>'
-            + '<div>' + teamName(m.num,'a',m.a) + '</div>'
-            + '</div>';
+      var res=resultLookup[m.num];
+      var ti=tippLookup[m.num];
+      var pts=null;
+      if(res&&res.home_score!=null&&ti)
+        pts=calcPts({home:ti.home_score,away:ti.away_score},{home:res.home_score,away:res.away_score});
+      var pcol=pts===3?'#336600':pts===2?'#886600':pts===1?'#664400':'#888';
+
+      var tippHtml='';
+      if(ME&&ti){
+        tippHtml='<span style="font-family:\'Courier New\',monospace;font-size:10px;color:#555;margin-left:4px">'
+          +ti.home_score+':'+ti.away_score+'</span>'
+          +(pts!=null?'<span style="background:'+pcol+';color:#fff;font-size:8px;font-weight:bold;padding:1px 3px;border-radius:2px;margin-left:2px">'+pts+'P</span>':'');
+      }
+
+      html+='<div style="background:#f5f0dc;border:2px outset #999;padding:5px 7px;'
+           +'font-family:Verdana,Arial,sans-serif;font-size:10px;position:relative">'
+           +'<span style="position:absolute;top:2px;right:4px;font-size:8px;color:#bbb;'
+           +'font-family:\'Courier New\',monospace">#'+m.num+'</span>'
+           // Heim
+           +'<div style="display:flex;align-items:center;justify-content:space-between;'
+           +'border-bottom:1px solid #ddd;padding-bottom:3px;margin-bottom:3px">'
+           +'<span>'+realName(m.num,'h',m.h)+'</span>'
+           +'<span style="font-family:\'Courier New\',monospace;font-weight:bold;color:#336633;font-size:11px">'
+           +(res&&res.home_score!=null?res.home_score:'')+'</span>'
+           +'</div>'
+           // Gast
+           +'<div style="display:flex;align-items:center;justify-content:space-between">'
+           +'<span>'+realName(m.num,'a',m.a)+'</span>'
+           +'<span style="font-family:\'Courier New\',monospace;font-weight:bold;color:#336633;font-size:11px">'
+           +(res&&res.away_score!=null?res.away_score:'')+'</span>'
+           +'</div>'
+           // Tipp
+           +(ME?'<div style="margin-top:4px;padding-top:3px;border-top:1px dashed #ccc;font-size:9px;color:#888">'
+           +(ti?'Tipp: '+tippHtml:'<span style="color:#ccc">kein Tipp</span>')
+           +'</div>':'')
+           +'</div>';
     });
 
-    html += '</div></div>';
+    html+='</div>';
   });
 
-  html += '</div>';
-  cont.innerHTML = html;
+  html+='</div>';
+  cont.innerHTML=html;
 }
 
 
@@ -1423,43 +1434,6 @@ function saveKoResult(matchId, btnEl){
     });
 }
 
-function renderKoResultsAdmin(){
-  var cont = document.getElementById('ko-results-admin');
-  if(!cont) return;
-  sb.from('ko_matches').select('*, ko_results(*)').order('match_num')
-    .then(function(res){
-      if(res.error||!res.data||!res.data.length){
-        cont.innerHTML='<div style="padding:10px;font-size:11px;color:#999;font-style:italic">Noch keine K.O.-Spiele angelegt.</div>';
-        return;
-      }
-      var html='';
-      var curRound='';
-      res.data.forEach(function(m){
-        if(m.round!==curRound){
-          curRound=m.round;
-          html+='<div class="admgrphdr">'+KO_ROUNDS[m.round]+' (Spiel '+m.match_num+(res.data.filter(function(x){return x.round===m.round;}).length>1?'–'+(res.data.filter(function(x){return x.round===m.round;})[res.data.filter(function(x){return x.round===m.round;}).length-1].match_num):'')+')</div>';
-        }
-        var r=m.ko_results&&m.ko_results[0]||{};
-        html+='<div class="admrow" style="flex-wrap:wrap">'
-          +'<div style="display:flex;align-items:center;gap:4px;flex:1;min-width:300px;margin-bottom:4px">'
-          +'<span style="font-size:9px;color:#aaa;font-family:\'Courier New\',monospace;width:22px">'+m.match_num+'</span>'
-          +'<input style="border:2px inset #aaa;font-family:Verdana,sans-serif;font-size:10px;padding:2px 4px;background:#ffffee;flex:1" value="'+m.team_home+'" id="kotn-h-'+m.id+'" placeholder="Heim-Team">'
-          +'<span style="color:#888;font-weight:bold;padding:0 3px">vs</span>'
-          +'<input style="border:2px inset #aaa;font-family:Verdana,sans-serif;font-size:10px;padding:2px 4px;background:#ffffee;flex:1" value="'+m.team_away+'" id="kotn-a-'+m.id+'" placeholder="Gast-Team">'
-          +'<button class="btnok" onclick="updateKoTeams('+m.id+')">OK</button>'
-          +'</div>'
-          +'<div style="display:flex;align-items:center;gap:5px">'
-          +'<input class="adminp" type="number" min="0" max="30" value="'+(r.home_score!=null?r.home_score:'')+'" id="kor-h-'+m.id+'">'
-          +'<b style="color:#888">:</b>'
-          +'<input class="adminp" type="number" min="0" max="30" value="'+(r.away_score!=null?r.away_score:'')+'" id="kor-a-'+m.id+'">'
-          +'<button class="btnok" onclick="saveKoResult('+m.id+')">&#9654;</button>'
-          +'</div>'
-          +'</div>';
-      });
-      cont.innerHTML=html;
-    });
-}
-
 function updateKoTeams(matchId){
   var h=document.getElementById('kotn-h-'+matchId).value.trim();
   var a=document.getElementById('kotn-a-'+matchId).value.trim();
@@ -1469,94 +1443,72 @@ function updateKoTeams(matchId){
       if(res.error){showToast('Fehler: '+res.error.message);return;}
       showToast('Teams aktualisiert ✓');
       loadKoCache(function(){renderRangliste();});
-      renderKo();
-    });
+        });
 }
 
-function renderKo(){
-  renderKoBracket();
-  var cont=document.getElementById('ko-content');
+// Admin: KO-Phase komplett in Bracket-Ansicht
+function renderKoAdmin(){
+  var cont=document.getElementById('ko-admin-bracket');
   if(!cont)return;
-  sb.from('ko_matches').select('*, ko_results(*), ko_tipps(*)').order('match_num')
-    .then(function(res){
-      if(res.error||!res.data||!res.data.length){
-        cont.innerHTML='<div style="padding:16px;font-size:11px;color:#999;font-style:italic">Noch keine K.O.-Spiele angelegt.</div>';
-        return;
-      }
-      var now=new Date();
-      var html='';
-      var curRound='';
-      res.data.forEach(function(m){
-        if(m.round!==curRound){
-          curRound=m.round;
-          html+='<div style="background:#2a4a1a;color:#ffd700;font-family:Impact,Arial,sans-serif;font-size:11px;letter-spacing:2px;padding:4px 8px;border-top:2px solid #ffd700">'+KO_ROUNDS[m.round].toUpperCase()+'</div>';
-        }
-        var deadline=m.deadline?new Date(m.deadline):null;
-        var locked=deadline&&now>=deadline;
-        var result=m.ko_results&&m.ko_results[0];
-        var myTipp=null;
-        if(ME&&m.ko_tipps){
-          for(var i=0;i<m.ko_tipps.length;i++){
-            if(m.ko_tipps[i].player_name===ME){myTipp=m.ko_tipps[i];break;}
-          }
-        }
-        var pts=null;
-        if(result&&result.home_score!=null&&myTipp){
-          pts=calcPts({home:myTipp.home_score,away:myTipp.away_score},{home:result.home_score,away:result.away_score});
-        }
-        var hv=myTipp!=null?myTipp.home_score:null;
-        var av=myTipp!=null?myTipp.away_score:null;
-        html+='<div style="display:flex;align-items:center;border-bottom:1px solid #e8e0cc;padding:5px 8px;gap:6px;background:'+(myTipp?'#f8fff8':'#fffff8')+'">'
-            +'<span style="font-family:\'Courier New\',monospace;font-size:9px;color:#aaa;min-width:18px">'+m.match_num+'</span>'
-            +'<span style="flex:1;font-size:11px"><b>'+m.team_home+'</b></span>'
-            +'<span style="color:#888;font-size:10px;padding:0 4px">vs</span>'
-            +'<span style="flex:1;font-size:11px">'+m.team_away+'</span>';
-        if(result&&result.home_score!=null){
-          html+='<span style="font-family:\'Courier New\',monospace;font-weight:bold;color:#336633;font-size:12px;padding:0 4px">'+result.home_score+':'+result.away_score+'</span>';
-        }
-        if(myTipp){
-          var pcol=pts===3?'#336600':pts===2?'#886600':pts===1?'#664400':'#888888';
-          html+='<span style="font-family:\'Courier New\',monospace;font-size:11px;color:#888;padding:0 2px">'+myTipp.home_score+':'+myTipp.away_score+'</span>';
-          if(pts!=null)html+='<span style="background:'+pcol+';color:#fff;font-size:9px;font-weight:bold;padding:1px 4px;border-radius:2px">'+pts+'P</span>';
-        }
-        if(!locked&&ME){
-          html+='<button class="sp-tipp-btn" onclick="koTippOpen('+m.id
-               +',\''+m.team_home.replace(/'/g,"\\'")
-               +'\',\''+m.team_away.replace(/'/g,"\\'")
-               +'\','+(hv!=null?hv:'null')+','+(av!=null?av:'null')
-               +')" style="font-size:10px;padding:3px 8px">&#9998;</button>';
-        } else if(locked&&!myTipp){
-          html+='<span style="font-size:10px;color:#cc0000">&#128274;</span>';
-        }
-        html+='</div>';
-      });
-      cont.innerHTML=html;
-    });
-}
-
-// Admin: Team-Namen für Sechzehntelfinale eintragen
-function renderKoTeamsAdmin(){
-  var cont=document.getElementById('ko-teams-admin');
-  if(!cont)return;
-  sb.from('ko_matches').select('*').eq('round','sechzehntelfinale').order('match_num')
+  sb.from('ko_matches').select('*, ko_results(*)').order('match_num')
     .then(function(res){
       if(res.error||!res.data||!res.data.length){
         cont.innerHTML='<div style="font-size:11px;color:#999;font-style:italic;padding:8px">Keine Spiele gefunden.</div>';
         return;
       }
-      var html='<table cellpadding="3" cellspacing="0" width="100%">';
-      res.data.forEach(function(m){
-        html+='<tr style="border-bottom:1px solid #eee">'
-            +'<td style="font-family:\'Courier New\',monospace;font-size:9px;color:#aaa;width:24px">#'+m.match_num+'</td>'
-            +'<td><input style="border:2px inset #aaa;font-family:Verdana,sans-serif;font-size:10px;padding:2px 4px;background:#ffffee;width:100%" '
-            +'value="'+m.team_home+'" id="kotn-h-'+m.id+'" placeholder="Heim..."></td>'
-            +'<td style="padding:0 4px;color:#888;font-weight:bold;font-size:10px">vs</td>'
-            +'<td><input style="border:2px inset #aaa;font-family:Verdana,sans-serif;font-size:10px;padding:2px 4px;background:#ffffee;width:100%" '
-            +'value="'+m.team_away+'" id="kotn-a-'+m.id+'" placeholder="Gast..."></td>'
-            +'<td width="40" style="padding-left:4px"><button class="btnok" onclick="updateKoTeams('+m.id+')">OK</button></td>'
-            +'</tr>';
+
+      // Lookup match_num → row
+      var byNum={};
+      res.data.forEach(function(m){ byNum[m.match_num]=m; });
+
+      var html='';
+      KO_BRACKET_FIXED.forEach(function(rd){
+        var label=KO_ROUNDS[rd.round]||rd.round;
+        var isSF=rd.round==='sechzehntelfinale';
+        var cols=rd.round==='finale'||rd.round==='dritter'?1:rd.matches.length<=2?rd.matches.length:2;
+
+        html+='<div style="background:linear-gradient(90deg,#2a4a1a,#1a2a0a);color:#ffd700;'
+             +'font-family:Impact,Arial,sans-serif;font-size:11px;letter-spacing:2px;'
+             +'padding:3px 8px;border-left:3px solid #ffd700;margin:6px 0 3px">'
+             +label.toUpperCase()+'</div>';
+        html+='<div style="display:grid;grid-template-columns:repeat('+cols+',1fr);gap:4px;margin-bottom:2px">';
+
+        rd.matches.forEach(function(m){
+          var row=byNum[m.num];
+          if(!row){html+='<div style="background:#eee;padding:6px;font-size:10px;color:#aaa">#'+m.num+' fehlt</div>';return;}
+          var r=row.ko_results&&row.ko_results[0]||{};
+
+          html+='<div style="background:#f5f0dc;border:2px outset #aaa;padding:5px 6px;font-size:10px;font-family:Verdana,sans-serif">';
+          html+='<div style="font-family:\'Courier New\',monospace;font-size:8px;color:#bbb;text-align:right">#'+m.num+'</div>';
+
+          if(isSF){
+            // Teamnamen editierbar
+            html+='<input style="border:1px inset #aaa;width:100%;font-size:10px;padding:2px 3px;background:#ffffee;box-sizing:border-box;margin-bottom:2px" '
+                 +'value="'+row.team_home+'" id="kotn-h-'+row.id+'" placeholder="'+m.h+'">'
+                 +'<input style="border:1px inset #aaa;width:100%;font-size:10px;padding:2px 3px;background:#ffffee;box-sizing:border-box;margin-bottom:3px" '
+                 +'value="'+row.team_away+'" id="kotn-a-'+row.id+'" placeholder="'+m.a+'">'
+                 +'<button class="btnok" style="width:100%;font-size:9px" onclick="updateKoTeams('+row.id+')">Teams speichern</button>';
+          } else {
+            // Nur Anzeige der Teams
+            html+='<div style="font-weight:bold;font-size:10px;padding:1px 0">'+row.team_home+'</div>'
+                 +'<div style="font-size:10px;padding:1px 0;border-bottom:1px solid #ddd;margin-bottom:3px">'+row.team_away+'</div>';
+          }
+
+          // Ergebnis für alle Runden
+          html+='<div style="display:flex;align-items:center;gap:3px;margin-top:3px">'
+               +'<input class="adminp" type="number" min="0" max="30" style="width:32px" '
+               +'value="'+(r.home_score!=null?r.home_score:'')+'" id="kor-h-'+row.id+'">'
+               +'<b style="color:#888;font-size:11px">:</b>'
+               +'<input class="adminp" type="number" min="0" max="30" style="width:32px" '
+               +'value="'+(r.away_score!=null?r.away_score:'')+'" id="kor-a-'+row.id+'">'
+               +'<button class="btnok" style="font-size:9px" onclick="saveKoResult('+row.id+')">&#9654;</button>'
+               +(r.home_score!=null?'<span style="font-family:\'Courier New\',monospace;font-size:10px;color:#336633;font-weight:bold;margin-left:2px">'+r.home_score+':'+r.away_score+'</span>':'')
+               +'</div>';
+
+          html+='</div>';
+        });
+        html+='</div>';
       });
-      html+='</table>';
       cont.innerHTML=html;
     });
 }
@@ -1573,8 +1525,8 @@ function saveKoResult(matchId){
       // Automatisch nächste Runde updaten
       autoAdvanceKo(matchId,+h,+a,function(){
         showToast('Ergebnis gespeichert ✓');
-        loadKoCache(function(){renderRangliste();renderKoBracket();renderKo();});
-        renderKoResultsAdmin();
+        loadKoCache(function(){renderRangliste();renderKoBracket();});
+        renderKoAdmin();
       });
     });
 }
@@ -1656,8 +1608,7 @@ function qtConfirmKo(){
     showToast('Tipp gespeichert \u2713');
     qtClose();
     qtCurrentIsKo=null;
-    renderKo();
-  });
+    });
 }
 
 // ── SPIELPLAN ────────────────────────────────────────────────────
@@ -1684,7 +1635,8 @@ function renderSpielplan(){
     for(var ci=0;ci<rows[ri].length;ci++){
       var g=rows[ri][ci];
       var ms=MATCHES.filter(function(m){return m.group===g;});
-      html+='<td class="groupcard"><div class="groupcardhdr">GRUPPE '+g+'<small>'+GROUPS[g].map(function(t){return fl(t)+t;}).join(' &middot; ')+'</small></div>';
+      html+='<td class="groupcard"><div class="groupcardhdr">GRUPPE '+g
+        +'<small>'+GROUPS[g].map(function(t){return fl(t)+t;}).join(' &middot; ')+'</small></div>';
       for(var mi=0;mi<ms.length;mi++){
         var m=ms[mi];
         var r=STATE.results[m.id]||{};
@@ -1692,28 +1644,24 @@ function renderSpielplan(){
         var ti=ME&&STATE.tipps[ME]?STATE.tipps[ME][m.id]:null;
         var pts=null;
         if(done&&ti&&ti.home!=null) pts=calcPts(ti,r);
+
         html+='<table width="100%" cellpadding="0" cellspacing="0" class="gmrow"><tr>'
           +'<td class="gmdate">'+m.date+'</td>'
-          +'<td><span class="gmhome">'+fl(m.home)+m.home+'</span><br>'
-          +'<span class="gmaway">'+fl(m.away)+m.away+'</span></td>'
-          +'<td align="right" class="gmscore '+(done?'done':'open')+'">'+(done?r.home+':'+r.away:'&ndash;:&ndash;')+'</td>';
-        // Tipp-Spalte — nur wenn Spieler gewählt
+          +'<td><span class="gmhome">'+fl(m.home)+m.home+'</span>'
+          +'<br><span class="gmaway">'+fl(m.away)+m.away+'</span></td>'
+          +'<td align="right" class="gmscore '+(done?'done':'open')+'">'
+          +(done?r.home+':'+r.away:'&ndash;:&ndash;')+'</td>';
+
+        // Tipp + Punkte nur wenn Spieler gewählt — kein Tippen-Button (Gruppenphase schon vorbei)
         if(ME){
           if(ti&&ti.home!=null){
-            var pcol=pts===3?'#336600':pts===2?'#886600':pts===1?'#664400':'#888888';
-            html+='<td align="right" style="padding:2px 4px;white-space:nowrap">'
-              +'<span style="font-family:\'Courier New\',monospace;font-size:10px;color:#555">'+ti.home+':'+ti.away+'</span>';
-            if(pts!=null) html+='<span style="background:'+pcol+';color:#fff;font-size:8px;font-weight:bold;padding:1px 3px;border-radius:2px;margin-left:2px">'+pts+'P</span>';
-            if(!done) html+='<button class="sp-tipp-btn" onclick="qtOpen(\''+m.id+'\',\''+m.home.replace(/\'/g,"\\\'")+'\',\''+m.away.replace(/\'/g,"\\\'")+'\')">&#9998;</button>';
-            html+='</td>';
-          } else if(!done){
-            html+='<td align="right" style="padding:2px 4px">'
-              +'<button class="sp-tipp-btn" onclick="qtOpen(\''+m.id+'\',\''+m.home.replace(/\'/g,"\\\'")+'\',\''+m.away.replace(/\'/g,"\\\'")+'\')">'
-              +'Tippen</button>'
-              +'<input type="hidden" id="h_'+m.id+'" value="">'
-              +'<input type="hidden" id="a_'+m.id+'" value=""></td>';
+            var pcol=pts===3?'#336600':pts===2?'#886600':pts===1?'#664400':'#888';
+            html+='<td align="right" style="padding:2px 3px;white-space:nowrap;font-size:10px">'
+              +'<span style="font-family:\'Courier New\',monospace;color:#555">'+ti.home+':'+ti.away+'</span>'
+              +(pts!=null?'<span style="background:'+pcol+';color:#fff;font-size:8px;font-weight:bold;padding:1px 3px;border-radius:2px;margin-left:2px">'+pts+'P</span>':'')
+              +'</td>';
           } else {
-            html+='<td style="padding:2px 4px;font-size:9px;color:#aaa;text-align:right">–</td>';
+            html+='<td style="padding:2px 3px;font-size:9px;color:#ccc;text-align:right">–</td>';
           }
         }
         html+='</tr></table>';
@@ -1727,7 +1675,6 @@ function renderSpielplan(){
   renderKoBracket();
 }
 
-// ── TIPPEN ───────────────────────────────────────────────────────
 function renderTippen(){
   var sel=document.getElementById('tipper-select');
   sel.innerHTML='<option value="">-- ausw\u00e4hlen --</option>';
@@ -1743,7 +1690,6 @@ function loadMyTipps(){
     if(statEl)statEl.textContent='';
     if(sb2)sb2.style.display='none';
     renderSpielplan();
-    renderKo();
     return;
   }
   var st=calcStats(ME);
@@ -1753,7 +1699,6 @@ function loadMyTipps(){
   var statEl=document.getElementById('tipp-stat');
   if(statEl)statEl.textContent=tipped+'/'+MATCHES.length+' getippt  |  '+done2+' ausgewertet  |  '+st.p+' Punkte';
   renderSpielplan();
-  renderKo();
   if(sb2)sb2.style.display='block';
   renderSonder();
 }
@@ -1835,8 +1780,7 @@ function renderAdmin(){
   }
   document.getElementById('admin-players').innerHTML=phtml;
   fillSonderDropdowns();
-  renderKoTeamsAdmin();
-  renderKoResultsAdmin();
+  renderKoAdmin();
 }
 function saveSonderResult(){
   if(!STATE.sonderResult) STATE.sonderResult={};
