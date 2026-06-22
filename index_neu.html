@@ -560,8 +560,6 @@ a:visited { color: #660099; }
       <td width="1%" nowrap><button class="navbtn active" onclick="showPage('rangliste',this)">&#9733; Rangliste</button></td>
       <td width="1%" nowrap><button class="navbtn" onclick="showPage('spielplan',this)">Spielplan</button></td>
       <td width="1%" nowrap><button class="navbtn" onclick="showPage('tippen',this)">Meine Tipps</button></td>
-      <td width="1%" nowrap><button class="navbtn" onclick="showPage('ko',this)">&#9889; K.O.-Phase</button></td>
-      <td width="1%" nowrap><button class="navbtn" onclick="showPage('sonder',this)">Sondertipps</button></td>
       <td width="1%" nowrap><button class="navbtn" onclick="showPage('admin',this)">&#9881; Admin</button></td>
       <td width="100%">&nbsp;</td>
     </tr>
@@ -628,8 +626,8 @@ a:visited { color: #660099; }
         <div id="sp-gruppe">
           <table width="100%" cellpadding="0" cellspacing="0" id="group-outer-table" class="groupgrid"></table>
         </div>
-        <div id="sp-ko" style="display:none;padding:20px;text-align:center;color:#999999;font-size:11px;font-style:italic">
-          &#8987; K.O.-Runde wird nach Abschluss der Gruppenphase bef&uuml;llt.
+        <div id="sp-ko" style="display:none">
+          <div id="ko-bracket"></div>
         </div>
       </div>
     </div>
@@ -637,7 +635,7 @@ a:visited { color: #660099; }
     <!-- ═══ TIPPEN ═══ -->
     <div id="page-tippen" style="display:none">
       <div class="sectionbox">
-        <div class="sectionhdr">MEINE TIPPS</div>
+        <div class="sectionhdr">GRUPPENTIPPS</div>
         <div class="tipselbar">
           <table cellpadding="0" cellspacing="0" width="100%"><tr>
             <td style="font-size:10px;font-weight:bold;color:#555555;text-transform:uppercase;letter-spacing:1px;padding-right:8px">Spieler:</td>
@@ -649,10 +647,6 @@ a:visited { color: #660099; }
         </div>
         <div id="tipp-form"></div>
       </div>
-    </div>
-
-    <!-- ═══ K.O.-PHASE ═══ -->
-    <div id="page-ko" style="display:none">
       <div class="sectionbox">
         <div class="sectionhdr">&#9889; K.O.-PHASE TIPPS</div>
         <div id="ko-content">
@@ -661,15 +655,15 @@ a:visited { color: #660099; }
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- ═══ SONDERTIPPS ═══ -->
-    <div id="page-sonder" style="display:none">
       <div class="sectionbox">
         <div class="sectionhdr">&#9733; SONDERTIPPS &Uuml;BERSICHT <span class="blink2">&#9733;</span></div>
         <div id="sonder-inner"></div>
       </div>
     </div>
+
+
+
+
 
     <!-- ═══ ADMIN ═══ -->
     <div id="page-admin" style="display:none">
@@ -1111,7 +1105,7 @@ function showPage(name,btn){
   // Sicherstellen dass main-content sichtbar ist
   document.getElementById('main-content').style.display='block';
   document.getElementById('countdown-wrap').style.display='none';
-  var pages=['rangliste','spielplan','tippen','ko','sonder','admin'];
+  var pages=['rangliste','spielplan','tippen','admin'];
   for(var i=0;i<pages.length;i++){
     var el=document.getElementById('page-'+pages[i]);
     if(el)el.style.display=pages[i]===name?'block':'none';
@@ -1120,10 +1114,8 @@ function showPage(name,btn){
   for(var i=0;i<btns.length;i++)btns[i].classList.remove('active');
   if(btn)btn.classList.add('active');
   if(name==='rangliste')renderRangliste();
-  if(name==='spielplan')renderSpielplan();
-  if(name==='tippen')renderTippen();
-  if(name==='ko')renderKo();
-  if(name==='sonder')renderSonder();
+  if(name==='spielplan'){renderSpielplan();renderKoBracket();}
+  if(name==='tippen'){renderTippen();renderKo();renderSonder();}
   if(name==='admin')renderAdmin();
 }
 
@@ -1329,7 +1321,125 @@ function qtClose(){
   qtCurrentIsKo=null;
 }
 
-// ── K.O.-PHASE ───────────────────────────────────────────────────
+// ── K.O.-BRACKET ─────────────────────────────────────────────────
+// Fixer Turnierbaum — Paarungen stehen fest, Teams kommen später
+var KO_BRACKET_FIXED = [
+  { round:'sechzehntelfinale', matches:[
+    { num:73, h:'2. Gruppe A',             a:'2. Gruppe B' },
+    { num:74, h:'Deutschland',             a:'3. A/B/C/D/F' },
+    { num:75, h:'1. Gruppe F',             a:'2. Gruppe C' },
+    { num:76, h:'1. Gruppe C',             a:'2. Gruppe F' },
+    { num:77, h:'1. Gruppe I',             a:'3. C/D/F/G/H' },
+    { num:78, h:'2. Gruppe E',             a:'2. Gruppe I' },
+    { num:79, h:'Mexiko',                  a:'3. C/E/F/H/I' },
+    { num:80, h:'1. Gruppe L',             a:'3. E/H/I/J/K' },
+    { num:81, h:'USA',                     a:'3. B/E/F/I/J' },
+    { num:82, h:'1. Gruppe G',             a:'3. A/E/H/I/J' },
+    { num:83, h:'2. Gruppe K',             a:'2. Gruppe L' },
+    { num:84, h:'1. Gruppe H',             a:'2. Gruppe J' },
+    { num:85, h:'1. Gruppe B',             a:'3. E/F/G/I/J' },
+    { num:86, h:'1. Gruppe J',             a:'2. Gruppe H' },
+    { num:87, h:'1. Gruppe K',             a:'3. D/E/I/J/L' },
+    { num:88, h:'2. Gruppe D',             a:'2. Gruppe G' },
+  ]},
+  { round:'achtelfinale', matches:[
+    { num:89, h:'S74', a:'S77' },
+    { num:90, h:'S73', a:'S75' },
+    { num:91, h:'S76', a:'S78' },
+    { num:92, h:'S79', a:'S80' },
+    { num:93, h:'S83', a:'S84' },
+    { num:94, h:'S81', a:'S82' },
+    { num:95, h:'S86', a:'S88' },
+    { num:96, h:'S85', a:'S87' },
+  ]},
+  { round:'viertelfinale', matches:[
+    { num:97,  h:'S89', a:'S90' },
+    { num:98,  h:'S93', a:'S94' },
+    { num:99,  h:'S91', a:'S92' },
+    { num:100, h:'S95', a:'S96' },
+  ]},
+  { round:'halbfinale', matches:[
+    { num:101, h:'S97',  a:'S98' },
+    { num:102, h:'S99',  a:'S100' },
+  ]},
+  { round:'dritter', matches:[
+    { num:103, h:'V101', a:'V102' },
+  ]},
+  { round:'finale', matches:[
+    { num:104, h:'S101', a:'S102' },
+  ]},
+];
+
+function renderKoBracket(){
+  var cont = document.getElementById('ko-bracket');
+  if(!cont) return;
+
+  // Baue Lookup: match_num → echte Teams aus Supabase
+  var teamLookup = {};
+  KO_CACHE.matches.forEach(function(m){
+    teamLookup[m.match_num] = { h: m.team_home, a: m.team_away };
+  });
+  // Ergebnis-Lookup
+  var resultLookup = {};
+  KO_CACHE.results.forEach(function(r){
+    var m = KO_CACHE.matches.filter(function(x){return x.id===r.ko_match_id;})[0];
+    if(m) resultLookup[m.match_num] = r;
+  });
+
+  function teamName(num, side, fallback){
+    // Wenn echte Teams eingetragen → zeige echten Namen
+    if(teamLookup[num]){
+      var t = side==='h' ? teamLookup[num].h : teamLookup[num].a;
+      // Prüfe ob es noch ein Platzhalter ist ("Sieger Spiel X" o.ä.)
+      if(t && !t.match(/^(Sieger|Verlierer|[12]\. Gruppe|[13]\. Gruppe|3\. [A-L])/)){
+        return '<span style="color:#ffcc00;font-weight:bold">'+t+'</span>';
+      }
+    }
+    return '<span style="color:#aaaaaa;font-style:italic">'+fallback+'</span>';
+  }
+
+  function resultStr(num){
+    var r = resultLookup[num];
+    if(!r || r.home_score==null) return '';
+    var pts = r.home_score > r.away_score ? 'h' : r.home_score < r.away_score ? 'a' : 'u';
+    return '<span style="font-family:\'Courier New\',monospace;font-size:11px;color:#44cc44;font-weight:bold"> '+r.home_score+':'+r.away_score+'</span>';
+  }
+
+  var html = '<div style="overflow-x:auto;padding:8px">';
+
+  KO_BRACKET_FIXED.forEach(function(rd){
+    var label = KO_ROUNDS[rd.round] || rd.round;
+    var isFinal  = rd.round==='finale';
+    var isDritter = rd.round==='dritter';
+
+    html += '<div style="margin-bottom:6px">';
+    html += '<div style="background:linear-gradient(90deg,#2a4a1a,#1a2a0a);color:#ffd700;font-family:Impact,Arial,sans-serif;'
+          + 'font-size:12px;letter-spacing:2px;padding:4px 10px;border-left:4px solid #ffd700;margin-bottom:4px">'
+          + label.toUpperCase() + '</div>';
+
+    // Grid: 2 Spiele pro Zeile (außer Finale/Platz3 → 1 pro Zeile)
+    var cols = (isFinal||isDritter) ? 1 : rd.matches.length <= 2 ? rd.matches.length : 2;
+    html += '<div style="display:grid;grid-template-columns:repeat('+cols+',1fr);gap:4px;margin-bottom:2px">';
+
+    rd.matches.forEach(function(m){
+      var r = resultStr(m.num);
+      html += '<div style="background:#f5f0dc;border:2px outset #999999;padding:5px 7px;font-family:Verdana,Arial,sans-serif;font-size:10px;position:relative">'
+            + '<span style="position:absolute;top:3px;right:5px;font-size:8px;color:#999999;font-family:\'Courier New\',monospace">#'+m.num+'</span>'
+            + '<div style="border-bottom:1px solid #cccccc;padding-bottom:3px;margin-bottom:3px">'
+            + teamName(m.num,'h',m.h) + r
+            + '</div>'
+            + '<div>' + teamName(m.num,'a',m.a) + '</div>'
+            + '</div>';
+    });
+
+    html += '</div></div>';
+  });
+
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
+
 var KO_ROUNDS = {
   sechzehntelfinale: 'Sechzehntelfinale',
   achtelfinale:      'Achtelfinale',
@@ -1444,6 +1554,7 @@ function updateKoTeams(matchId){
 }
 
 function renderKo(){
+  renderKoBracket();
   var cont = document.getElementById('ko-content');
   if(!cont) return;
   sb.from('ko_matches').select('*, ko_results(*), ko_tipps(*)').order('match_num')
@@ -1962,7 +2073,7 @@ function init(){
       renderRangliste();renderSpielplan();renderTippen();
       if(ok && isAdmin) renderAdmin();
       if(!isAdmin) maybeShowWelcome();
-      loadKoCache(function(){ renderRangliste(); });
+      loadKoCache(function(){ renderRangliste(); renderKoBracket(); });
     });
   } else {
     // Ohne Token: Daten trotzdem öffentlich laden
@@ -1971,7 +2082,7 @@ function init(){
       setStatus(ok?'Online':'Offline',false);
       renderRangliste();renderSpielplan();renderTippen();
       if(!isAdmin) maybeShowWelcome();
-      loadKoCache(function(){ renderRangliste(); });
+      loadKoCache(function(){ renderRangliste(); renderKoBracket(); });
     });
   }
 }
