@@ -5,7 +5,7 @@
 <script type="text/javascript">
 var WM_START = new Date('2026-06-11T19:00:00Z');
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <title>WM 2026 RZ Tippspiel</title>
 <style type="text/css">
 body {
@@ -558,8 +558,7 @@ a:visited { color: #660099; }
     <table width="100%" cellpadding="0" cellspacing="0" class="navtable">
     <tr>
       <td width="1%" nowrap><button class="navbtn active" onclick="showPage('rangliste',this)">&#9733; Rangliste</button></td>
-      <td width="1%" nowrap><button class="navbtn" onclick="showPage('spielplan',this)">Spielplan</button></td>
-      <td width="1%" nowrap><button class="navbtn" onclick="showPage('tippen',this)">Meine Tipps</button></td>
+      <td width="1%" nowrap><button class="navbtn" onclick="showPage('spielplan',this)">Spielplan &amp; Tipps</button></td>
       <td width="1%" nowrap><button class="navbtn" onclick="showPage('admin',this)">&#9881; Admin</button></td>
       <td width="100%">&nbsp;</td>
     </tr>
@@ -615,27 +614,10 @@ a:visited { color: #660099; }
       </div>
     </div>
 
-    <!-- ═══ SPIELPLAN ═══ -->
+    <!-- ═══ SPIELPLAN + TIPPS ═══ -->
     <div id="page-spielplan" style="display:none">
       <div class="sectionbox">
         <div class="sectionhdr">SPIELPLAN WM 2026</div>
-        <div class="phasetabrow">
-          <button class="phasetab active" onclick="setPhase('gruppe',this)">Gruppenphase</button>
-          <button class="phasetab" onclick="setPhase('ko',this)">K.O.-Runde</button>
-        </div>
-        <div id="sp-gruppe">
-          <table width="100%" cellpadding="0" cellspacing="0" id="group-outer-table" class="groupgrid"></table>
-        </div>
-        <div id="sp-ko" style="display:none">
-          <div id="ko-bracket"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ TIPPEN ═══ -->
-    <div id="page-tippen" style="display:none">
-      <div class="sectionbox">
-        <div class="sectionhdr">GRUPPENTIPPS</div>
         <div class="tipselbar">
           <table cellpadding="0" cellspacing="0" width="100%"><tr>
             <td style="font-size:10px;font-weight:bold;color:#555555;text-transform:uppercase;letter-spacing:1px;padding-right:8px">Spieler:</td>
@@ -645,24 +627,25 @@ a:visited { color: #660099; }
             <td align="right"><span class="statbar" id="tipp-stat"></span></td>
           </tr></table>
         </div>
-        <div id="tipp-form"></div>
-      </div>
-      <div class="sectionbox">
-        <div class="sectionhdr">&#9889; K.O.-PHASE TIPPS</div>
-        <div id="ko-content">
-          <div style="padding:16px;font-size:11px;color:#999999;font-family:Verdana,Arial,sans-serif;font-style:italic">
-            Lade K.O.-Runden...
-          </div>
+        <div class="phasetabrow">
+          <button class="phasetab active" onclick="setPhase('gruppe',this)">Gruppenphase</button>
+          <button class="phasetab" onclick="setPhase('ko',this)">K.O.-Runde</button>
+        </div>
+        <div id="sp-gruppe">
+          <table width="100%" cellpadding="0" cellspacing="0" id="group-outer-table" class="groupgrid"></table>
+          <div id="tipp-form"></div>
+        </div>
+        <div id="sp-ko" style="display:none">
+          <div id="ko-bracket"></div>
+          <div class="sectionhdr" style="margin-top:8px">&#9889; K.O.-PHASE TIPPS</div>
+          <div id="ko-content"><div style="padding:12px;font-size:11px;color:#999;font-style:italic">Lade...</div></div>
         </div>
       </div>
-      <div class="sectionbox">
-        <div class="sectionhdr">&#9733; SONDERTIPPS &Uuml;BERSICHT <span class="blink2">&#9733;</span></div>
+      <div class="sectionbox" id="sonder-box" style="display:none">
+        <div class="sectionhdr">&#9733; SONDERTIPPS</div>
         <div id="sonder-inner"></div>
       </div>
     </div>
-
-
-
 
 
     <!-- ═══ ADMIN ═══ -->
@@ -743,37 +726,13 @@ a:visited { color: #660099; }
           </div>
         </div><!-- /sectionbox Spieler -->
         <div class="sectionbox">
-          <div class="sectionhdr">&#9889; K.O.-PAARUNGEN EINTRAGEN</div>
-          <div style="padding:10px;background:#fffff8;font-family:Verdana,Arial,sans-serif;font-size:11px">
-            <div style="margin-bottom:8px;color:#555555">
-              Runde w&auml;hlen, Paarungen eintragen, Deadline setzen &rarr; Speichern.<br>
-              <span style="font-size:10px;color:#888888">Spieler k&ouml;nnen bis zur Deadline tippen.</span>
-            </div>
-            <table cellpadding="4" cellspacing="0" width="100%">
-              <tr>
-                <td style="font-weight:bold;width:120px">Runde:</td>
-                <td>
-                  <select class="retroselect" id="ko-round-select">
-                    <option value="sechzehntelfinale">Sechzehntelfinale</option>
-                    <option value="achtelfinale">Achtelfinale</option>
-                    <option value="viertelfinale">Viertelfinale</option>
-                    <option value="halbfinale">Halbfinale</option>
-                    <option value="dritter">Spiel um Platz 3</option>
-                    <option value="finale">Finale</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td style="font-weight:bold;vertical-align:top;padding-top:8px">Deadline:</td>
-                <td><input type="datetime-local" class="retroinput" id="ko-deadline" style="width:220px;margin:0"></td>
-              </tr>
-            </table>
-            <div id="ko-match-inputs" style="margin-top:10px"></div>
-            <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
-              <button class="btngreen" onclick="addKoMatchInput()">+ Paarung hinzuf&uuml;gen</button>
-              <button class="btngreen" onclick="saveKoMatches()">&#128190; Runde speichern</button>
-              <span id="ko-save-msg" style="font-family:'Courier New',monospace;font-size:10px;color:#336633"></span>
-            </div>
+          <div class="sectionhdr">&#9889; SECHZEHNTELFINALE &mdash; TEAMS EINTRAGEN</div>
+          <div style="padding:8px;background:#fffff8;font-family:Verdana,Arial,sans-serif;font-size:11px;color:#555">
+            Trage die echten Teamnamen ein sobald die Gruppenphase abgeschlossen ist.
+            Die weiteren Runden werden automatisch berechnet.
+          </div>
+          <div id="ko-teams-admin" style="padding:8px">
+            <div style="font-size:11px;color:#999;font-style:italic">Lade...</div>
           </div>
         </div>
         <div class="sectionbox">
@@ -868,6 +827,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; 
+  
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -1105,7 +1065,7 @@ function showPage(name,btn){
   // Sicherstellen dass main-content sichtbar ist
   document.getElementById('main-content').style.display='block';
   document.getElementById('countdown-wrap').style.display='none';
-  var pages=['rangliste','spielplan','tippen','admin'];
+  var pages=['rangliste','spielplan','admin'];
   for(var i=0;i<pages.length;i++){
     var el=document.getElementById('page-'+pages[i]);
     if(el)el.style.display=pages[i]===name?'block':'none';
@@ -1114,8 +1074,7 @@ function showPage(name,btn){
   for(var i=0;i<btns.length;i++)btns[i].classList.remove('active');
   if(btn)btn.classList.add('active');
   if(name==='rangliste')renderRangliste();
-  if(name==='spielplan'){renderSpielplan();renderKoBracket();}
-  if(name==='tippen'){renderTippen();renderKo();renderSonder();}
+  if(name==='spielplan'){renderSpielplan();renderKoBracket();renderKo();renderSonder();}
   if(name==='admin')renderAdmin();
 }
 
@@ -1450,45 +1409,7 @@ var KO_ROUNDS = {
 };
 var koMatchCounter = 0;
 
-function addKoMatchInput(){
-  koMatchCounter++;
-  var div = document.createElement('div');
-  div.id = 'ko-pair-'+koMatchCounter;
-  div.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px';
-  div.innerHTML =
-    '<input type="text" class="retroinput" placeholder="Heim..." id="ko-h-'+koMatchCounter+'" style="margin:0;flex:1">'
-    +'<span style="font-weight:bold;color:#555">vs.</span>'
-    +'<input type="text" class="retroinput" placeholder="Gast..." id="ko-a-'+koMatchCounter+'" style="margin:0;flex:1">'
-    +'<button class="btnred" onclick="document.getElementById(\'ko-pair-'+koMatchCounter+'\').remove()" style="padding:3px 8px">&#10005;</button>';
-  document.getElementById('ko-match-inputs').appendChild(div);
-}
 
-function saveKoMatches(){
-  var round    = document.getElementById('ko-round-select').value;
-  var deadline = document.getElementById('ko-deadline').value;
-  var msgEl    = document.getElementById('ko-save-msg');
-  if(!deadline){ msgEl.textContent='⚠ Bitte Deadline setzen'; return; }
-
-  var pairs = [];
-  var inputs = document.getElementById('ko-match-inputs').children;
-  for(var i=0;i<inputs.length;i++){
-    var id = inputs[i].id.replace('ko-pair-','');
-    var h = document.getElementById('ko-h-'+id).value.trim();
-    var a = document.getElementById('ko-a-'+id).value.trim();
-    if(h && a) pairs.push({round:round, match_num:i+1, team_home:h, team_away:a, deadline:new Date(deadline).toISOString()});
-  }
-  if(!pairs.length){ msgEl.textContent='⚠ Keine Paarungen eingegeben'; return; }
-
-  msgEl.textContent = 'Speichere...';
-  sb.from('ko_matches').insert(pairs).then(function(res){
-    if(res.error){ msgEl.textContent='⚠ Fehler: '+res.error.message; return; }
-    msgEl.textContent = '✓ '+pairs.length+' Spiele gespeichert!';
-    document.getElementById('ko-match-inputs').innerHTML = '';
-    koMatchCounter = 0;
-    renderKoResultsAdmin();
-    renderKo();
-  });
-}
 
 function saveKoResult(matchId, btnEl){
   var h = document.getElementById('kor-h-'+matchId).value;
@@ -1555,90 +1476,157 @@ function updateKoTeams(matchId){
 
 function renderKo(){
   renderKoBracket();
-  var cont = document.getElementById('ko-content');
-  if(!cont) return;
+  var cont=document.getElementById('ko-content');
+  if(!cont)return;
   sb.from('ko_matches').select('*, ko_results(*), ko_tipps(*)').order('match_num')
     .then(function(res){
       if(res.error||!res.data||!res.data.length){
-        cont.innerHTML='<div style="padding:20px;font-size:11px;color:#999999;font-style:italic;text-align:center">&#8987; K.O.-Runde noch nicht gestartet.</div>';
+        cont.innerHTML='<div style="padding:16px;font-size:11px;color:#999;font-style:italic">Noch keine K.O.-Spiele angelegt.</div>';
         return;
       }
-
-      var now = new Date();
+      var now=new Date();
       var html='';
       var curRound='';
-
       res.data.forEach(function(m){
         if(m.round!==curRound){
           curRound=m.round;
-          html+='<div class="group-card-hdr" style="background:linear-gradient(180deg,#335533,#113311);color:#ffd700;font-family:Impact,sans-serif;font-size:13px;letter-spacing:1.5px;padding:5px 8px;border-bottom:2px solid #ffcc00">'
-            +KO_ROUNDS[m.round].toUpperCase()+'</div>';
+          html+='<div style="background:#2a4a1a;color:#ffd700;font-family:Impact,Arial,sans-serif;font-size:11px;letter-spacing:2px;padding:4px 8px;border-top:2px solid #ffd700">'+KO_ROUNDS[m.round].toUpperCase()+'</div>';
         }
-
-        var deadline = m.deadline ? new Date(m.deadline) : null;
-        var locked   = deadline && now >= deadline;
-        var result   = m.ko_results && m.ko_results[0];
-        var myTipp   = null;
-        if(ME && m.ko_tipps){
+        var deadline=m.deadline?new Date(m.deadline):null;
+        var locked=deadline&&now>=deadline;
+        var result=m.ko_results&&m.ko_results[0];
+        var myTipp=null;
+        if(ME&&m.ko_tipps){
           for(var i=0;i<m.ko_tipps.length;i++){
             if(m.ko_tipps[i].player_name===ME){myTipp=m.ko_tipps[i];break;}
           }
         }
-
-        var pts = null;
+        var pts=null;
         if(result&&result.home_score!=null&&myTipp){
-          pts = calcPts({home:myTipp.home_score,away:myTipp.away_score},
-                        {home:result.home_score, away:result.away_score});
+          pts=calcPts({home:myTipp.home_score,away:myTipp.away_score},{home:result.home_score,away:result.away_score});
         }
-
-        // Datum formatieren
-        var dateStr = '';
-        if(m.deadline){
-          var d = new Date(m.deadline);
-          dateStr = d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});
-        }
-
-        html+='<table width="100%" cellpadding="0" cellspacing="0"><tr style="border-bottom:1px solid #eeeeee">'
-          +'<td style="padding:5px 8px;width:28px;color:#aaa;font-family:\'Courier New\',monospace;font-size:10px">'+m.match_num+'</td>'
-          +'<td style="padding:5px 4px;font-size:9px;color:#aaa;width:32px">'+dateStr+'</td>'
-          +'<td style="padding:5px 4px"><b>'+m.team_home+'</b></td>'
-          +'<td style="padding:5px 2px;color:#888;font-size:10px" align="center">vs</td>'
-          +'<td style="padding:5px 4px">'+m.team_away+'</td>'
-          +'<td align="right" nowrap style="padding:5px 8px">';
-
-        // Ergebnis
+        var hv=myTipp!=null?myTipp.home_score:null;
+        var av=myTipp!=null?myTipp.away_score:null;
+        html+='<div style="display:flex;align-items:center;border-bottom:1px solid #e8e0cc;padding:5px 8px;gap:6px;background:'+(myTipp?'#f8fff8':'#fffff8')+'">'
+            +'<span style="font-family:\'Courier New\',monospace;font-size:9px;color:#aaa;min-width:18px">'+m.match_num+'</span>'
+            +'<span style="flex:1;font-size:11px"><b>'+m.team_home+'</b></span>'
+            +'<span style="color:#888;font-size:10px;padding:0 4px">vs</span>'
+            +'<span style="flex:1;font-size:11px">'+m.team_away+'</span>';
         if(result&&result.home_score!=null){
-          html+='<span style="font-family:\'Courier New\',monospace;font-size:13px;font-weight:bold;color:#336633">'
-            +result.home_score+':'+result.away_score+'</span> ';
+          html+='<span style="font-family:\'Courier New\',monospace;font-weight:bold;color:#336633;font-size:12px;padding:0 4px">'+result.home_score+':'+result.away_score+'</span>';
         }
-
-        // Eigener Tipp
         if(myTipp){
-          var pTag = pts!=null?'<span class="ptstag p'+pts+'">'+pts+'P</span>':'';
-          html+='<span style="font-family:\'Courier New\',monospace;font-size:11px;color:#888">'
-            +myTipp.home_score+':'+myTipp.away_score+'</span> '+pTag+' ';
+          var pcol=pts===3?'#336600':pts===2?'#886600':pts===1?'#664400':'#888888';
+          html+='<span style="font-family:\'Courier New\',monospace;font-size:11px;color:#888;padding:0 2px">'+myTipp.home_score+':'+myTipp.away_score+'</span>';
+          if(pts!=null)html+='<span style="background:'+pcol+';color:#fff;font-size:9px;font-weight:bold;padding:1px 4px;border-radius:2px">'+pts+'P</span>';
         }
-
-        // Tipp-Button
         if(!locked&&ME){
-          var hv = myTipp?myTipp.home_score:'';
-          var av = myTipp?myTipp.away_score:'';
-          html+='<button class="sp-tipp-btn" onclick="koTippOpen('+m.id+',\''+m.team_home.replace(/'/g,"\\'")+'\',\''+m.team_away.replace(/'/g,"\\'")+'\','+hv+','+av+')">&#9998; Tippen</button>';
+          html+='<button class="sp-tipp-btn" onclick="koTippOpen('+m.id
+               +',\''+m.team_home.replace(/'/g,"\\'")
+               +'\',\''+m.team_away.replace(/'/g,"\\'")
+               +'\','+(hv!=null?hv:'null')+','+(av!=null?av:'null')
+               +')" style="font-size:10px;padding:3px 8px">&#9998;</button>';
         } else if(locked&&!myTipp){
-          html+='<span style="font-size:9px;color:#cc0000">&#128274;</span>';
+          html+='<span style="font-size:10px;color:#cc0000">&#128274;</span>';
         }
-
-        html+='</td></tr></table>';
+        html+='</div>';
       });
       cont.innerHTML=html;
     });
 }
 
+// Admin: Team-Namen für Sechzehntelfinale eintragen
+function renderKoTeamsAdmin(){
+  var cont=document.getElementById('ko-teams-admin');
+  if(!cont)return;
+  sb.from('ko_matches').select('*').eq('round','sechzehntelfinale').order('match_num')
+    .then(function(res){
+      if(res.error||!res.data||!res.data.length){
+        cont.innerHTML='<div style="font-size:11px;color:#999;font-style:italic;padding:8px">Keine Spiele gefunden.</div>';
+        return;
+      }
+      var html='<table cellpadding="3" cellspacing="0" width="100%">';
+      res.data.forEach(function(m){
+        html+='<tr style="border-bottom:1px solid #eee">'
+            +'<td style="font-family:\'Courier New\',monospace;font-size:9px;color:#aaa;width:24px">#'+m.match_num+'</td>'
+            +'<td><input style="border:2px inset #aaa;font-family:Verdana,sans-serif;font-size:10px;padding:2px 4px;background:#ffffee;width:100%" '
+            +'value="'+m.team_home+'" id="kotn-h-'+m.id+'" placeholder="Heim..."></td>'
+            +'<td style="padding:0 4px;color:#888;font-weight:bold;font-size:10px">vs</td>'
+            +'<td><input style="border:2px inset #aaa;font-family:Verdana,sans-serif;font-size:10px;padding:2px 4px;background:#ffffee;width:100%" '
+            +'value="'+m.team_away+'" id="kotn-a-'+m.id+'" placeholder="Gast..."></td>'
+            +'<td width="40" style="padding-left:4px"><button class="btnok" onclick="updateKoTeams('+m.id+')">OK</button></td>'
+            +'</tr>';
+      });
+      html+='</table>';
+      cont.innerHTML=html;
+    });
+}
+
+// Nach Ergebnis eintragen: nächste Runde automatisch updaten
+function saveKoResult(matchId){
+  var h=document.getElementById('kor-h-'+matchId).value;
+  var a=document.getElementById('kor-a-'+matchId).value;
+  if(h===''||a==='')return;
+  sb.from('ko_results')
+    .upsert({ko_match_id:matchId,home_score:+h,away_score:+a},{onConflict:'ko_match_id'})
+    .then(function(res){
+      if(res.error){showToast('Fehler: '+res.error.message);return;}
+      // Automatisch nächste Runde updaten
+      autoAdvanceKo(matchId,+h,+a,function(){
+        showToast('Ergebnis gespeichert ✓');
+        loadKoCache(function(){renderRangliste();renderKoBracket();renderKo();});
+        renderKoResultsAdmin();
+      });
+    });
+}
+
+// Berechnet den Sieger und trägt ihn in die nächste Runde ein
+function autoAdvanceKo(matchId, hs, as, cb){
+  sb.from('ko_matches').select('*').eq('id',matchId).single()
+    .then(function(res){
+      if(res.error||!res.data){if(cb)cb();return;}
+      var m=res.data;
+      var winner = hs>as ? m.team_home : m.team_away;
+      var loser  = hs>as ? m.team_away : m.team_home;
+      var num=m.match_num;
+
+      // Finde Folge-Spiel aus dem fixen Bracket
+      var nextMatchNum=null, nextSide=null, isLoser=false;
+      var AF=[
+        {num:89,h:74,a:77},{num:90,h:73,a:75},{num:91,h:76,a:78},{num:92,h:79,a:80},
+        {num:93,h:83,a:84},{num:94,h:81,a:82},{num:95,h:86,a:88},{num:96,h:85,a:87}
+      ];
+      var VF=[
+        {num:97,h:89,a:90},{num:98,h:93,a:94},{num:99,h:91,a:92},{num:100,h:95,a:96}
+      ];
+      var HF=[{num:101,h:97,a:98},{num:102,h:99,a:100}];
+      var F=[{num:104,h:101,a:102},{num:103,h:101,a:102,loser:true}];
+      var allRounds=[AF,VF,HF,F];
+
+      allRounds.forEach(function(round){
+        round.forEach(function(next){
+          if(next.h===num){nextMatchNum=next.num;nextSide='home';isLoser=!!next.loser;}
+          if(next.a===num){nextMatchNum=next.num;nextSide='away';isLoser=!!next.loser;}
+        });
+      });
+
+      if(!nextMatchNum){if(cb)cb();return;}
+      var teamToSet=isLoser?loser:winner;
+      sb.from('ko_matches').select('id').eq('match_num',nextMatchNum).single()
+        .then(function(nr){
+          if(nr.error||!nr.data){if(cb)cb();return;}
+          var upd={};
+          upd[nextSide==='home'?'team_home':'team_away']=teamToSet;
+          sb.from('ko_matches').update(upd).eq('id',nr.data.id)
+            .then(function(){if(cb)cb();});
+        });
+    });
+}
 function koTippOpen(matchId, home, away, curH, curA){
   if(!ME){showToast('Bitte erst Spieler w\u00e4hlen (Meine Tipps)');return;}
   qtCurrentId = 'ko_'+matchId;
-  qtH = curH!==''&&curH!=null ? +curH : 0;
-  qtA = curA!==''&&curA!=null ? +curA : 0;
+  qtH = (curH!=null&&curH!==''&&curH!==undefined) ? +curH : 0;
+  qtA = (curA!=null&&curA!==''&&curA!==undefined) ? +curA : 0;
   qtActive='h'; qtDoubleMode=false;
   document.getElementById('qt-matchname').innerHTML=fl(home)+'<b>'+home+'</b> &ndash; <b>'+away+'</b>'+fl(away);
   document.getElementById('qt-home-label').textContent=home;
@@ -1722,6 +1710,8 @@ function loadMyTipps(){
   if(!ME){
     document.getElementById('tipp-form').innerHTML='';
     document.getElementById('tipp-stat').textContent='';
+    var sb2=document.getElementById('sonder-box');
+    if(sb2)sb2.style.display='none';
     return;
   }
   var myT=STATE.tipps[ME]||{};
@@ -1770,6 +1760,11 @@ function loadMyTipps(){
   }
   html+='</table>';
   document.getElementById('tipp-form').innerHTML=html;
+  // KO-Tipps und Sondertipps auch aktualisieren
+  renderKo();
+  var sb2=document.getElementById('sonder-box');
+  if(sb2)sb2.style.display='block';
+  renderSonder();
 }
 function saveTipps(){
   if(!ME)return;
@@ -1848,6 +1843,7 @@ function renderAdmin(){
   }
   document.getElementById('admin-players').innerHTML=phtml;
   fillSonderDropdowns();
+  renderKoTeamsAdmin();
   renderKoResultsAdmin();
 }
 function saveSonderResult(){
