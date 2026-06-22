@@ -2,7 +2,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>WM 2026 RZ Tippspiel - Tipps abgeben!</title>
+<script type="text/javascript">
+var WM_START = new Date('2026-06-11T19:00:00Z');
+</script>
+<title>WM 2026 RZ Tippspiel</title>
 <style type="text/css">
 body {
   background-color: #003300;
@@ -12,32 +15,60 @@ body {
   color: #000000;
   margin: 4px;
 }
-.outer {
-  max-width: 820px;
-  margin: 0 auto;
-  background: #ffffff;
+a { color: #003399; text-decoration: underline; }
+a:hover { color: #ff0000; text-decoration: underline; }
+a:visited { color: #660099; }
+
+.maintable {
+  background-color: #ffffff;
   border: 4px outset #cccccc;
 }
-.hdr {
+.headertable {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='2' height='2' fill='%23004400'/%3E%3Crect x='2' y='2' width='2' height='2' fill='%23003300'/%3E%3C/svg%3E");
   background-color: #003300;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='2' height='2' fill='%23004400'/%3E%3Crect x='2' y='2' width='2' height='2' fill='%23003300'/%3E%3C/svg%3E");
+  width: 100%;
   border-bottom: 4px solid #ffcc00;
 }
 .title {
   font-family: "Comic Sans MS", "Arial Black", Impact, sans-serif;
-  font-size: 24px;
+  font-size: 32px;
   font-weight: bold;
   color: #ffff00;
   text-shadow: 3px 3px 0px #ff6600, -1px -1px 0 #000;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
 }
 .subtitle {
   font-family: "Comic Sans MS", Verdana, Arial, sans-serif;
   font-size: 11px;
   color: #00ff88;
-  letter-spacing: 1px;
-  margin-top: 3px;
+  letter-spacing: 2px;
 }
+.navtable {
+  background: #336633;
+  width: 100%;
+  border-bottom: 4px solid #ffcc00;
+  border-top: 2px solid #ffcc00;
+}
+.navbtn {
+  font-family: "Comic Sans MS", Verdana, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  color: #ffff00;
+  background: #336633;
+  border: 3px outset #88cc88;
+  padding: 6px 16px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.navbtn:hover { background: #004400; color: #ffffff; border-color: #ffcc00; }
+.navbtn.active {
+  background: #ffffcc;
+  color: #003300;
+  border-style: inset;
+  font-style: italic;
+}
+/* MARQUEE AREA */
 .marqueebar {
   background: #000033;
   border-top: 2px solid #ffcc00;
@@ -49,420 +80,755 @@ body {
   letter-spacing: 2px;
   padding: 3px 0;
 }
+/* CONTENT */
 .contentbg {
   background-color: #cccc99;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='4' height='4' fill='%23c8c895'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%23c8c895'/%3E%3Crect x='4' y='0' width='4' height='4' fill='%23d4d4a0'/%3E%3Crect x='0' y='4' width='4' height='4' fill='%23d4d4a0'/%3E%3C/svg%3E");
-  padding: 10px;
 }
+/* SECTION HEADERS */
 .sectionhdr {
   font-family: "Comic Sans MS", "Arial Black", sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: bold;
   color: #ffff00;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='3' height='3' fill='%23225522'/%3E%3Crect x='3' y='3' width='3' height='3' fill='%23225522'/%3E%3Crect x='3' y='0' width='3' height='3' fill='%231a441a'/%3E%3Crect x='0' y='3' width='3' height='3' fill='%231a441a'/%3E%3C/svg%3E");
   background-color: #225522;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='3' height='3' fill='%23225522'/%3E%3Crect x='3' y='3' width='3' height='3' fill='%23225522'/%3E%3Crect x='3' y='0' width='3' height='3' fill='%231a441a'/%3E%3Crect x='0' y='3' width='3' height='3' fill='%231a441a'/%3E%3C/svg%3E");
   border-top: 2px solid #ffcc00;
   border-bottom: 3px solid #ffcc00;
   padding: 5px 10px;
   letter-spacing: 2px;
-  text-shadow: 1px 1px 0 #000;
+  text-shadow: 1px 1px 0 #000000;
 }
 .sectionbox {
   background: #ffffff;
   border: 3px outset #cccccc;
   margin-bottom: 10px;
 }
-@keyframes blink  { 0%,100%{opacity:1} 50%{opacity:0.1} }
-@keyframes blink2 { 0%,100%{opacity:1} 40%{opacity:0}   }
-@keyframes rainbow{ 0%{color:#ff0000}25%{color:#ffff00}50%{color:#00ff00}75%{color:#0088ff}100%{color:#ff0000} }
-.blink  { animation: blink  1.2s infinite; }
-.blink2 { animation: blink2 0.7s infinite; }
-.rainbow{ animation: rainbow 2s infinite; font-weight:bold; }
-
-/* NAME BAR */
-.name-bar {
+/* RANGLISTE */
+.rltable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.rltable th {
+  background: #336633;
+  color: #ffcc00;
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 5px 8px;
+  border: 1px solid #225522;
+  text-align: left;
+}
+.rltable td {
+  padding: 5px 8px;
+  border: 1px solid #ccccaa;
+  font-size: 11px;
+  vertical-align: middle;
+}
+.rltable tr.even td { background: #f5f5ee; }
+.rltable tr.odd  td { background: #eaeadb; }
+.rltable tr:hover td { background: #ffffcc !important; }
+.rank-no {
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 20px;
+  color: #aaaaaa;
+  text-align: center;
+  width: 32px;
+}
+.rank-1 .rank-no { color: #cc9900; font-size: 24px; }
+.rank-2 .rank-no { color: #999999; font-size: 22px; }
+.rank-3 .rank-no { color: #885522; font-size: 20px; }
+.ptsnum {
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 26px;
+  color: #003300;
+  line-height: 1;
+}
+.ptssub {
+  font-size: 9px;
+  color: #999999;
+}
+/* PILL FILTER */
+.pillrow {
+  background: #eeeecc;
+  border-bottom: 1px solid #ccccaa;
+  padding: 5px 6px;
+}
+.pill {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: #ffffff;
+  border: 2px outset #aaaaaa;
+  padding: 2px 8px;
+  cursor: pointer;
+  color: #555555;
+}
+.pill:hover { background: #ffffcc; }
+.pill.active {
+  background: #336633;
+  color: #ffff00;
+  border-style: inset;
+}
+/* GROUP GRID */
+.groupgrid {
+  border-top: 1px solid #bbbbaa;
+}
+.groupcard {
+  background: #ffffff;
+  border-right: 1px solid #ccccaa;
+  border-bottom: 1px solid #ccccaa;
+  vertical-align: top;
+  width: 25%;
+}
+.groupcardhdr {
+  background: #336633;
+  border-bottom: 2px solid #ffcc00;
+  padding: 4px 8px;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 13px;
+  color: #ffcc00;
+  letter-spacing: 2px;
+}
+.groupcardhdr small {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 8px;
+  color: #aaccaa;
+  font-weight: normal;
+  letter-spacing: 0;
+  display: block;
+  margin-top: 1px;
+}
+.gmrow {
+  border-bottom: 1px solid #f0f0e8;
+  padding: 4px 8px;
+  font-size: 10px;
+}
+.gmdate { color: #aaaaaa; font-size: 9px; font-family: "Courier New", monospace; }
+.gmhome { font-weight: bold; color: #333333; }
+.gmaway { color: #888888; }
+.gmscore {
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 15px;
+  text-align: center;
+}
+.gmscore.done { color: #336633; }
+.gmscore.open { color: #dddddd; }
+/* TIPPEN */
+.tipselbar {
   background: #eeeecc;
   border-bottom: 2px groove #aaaaaa;
-  padding: 8px 10px;
+  padding: 7px 8px;
 }
-.name-label {
-  font-size: 10px; font-weight: bold; color: #555555;
-  text-transform: uppercase; letter-spacing: 1px; margin-right: 8px;
+.retroselect {
+  border: 2px inset #aaaaaa;
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 12px;
+  padding: 4px 6px;
+  background: #ffffff;
+}
+.tippcard {
+  background: #ffffff;
+  border-right: 1px solid #ccccaa;
+  border-bottom: 1px solid #ccccaa;
+  vertical-align: top;
+  width: 25%;
+}
+.tippcardhdr {
+  background: #225522;
+  border-bottom: 2px solid #ffcc00;
+  padding: 4px 8px;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 12px;
+  color: #ffcc00;
+  letter-spacing: 2px;
+}
+.tipprow {
+  border-bottom: 1px solid #f0f0e8;
+  padding: 4px 7px;
+  font-size: 10px;
+}
+.tipprow.locked { background: #f8f8f0; }
+.tipprow:nth-child(odd) { background: #fafaf5; }
+.tipprow.locked:nth-child(odd) { background: #f5f5ec; }
+.tippinp {
+  width: 44px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  border: 2px inset #cccccc;
+  background: #f5f5ee;
+  color: #555555;
+  padding: 2px;
+  cursor: default;
+  pointer-events: none;
+}
+.tippinp:focus { outline: none; }
+.tippinp::-webkit-inner-spin-button,
+.tippinp::-webkit-outer-spin-button { display: none; }
+.tippinp[type=number] { -moz-appearance: textfield; }
+.ptstag {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 5px;
+  border: 1px solid;
+}
+.p3 { background: #ccffcc; color: #003300; border-color: #66cc66; }
+.p2 { background: #ffeecc; color: #663300; border-color: #cc8800; }
+.p1 { background: #ffcccc; color: #660000; border-color: #cc6666; }
+.p0 { background: #eeeeee; color: #999999; border-color: #cccccc; }
+.savebar {
+  background: #eeeecc;
+  border-top: 2px groove #aaaaaa;
+  padding: 7px 8px;
+}
+.btngreen {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: #336633;
+  color: #ffcc00;
+  border: 2px outset #66aa66;
+  padding: 5px 14px;
+  cursor: pointer;
+}
+.btngreen:hover { background: #225522; }
+.btngreen:active { border-style: inset; }
+.btngrey {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  background: #888888;
+  color: #ffffff;
+  border: 2px outset #aaaaaa;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.btngrey:active { border-style: inset; }
+.btnred {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  background: #aa2222;
+  color: #ffffff;
+  border: 2px outset #cc5555;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.btnred:active { border-style: inset; }
+.btnok {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  background: #336633;
+  color: #ffffff;
+  border: 2px outset #55aa55;
+  padding: 2px 7px;
+  cursor: pointer;
+}
+.btnok:active { border-style: inset; }
+/* ADMIN */
+.loginbox {
+  background: #ffffff;
+  border: 3px outset #cccccc;
+  padding: 14px;
+  max-width: 320px;
+  margin: 16px auto;
+}
+.loginbox h3 {
+  font-family: "Comic Sans MS", Impact, sans-serif;
+  font-size: 16px;
+  color: #003300;
+  border-bottom: 2px solid #ffcc00;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
 }
 .retroinput {
   border: 2px inset #aaaaaa;
-  font-family: "Comic Sans MS", Verdana, Arial, sans-serif;
-  font-size: 13px; padding: 4px 8px;
-  background: #ffffee; color: #003300;
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 12px;
+  padding: 5px 7px;
+  background: #ffffee;
+  width: 100%;
+  display: block;
+  margin-bottom: 8px;
 }
 .retroinput:focus { outline: 2px solid #336633; background: #ffffcc; }
-
-/* SONDERTIPPS */
-.sonder-table { width: 100%; border-collapse: collapse; }
-.sonder-table td { padding: 7px 10px; border-bottom: 1px solid #e8e8d8; vertical-align: middle; }
-.sonder-table tr.even { background: #f8f8f0; }
-.sonder-table tr.odd  { background: #f0f0e8; }
-.sonder-table tr:hover { background: #ffffcc !important; }
-.sonder-label {
+.admgrphdr {
+  background: #eeeecc;
+  border-bottom: 1px solid #ccccaa;
+  font-size: 9px;
+  font-weight: bold;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 3px 8px;
+}
+.admrow {
+  border-bottom: 1px solid #f0f0e8;
+  padding: 4px 8px;
+  font-size: 10px;
   font-family: Verdana, Arial, sans-serif;
-  font-size: 11px; font-weight: bold; width: 40%;
 }
-.sonder-label small {
-  display: block; font-weight: normal;
-  font-size: 9px; color: #888888; margin-top: 2px; font-style: italic;
-}
-.sonder-select {
-  border: 2px inset #aaaaaa;
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 11px; padding: 3px 6px;
-  background: #ffffee; color: #003300;
-  min-width: 200px;
-}
-.sonder-select:focus { outline: 2px solid #336633; }
-
-/* SPIELPLAN */
-.group-label {
-  font-family: "Comic Sans MS", Impact, sans-serif;
-  font-size: 12px; font-weight: bold;
-  color: #ffcc00; background: #336633;
-  border-bottom: 2px solid #ffcc00;
-  padding: 3px 8px; letter-spacing: 2px; text-shadow: 1px 1px 0 #000;
-}
-.spiele-table { width: 100%; border-collapse: collapse; }
-.spiele-table tr.even { background: #f8f8f0; }
-.spiele-table tr.odd  { background: #f0f0e8; }
-.spiele-table tr:hover { background: #ffffcc !important; }
-.spiele-table td { padding: 4px 8px; border-bottom: 1px solid #e8e8d8; vertical-align: middle; }
-.sp-date { font-family: "Courier New", Courier, monospace; font-size: 9px; color: #999999; width: 36px; }
-.sp-home { font-weight: bold; font-size: 11px; text-align: right; width: 38%; }
-.sp-away { font-size: 11px; width: 38%; }
-.sp-inp {
-  width: 44px;
+.admrow:nth-child(even) { background: #fafaf5; }
+.admlabel { font-size: 10px; }
+.admlabel small { font-size: 9px; color: #aaaaaa; display: block; }
+.adminp {
+  width: 32px;
   font-family: "Courier New", Courier, monospace;
-  font-size: 14px; font-weight: bold; text-align: center;
-  border: 2px inset #aaaaaa; background: #ffffee; color: #003300; padding: 3px 2px;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  border: 2px inset #aaaaaa;
+  background: #ffffee;
+  padding: 2px;
 }
-.sp-inp:focus { outline: 2px solid #336633; background: #ffffcc; }
-.sp-inp::-webkit-inner-spin-button,
-.sp-inp::-webkit-outer-spin-button { display: none; }
-.sp-colon { font-family: "Courier New", Courier, monospace; font-weight: bold; font-size: 14px; color: #666666; padding: 0 3px; }
-.sp-inputs { white-space: nowrap; }
-
-/* SCHNELLTIPP POPUP */
-.qt-overlay {
+.adminp:focus { outline: 2px solid #336633; }
+/* TOAST */
+.toastpop {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  z-index: 9999;
+  background: #000033;
+  color: #ffff00;
+  border: 3px outset #4444cc;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  display: none;
+}
+/* FOOTER */
+.footerbar {
+  background: #003300;
+  border-top: 3px solid #ffcc00;
+  text-align: center;
+  padding: 6px;
+  font-size: 9px;
+  color: #336633;
+  font-family: "Courier New", Courier, monospace;
+  letter-spacing: 2px;
+}
+/* TABS */
+.phasetab {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: #eeeecc;
+  border: 2px outset #aaaaaa;
+  border-bottom: none;
+  padding: 4px 14px;
+  cursor: pointer;
+  color: #555555;
+  margin-right: 2px;
+}
+.phasetab.active {
+  background: #ffffff;
+  color: #003300;
+  border-style: inset;
+  border-bottom: 2px solid #ffffff;
+}
+.phasetabrow {
+  background: #eeeecc;
+  border-bottom: 1px solid #ccccaa;
+  padding: 5px 6px 0;
+}
+.statbar { font-family: "Courier New", Courier, monospace; font-size: 10px; color: #666666; margin-left: auto; }
+.savemsg { font-family: "Courier New", Courier, monospace; font-size: 10px; color: #666666; }
+/* WILLKOMMENS-POPUP */
+.welcome-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.6); z-index: 1000;
+  background: rgba(0,0,0,.7); z-index: 2000;
   align-items: center; justify-content: center;
 }
-.qt-overlay.open { display: flex; }
-.qt-box {
+.welcome-overlay.open { display: flex; }
+.welcome-box {
   background: #fff; border: 4px outset #cccccc;
-  width: 300px; font-family: Verdana, Arial, sans-serif;
+  max-width: 420px; width: 92%;
+  font-family: Verdana, Arial, sans-serif;
+  text-align: center;
 }
-.qt-hdr {
+.welcome-hdr {
   background: #225522; border-bottom: 3px solid #ffcc00;
-  padding: 5px 10px; font-family: "Comic Sans MS", Impact, sans-serif;
-  font-size: 13px; color: #ffff00; letter-spacing: 1px;
-  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px;
+  font-family: "Comic Sans MS", Impact, sans-serif;
+  font-size: 18px; color: #ffff00; letter-spacing: 2px;
+  text-shadow: 1px 1px 0 #000;
 }
-.qt-close {
-  background: none; border: none; color: #ffcc00;
-  font-size: 18px; font-weight: bold; cursor: pointer; line-height: 1;
+.welcome-body {
+  padding: 16px 18px 12px;
+  font-size: 12px; line-height: 1.6; color: #333;
 }
-.qt-matchname {
-  padding: 6px 10px 5px; font-size: 11px; font-weight: bold;
-  color: #333; border-bottom: 1px solid #eee;
-  text-align: center; background: #fafaf5;
+.welcome-body b { color: #003300; }
+.welcome-body .hint {
+  background: #ffffcc; border: 2px solid #ffcc00;
+  padding: 8px 10px; margin: 10px 0 0;
+  font-size: 11px; color: #553300;
+  text-align: left;
 }
-.qt-section-label {
-  font-size: 9px; font-weight: bold; color: #888;
-  text-transform: uppercase; letter-spacing: 1px; padding: 5px 10px 3px;
-}
-.qt-presets {
-  display: flex; flex-wrap: wrap; gap: 4px; padding: 3px 10px 8px;
-}
-.qt-preset {
-  background: #ffffee; border: 2px outset #aaaaaa;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px; font-weight: bold;
-  padding: 4px 0; cursor: pointer; color: #003300;
-  width: 42px; text-align: center;
-}
-.qt-preset:hover { background: #ffffcc; border-color: #336633; }
-.qt-preset:active, .qt-preset.sel { border-style: inset; background: #ccffcc; border-color: #336633; }
-.qt-numpad-wrap {
-  border-top: 2px groove #ccccaa; padding: 8px 10px; background: #f5f5ee;
-}
-.qt-score-row {
-  display: flex; align-items: center; justify-content: center;
-  gap: 6px; margin-bottom: 7px;
-}
-.qt-score-side { text-align: center; }
-.qt-score-label {
-  font-size: 9px; color: #888; font-weight: bold;
-  text-transform: uppercase; letter-spacing: .5px;
-  display: block; margin-bottom: 3px;
-  width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.qt-score-val {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 26px; font-weight: bold; color: #003300;
-  background: #ffffee; border: 2px inset #aaaaaa;
-  width: 54px; height: 40px; line-height: 40px;
-  text-align: center; display: block; cursor: pointer;
-}
-.qt-score-val.active { border-color: #336633; background: #ffffcc; }
-.qt-score-colon {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 26px; font-weight: bold; color: #666; margin-top: 14px;
-}
-.qt-numpad-hint {
-  font-size: 9px; color: #999; text-align: center; margin-bottom: 5px;
-}
-.qt-numpad-grid {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 8px;
-}
-.qt-num-btn {
-  height: 32px; background: #ffffee; border: 2px outset #aaaaaa;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 14px; font-weight: bold; cursor: pointer; color: #003300;
-}
-.qt-num-btn:hover { background: #ffffcc; border-color: #336633; }
-.qt-num-btn:active { border-style: inset; }
-.qt-confirm {
-  background: #336633; color: #ffff00; border: 2px outset #55aa55;
+.welcome-btn {
+  background: #336633; color: #ffff00;
+  border: 3px outset #55aa55;
   font-family: "Comic Sans MS", Verdana, sans-serif;
-  font-size: 12px; font-weight: bold;
-  padding: 6px; cursor: pointer; width: 100%; display: block; text-align: center;
+  font-size: 13px; font-weight: bold;
+  padding: 8px 24px; cursor: pointer;
+  margin: 10px 0 14px;
+  letter-spacing: 1px;
 }
-.qt-confirm:active { border-style: inset; }
-.sp-tipp-btn {
-  background: #ffffee; border: 2px outset #aaaaaa;
-  font-family: Verdana, Arial, sans-serif; font-size: 9px; font-weight: bold;
-  color: #336633; cursor: pointer; padding: 2px 6px; white-space: nowrap;
-}
-.sp-tipp-btn:hover { background: #ffffcc; border-color: #336633; }
-.sp-tipp-btn:active { border-style: inset; }
-.sp-tipp-display {
-  font-family: "Courier New", Courier, monospace; font-size: 13px; font-weight: bold;
-  color: #003300; min-width: 14px; text-align: center; display: inline-block;
-}
-.submit-bar {
-  background: #ddddaa; border: 3px outset #ccccaa;
-  padding: 12px; text-align: center; margin-bottom: 10px;
-}
-.submit-bar p { font-family: "Comic Sans MS", Verdana, sans-serif; font-size: 11px; color: #444444; margin-bottom: 10px; }
-.btnbig {
-  font-family: "Comic Sans MS", Verdana, Arial, sans-serif;
-  font-size: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;
-  background: #336633; color: #ffff00; border: 4px outset #66aa66;
-  padding: 10px 28px; cursor: pointer; text-shadow: 1px 1px 0 #000;
-}
-.btnbig:hover { background: #225522; color: #ffffff; }
-.btnbig:active { border-style: inset; }
-#error-msg {
-  font-family: "Comic Sans MS", Verdana, sans-serif; font-size: 11px;
-  color: #cc0000; font-weight: bold; margin-top: 8px; display: none;
-}
-.footerbar {
-  background: #003300; border-top: 3px solid #ffcc00;
-  text-align: center; padding: 6px;
-  font-size: 9px; color: #336633;
-  font-family: "Courier New", Courier, monospace; letter-spacing: 2px;
-}
+.welcome-btn:active { border-style: inset; }
+.cd-wrap{padding:30px 20px;text-align:center;background:#ffffff}
+.cd-title{font-family:"Comic Sans MS",Impact,sans-serif;font-size:20px;font-weight:bold;color:#003300;margin-bottom:6px}
+.cd-sub{font-family:"Comic Sans MS",Verdana,sans-serif;font-size:11px;color:#666666;margin-bottom:20px}
+.cd-table{border-collapse:separate;border-spacing:8px;margin:0 auto 16px}
+.cd-cell{background:#003300;border:3px outset #336633;padding:8px 14px;text-align:center;min-width:60px}
+.cd-num{font-family:"Courier New",Courier,monospace;font-size:34px;font-weight:bold;color:#ffcc00;display:block;line-height:1;text-shadow:0 0 8px #ffcc00}
+.cd-lbl{font-family:"Comic Sans MS",Verdana,sans-serif;font-size:9px;color:#99cc99;text-transform:uppercase;letter-spacing:1px;display:block;margin-top:4px}
+.cd-info{font-family:"Comic Sans MS",Verdana,sans-serif;font-size:11px;color:#666666;font-style:italic;margin-top:8px}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.cd-ball{font-size:44px;display:block;margin-bottom:10px;animation:bounce .9s infinite alternate}
+/* STARS ANIMATION */
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+@keyframes blink2 { 0%,100%{opacity:1} 40%{opacity:0.0} }
+@keyframes blink3 { 0%{color:#ff0000}25%{color:#ffff00}50%{color:#00ff00}75%{color:#0088ff}100%{color:#ff0000} }
+.blink { animation: blink 1.2s infinite; }
+.blink2 { animation: blink2 0.7s infinite; }
+.rainbow { animation: blink3 2s infinite; font-weight:bold; }
+/* STATUS DOT */
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#999999; margin-right:4px; vertical-align:middle; }
+.dot.on { background:#00cc00; box-shadow: 0 0 5px #00cc00; }
+/* phase display */
+.phase-gruppe { display: block; }
+.phase-ko { display: none; }
 </style>
 </head>
 <body>
-<div class="outer">
 
+<table width="980" align="center" cellpadding="0" cellspacing="0" class="maintable">
+<tr>
   <!-- HEADER -->
-  <div class="hdr">
-    <table width="100%" cellpadding="0" cellspacing="0">
+  <td>
+    <table width="100%" cellpadding="0" cellspacing="0" class="headertable">
     <tr>
       <td width="72" align="center" valign="middle" style="padding:10px;background:transparent">
         <img src="ball.gif" width="56" height="56" alt="Fussball" style="display:block;border:0;background:transparent">
       </td>
       <td valign="middle" style="padding:8px 4px">
-        <div class="title">&#9917; WM 2026 RZ Tippspiel</div>
-        <div class="subtitle">&#9733; F&uuml;ll deinen Tippbogen aus und schick ihn ab &#9733;</div>
+        <div class="title">&#9917; WM 2026 RZ Tippspiel &#9917;</div>
+        <div class="subtitle">&#9733; USA &nbsp;&middot;&nbsp; Kanada &nbsp;&middot;&nbsp; Mexiko &nbsp;&middot;&nbsp; 11. Juni &ndash; 19. Juli 2026 &#9733;</div>
         <div style="font-family:'Comic Sans MS',Verdana,sans-serif;font-size:10px;color:#ffcc00;margin-top:3px">
-          <span class="blink">&#9733;</span> USA &middot; Kanada &middot; Mexiko &middot; 11. Juni &ndash; 19. Juli 2026 <span class="blink">&#9733;</span>
+          <span class="blink">&#9733;</span> Tippt euch zum Weltmeister! <span class="blink">&#9733;</span>
         </div>
+      </td>
+      <td align="right" valign="middle" style="padding:10px">
+        <table cellpadding="0" cellspacing="0">
+        <tr><td align="right" style="font-family:'Courier New',monospace;font-size:10px;color:#ffff00;letter-spacing:1px;padding-bottom:4px">
+          <span class="dot" id="dot"></span><span id="gh-status" style="color:#ffff00">KEIN TOKEN</span>
+        </td></tr>
+        <tr><td align="right" style="font-size:20px;letter-spacing:4px">&#127482;&#127480;&#127464;&#127462;&#127474;&#127485;</td></tr>
+        </table>
       </td>
     </tr>
     </table>
+    <!-- MARQUEE -->
     <div class="marqueebar">
       <marquee behavior="scroll" direction="left" scrollamount="3" style="height:18px">
         &#9733;&nbsp; WM 2026 RZ TIPPSPIEL &nbsp;&#9733;&nbsp;
-        GRUPPENPHASE: 11. JUNI BIS 28. JUNI &nbsp;&#9733;&nbsp;
-        3P EXAKTES ERGEBNIS &middot; 2P TORDIFFERENZ &middot; 1P TENDENZ &nbsp;&#9733;&nbsp;
-        F&Uuml;LL ALLE FELDER AUS UND KLICK AUF ABSENDEN! &nbsp;&#9733;
+        48 MANNSCHAFTEN &middot; 12 GRUPPEN &middot; 104 SPIELE &nbsp;&#9733;&nbsp;
+        3 PUNKTE EXAKTES ERGEBNIS &middot; 2 PUNKTE RICHTIGE TORDIFFERENZ &middot; 1 PUNKT RICHTIGE TENDENZ &nbsp;&#9733;&nbsp;
+        WM-AUFTAKT: 11. JUNI 2026 IM AZTEKENSTADION &nbsp;&#9733;&nbsp;
+        FINALE: 19. JULI 2026, METLIFE STADIUM NEW JERSEY &nbsp;&#9733;&nbsp;
+        VIEL ERFOLG BEIM TIPPEN! &nbsp;&#9733;
       </marquee>
     </div>
-  </div>
+    <!-- NAV -->
+    <table width="100%" cellpadding="0" cellspacing="0" class="navtable">
+    <tr>
+      <td width="1%" nowrap><button class="navbtn active" onclick="showPage('rangliste',this)">&#9733; Rangliste</button></td>
+      <td width="1%" nowrap><button class="navbtn" onclick="showPage('spielplan',this)">Spielplan</button></td>
+      <td width="1%" nowrap><button class="navbtn" onclick="showPage('tippen',this)">Meine Tipps</button></td>
+      <td width="1%" nowrap><button class="navbtn" onclick="showPage('sonder',this)">Sondertipps</button></td>
+      <td width="1%" nowrap><button class="navbtn" onclick="showPage('admin',this)">&#9881; Admin</button></td>
+      <td width="100%">&nbsp;</td>
+    </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td class="contentbg" style="padding:8px">
 
-  <!-- CONTENT -->
-  <div class="contentbg">
-
-    <div id="tipp-screen">
-
-      <!-- NAME -->
-      <div class="sectionbox">
-        <div class="sectionhdr">&#9733; DEIN NAME &#9733;</div>
-        <div class="name-bar">
-          <span class="name-label">Name:</span>
-          <input type="text" class="retroinput" id="player-name" placeholder="z.B. Manuel Neuer" style="width:220px">
-          &nbsp;&nbsp;
-          <span style="font-family:Verdana,Arial,sans-serif;font-size:10px;color:#888888">
-            (wird automatisch in die Mail eingetragen)
-          </span>
-        </div>
-      </div>
-
-      <!-- SONDERTIPPS -->
-      <div class="sectionbox">
-        <div class="sectionhdr">&#9733; SONDERTIPPS <span class="blink2">&#9733;</span></div>
-        <table class="sonder-table" cellpadding="0" cellspacing="0">
-          <tr class="odd">
-            <td class="sonder-label">
-              &#127942; WM-Sieger
-              <small>Welches Team gewinnt das Finale?</small>
-            </td>
-            <td>
-              <select class="sonder-select" id="s-winner">
-                <option value="">-- Team w&auml;hlen --</option>
-              </select>
-            </td>
-          </tr>
-          <tr class="even">
-            <td class="sonder-label">
-              &#129352; Finalist (Verlierer)
-              <small>Wer verliert das Finale?</small>
-            </td>
-            <td>
-              <select class="sonder-select" id="s-finalist">
-                <option value="">-- Team w&auml;hlen --</option>
-              </select>
-            </td>
-          </tr>
-          <tr class="odd">
-            <td class="sonder-label">
-              &#129353; Dritter Platz
-              <small>Wer gewinnt das Spiel um Platz 3?</small>
-            </td>
-            <td>
-              <select class="sonder-select" id="s-third">
-                <option value="">-- Team w&auml;hlen --</option>
-              </select>
-            </td>
-          </tr>
-          <tr class="even">
-            <td class="sonder-label">
-              &#128293; &Uuml;berraschungsteam
-              <small>
-                Welches Team &uuml;bertrifft alle Erwartungen?<br>
-                Bewertung: FIFA-Rang &times; erreichte Runde &mdash; je niedriger der Rang, desto mehr Punkte!
-              </small>
-            </td>
-            <td>
-              <select class="sonder-select" id="s-surprise">
-                <option value="">-- Team w&auml;hlen --</option>
-              </select>
-            </td>
+    <!-- ══ COUNTDOWN (verschwindet ab 11. Juni) ══ -->
+    <div id="countdown-wrap" class="sectionbox">
+      <div class="sectionhdr">&#9733; WM 2026 STARTET BALD! &#9733; <span class="blink2">&#9733;</span></div>
+      <div class="cd-wrap">
+        <span class="cd-ball">&#9917;</span>
+        <div class="cd-title">Die Seite &ouml;ffnet am 11. Juni 2026!</div>
+        <div class="cd-sub" style="font-size:13px;font-weight:bold;color:#333333">Tipps f&uuml;r die Gruppenphase kannst du noch &uuml;ber den <a href="tippen.html" style="color:#003399">Tippbogen</a> abgeben&nbsp;&#9733;</div>
+        <table class="cd-table" cellpadding="0" cellspacing="0" align="center">
+          <tr>
+            <td class="cd-cell"><span class="cd-num" id="cd-days">--</span><span class="cd-lbl">Tage</span></td>
+            <td class="cd-cell"><span class="cd-num" id="cd-hours">--</span><span class="cd-lbl">Stunden</span></td>
+            <td class="cd-cell"><span class="cd-num" id="cd-mins">--</span><span class="cd-lbl">Minuten</span></td>
+            <td class="cd-cell"><span class="cd-num" id="cd-secs">--</span><span class="cd-lbl">Sekunden</span></td>
           </tr>
         </table>
+        <div class="cd-info">
+          <span class="blink">&#9733;</span>
+          Er&ouml;ffnungsspiel: Mexiko vs. Kanada &mdash; 11. Juni 2026, 21:00 Uhr MEZ
+          <span class="blink">&#9733;</span>
+        </div>
       </div>
+    </div>
 
-      <!-- GRUPPENPHASE -->
+    <!-- ══ HAUPTINHALT (versteckt bis 11. Juni) ══ -->
+    <div id="main-content" style="display:none">
+    <div id="page-rangliste">
       <div class="sectionbox">
-        <div class="sectionhdr">&#9733; GRUPPENPHASE &ndash; ALLE 72 SPIELE <span class="blink2">&#9733;</span></div>
-        <div id="form-inner"></div>
+        <div class="sectionhdr">&#9733; AKTUELLE RANGLISTE &#9733; <span class="blink" style="color:#ff4444">&#9733;</span> <span class="blink2" style="color:#ffff00">&#9733;</span> <span class="blink" style="color:#00ff88">&#9733;</span></div>
+        <table class="rltable">
+          <thead><tr>
+            <th width="36">#</th>
+            <th>Spieler</th>
+            <th>Gesamt</th>
+            <th>Gruppe</th>
+            <th>K.O.</th>
+            <th>Sonder</th>
+            <th>Exakt&nbsp;(3P)</th>
+            <th>Diff&nbsp;(2P)</th>
+            <th>Tend.&nbsp;(1P)</th>
+            <th>Getippt</th>
+          </tr></thead>
+          <tbody id="rl-body"></tbody>
+        </table>
       </div>
-
-      <!-- SUBMIT -->
-      <div class="submit-bar">
-        <p>
-          <b>So funktioniert es:</b> F&uuml;ll alle Felder aus und klick auf einen der Buttons.<br>
-          <b>Option 1:</b> Dein Mailprogramm &ouml;ffnet sich &ndash; einfach auf <b>Senden</b> klicken.<br>
-          <b>Option 2:</b> Tipps in die Zwischenablage kopieren und per Matrix an Domenik schicken.
-        </p>
-        <table cellpadding="0" cellspacing="0"><tr>
-          <td style="padding-right:8px">
-            <button class="btnbig" onclick="buildMail()">
-              &#9993; Per Mail abschicken
-            </button>
-          </td>
-          <td>
-            <button class="btnbig" onclick="copyToClipboard()" style="background:#336633;border-color:#559955">
-              &#128203; In Zwischenablage kopieren
-            </button>
-          </td>
-        </tr></table>
-        <div id="copy-msg" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#336633;margin-top:8px;display:none">
-          &#10003; Kopiert! Jetzt per Matrix an Domenik versenden.
-        </div>
-        <div id="error-msg"></div>
-      </div>
-
-    </div><!-- /tipp-screen -->
-
-  </div><!-- /contentbg -->
-
-  <!-- SCHNELLTIPP POPUP -->
-<div class="qt-overlay" id="qt-overlay" onclick="qtCloseIfBg(event)">
-  <div class="qt-box">
-    <div class="qt-hdr">
-      <span>&#9917; Schnelltipp</span>
-      <button class="qt-close" onclick="qtClose()">&#10005;</button>
     </div>
-    <div class="qt-matchname" id="qt-matchname"></div>
-    <div class="qt-section-label">H&auml;ufige Ergebnisse</div>
-    <div class="qt-presets" id="qt-presets"></div>
-    <div class="qt-numpad-wrap">
-      <div class="qt-score-row">
-        <div class="qt-score-side">
-          <span class="qt-score-label" id="qt-home-label">Heim</span>
-          <span class="qt-score-val" id="qt-h" onclick="qtActivate('h')">0</span>
+
+    <!-- ═══ SPIELPLAN ═══ -->
+    <div id="page-spielplan" style="display:none">
+      <div class="sectionbox">
+        <div class="sectionhdr">SPIELPLAN WM 2026</div>
+        <div class="phasetabrow">
+          <button class="phasetab active" onclick="setPhase('gruppe',this)">Gruppenphase</button>
+          <button class="phasetab" onclick="setPhase('ko',this)">K.O.-Runde</button>
         </div>
-        <div class="qt-score-colon">:</div>
-        <div class="qt-score-side">
-          <span class="qt-score-label" id="qt-away-label">Gast</span>
-          <span class="qt-score-val" id="qt-a" onclick="qtActivate('a')">0</span>
+        <div id="sp-gruppe">
+          <table width="100%" cellpadding="0" cellspacing="0" id="group-outer-table" class="groupgrid"></table>
+        </div>
+        <div id="sp-ko" style="display:none;padding:20px;text-align:center;color:#999999;font-size:11px;font-style:italic">
+          &#8987; K.O.-Runde wird nach Abschluss der Gruppenphase bef&uuml;llt.
         </div>
       </div>
-      <div class="qt-numpad-hint">Aktives Feld antippen &rarr; Zahl w&auml;hlen</div>
-      <div class="qt-numpad-grid" id="qt-numpad"></div>
-      <button class="qt-confirm" onclick="qtConfirm()">&#10003; &Uuml;bernehmen</button>
     </div>
+
+    <!-- ═══ TIPPEN ═══ -->
+    <div id="page-tippen" style="display:none">
+      <div class="sectionbox">
+        <div class="sectionhdr">MEINE TIPPS</div>
+        <div class="tipselbar">
+          <table cellpadding="0" cellspacing="0" width="100%"><tr>
+            <td style="font-size:10px;font-weight:bold;color:#555555;text-transform:uppercase;letter-spacing:1px;padding-right:8px">Spieler:</td>
+            <td><select class="retroselect" id="tipper-select" onchange="loadMyTipps()">
+              <option value="">-- ausw&auml;hlen --</option>
+            </select></td>
+            <td align="right"><span class="statbar" id="tipp-stat"></span></td>
+          </tr></table>
+        </div>
+        <div id="tipp-form"></div>
+      </div>
+    </div>
+
+    <!-- ═══ SONDERTIPPS ═══ -->
+    <div id="page-sonder" style="display:none">
+      <div class="sectionbox">
+        <div class="sectionhdr">&#9733; SONDERTIPPS &Uuml;BERSICHT <span class="blink2">&#9733;</span></div>
+        <div id="sonder-inner"></div>
+      </div>
+    </div>
+
+    <!-- ═══ ADMIN ═══ -->
+    <div id="page-admin" style="display:none">
+      <div id="admin-login-wrap">
+        <!-- SCHRITT 1: Passwort -->
+        <div class="loginbox" id="login-step1">
+          <h3>&#128274; Admin-Bereich</h3>
+          <div style="font-size:10px;color:#666666;margin-bottom:8px;font-family:Verdana,Arial,sans-serif">Bitte Passwort eingeben:</div>
+          <input type="password" class="retroinput" id="admin-pw" placeholder="Passwort...">
+          <button class="btngreen" onclick="checkPassword()">Weiter &raquo;</button>
+          <div id="pw-error" style="color:#cc0000;font-size:10px;font-family:Verdana,Arial,sans-serif;margin-top:6px;display:none">&#10007; Falsches Passwort!</div>
+        </div>
+        <!-- SCHRITT 2: GitHub Token (nur sichtbar nach korrektem PW) -->
+        <div class="loginbox" id="login-step2" style="display:none">
+          <h3>&#9881; GitHub-Token</h3>
+          <div style="font-size:10px;color:#666666;margin-bottom:8px;font-family:Verdana,Arial,sans-serif">GitHub Personal Access Token:</div>
+          <input type="password" class="retroinput" id="gh-token" placeholder="ghp_...">
+          <button class="btngreen" onclick="adminLogin()">Anmelden</button>
+          <button class="btngrey" style="margin-top:4px;display:block" onclick="backToPassword()">&#171; Zur&uuml;ck</button>
+        </div>
+      </div>
+      <div id="admin-panel" style="display:none">
+        <div class="sectionbox">
+          <div class="sectionhdr">ERGEBNISSE EINTRAGEN</div>
+          <div id="admin-matches"></div>
+        </div>
+        <div class="sectionbox">
+          <div class="sectionhdr">&#128229; TIPPS IMPORTIEREN</div>
+          <div style="padding:10px;background:#fffff8;border-bottom:1px solid #ccccaa">
+            <div style="font-family:'Comic Sans MS',Verdana,sans-serif;font-size:11px;color:#444444;margin-bottom:8px">
+              Den <b>Import-Block</b> aus der Mail hier reinkopieren und auf <b>Importieren</b> klicken.<br>
+              <span style="font-size:10px;color:#888888">Spieler wird automatisch angelegt falls noch nicht vorhanden.</span>
+            </div>
+            <textarea id="import-json" style="width:100%;height:80px;border:2px inset #aaaaaa;font-family:'Courier New',Courier,monospace;font-size:10px;background:#ffffee;padding:5px;resize:vertical" placeholder='{"name":"Max Mustermann","tipps":{"G1":{"home":2,"away":1},...}}'></textarea>
+            <div style="margin-top:6px;display:flex;align-items:center;gap:8px">
+              <button class="btngreen" onclick="importTipps()">&#128229; Importieren</button>
+              <span id="import-msg" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#336633"></span>
+            </div>
+          </div>
+        </div>
+        <div class="sectionbox">
+          <div class="sectionhdr">&#9733; SONDERWERTUNG AUFL&Ouml;SEN</div>
+          <div style="padding:10px;background:#fffff8;font-family:Verdana,Arial,sans-serif;font-size:11px">
+            <div style="margin-bottom:10px;color:#555555">Hier tr&auml;gst du am Ende ein wer was wirklich erreicht hat.</div>
+            <table cellpadding="4" cellspacing="0" width="100%">
+              <tr>
+                <td style="font-weight:bold;width:160px">&#127942; WM-Sieger:</td>
+                <td><select class="retroselect" id="sr-winner" style="min-width:180px"><option value="">-- Team --</option></select></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold">&#129352; Finalist:</td>
+                <td><select class="retroselect" id="sr-finalist"><option value="">-- Team --</option></select></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold">&#129353; Dritter Platz:</td>
+                <td><select class="retroselect" id="sr-third"><option value="">-- Team --</option></select></td>
+              </tr>
+              <tr>
+                <td style="font-weight:bold;vertical-align:top;padding-top:6px">&#128293; &Uuml;berraschungsteam<br><span style="font-size:9px;color:#888888;font-weight:normal">pro Team die erreichte Runde</span></td>
+                <td id="sr-surprise-rows" style="padding-top:4px"></td>
+              </tr>
+            </table>
+            <div style="margin-top:10px">
+              <button class="btngreen" onclick="saveSonderResult()">&#128190; Sonderwertung speichern</button>
+              <span id="sr-msg" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#336633;margin-left:8px"></span>
+            </div>
+          </div>
+        </div>
+          <div style="padding:10px">
+            <div id="admin-players"></div>
+            <table cellpadding="0" cellspacing="0" style="margin-top:8px;width:100%"><tr>
+              <td><input type="text" class="retroinput" id="new-player" style="margin:0" placeholder="Neuer Spieler..."></td>
+              <td width="120" style="padding-left:6px"><button class="btngreen" onclick="addPlayer()">+ Hinzuf&uuml;gen</button></td>
+            </tr></table>
+          </div>
+        </div>
+        <div style="padding:8px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btngrey" onclick="exportMattermost()">&#128203; Mattermost-Export</button>
+          <button class="btngrey" onclick="repairEncoding()">&#128295; Encoding reparieren</button>
+          <button class="btngrey" onclick="adminLogout()">Abmelden</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+
+  </td>
+</tr>
+<tr>
+  <td class="footerbar">
+    <span class="rainbow">&#9733; WM 2026 RZ TIPPSPIEL &#9733;</span> &nbsp; POWERED BY GITHUB PAGES &nbsp; &#9733; &nbsp; &copy; 2026 &nbsp; &#9733;
+  </td>
+</tr>
+</table>
+
+<!-- WILLKOMMENS-POPUP -->
+<div class="welcome-overlay" id="welcome-overlay">
+  <div class="welcome-box">
+    <div class="welcome-hdr">&#9917; Herzlich Willkommen! &#9917;</div>
+    <div class="welcome-body">
+      <div style="font-size:22px;margin-bottom:8px">&#127942;</div>
+      <b>Die WM 2026 hat begonnen!</b><br><br>
+      Willkommen beim <b>WM 2026 RZ Tippspiel</b>.<br>
+      Hier siehst du die Rangliste, den Spielplan und deine Tipps.<br><br>
+      <div class="hint">
+        &#9888; <b>Noch nicht getippt?</b><br>
+        Nachz&uuml;gler k&ouml;nnen ihre Gruppenphase-Tipps noch bis<br>
+        <b>Freitag, 13. Juni 2026 um 23:59 Uhr</b> abgeben &mdash;<br>
+        nat&uuml;rlich nur f&uuml;r noch nicht gespielte Partien.<br>
+        &rarr; <a href="tippen.html">Zum Tippbogen</a>
+      </div>
+    </div>
+    <button class="welcome-btn" onclick="closeWelcome()">&#9733; Los geht&apos;s! &#9733;</button>
   </div>
 </div>
-<div class="footerbar">
-    <span class="rainbow">&#9733; WM 2026 RZ TIPPSPIEL &#9733;</span>
-    &nbsp; VIEL ERFOLG! &nbsp; &#9733; &nbsp; &copy; 2026
-  </div>
-</div><!-- /outer -->
+
+<div class="toastpop" id="toast"></div>
 
 <script type="text/javascript">
 // ── CONFIG ───────────────────────────────────────────────────────
-var MAIL_TO = 'domenikl@gfz.de'; // <-- hier deine Mail-Adresse eintragen
+var GH_USER = 'herbeauslese';
+var GH_REPO = 'kicktipp26';
+var GH_FILE = 'data.json';
 
-// ── SPIELPLAN ────────────────────────────────────────────────────
+// ── ADMIN PASSWORT ───────────────────────────────────────────────
+// SHA-256 Hash des Passworts "admin2026" — hier durch eigenen Hash ersetzen
+// Hash erzeugen: https://emn178.github.io/online-tools/sha256.html
+var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; // Standard: "admin2026" — unbedingt ersetzen!
+
+async function hashString(str){
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+
+function checkPassword(){
+  var pw = document.getElementById('admin-pw').value;
+  if(!pw) return;
+  hashString(pw).then(function(h){
+    if(h === PW_HASH){
+      document.getElementById('login-step1').style.display='none';
+      document.getElementById('login-step2').style.display='block';
+      document.getElementById('pw-error').style.display='none';
+    } else {
+      document.getElementById('pw-error').style.display='block';
+      document.getElementById('admin-pw').value='';
+    }
+  });
+}
+
+function backToPassword(){
+  document.getElementById('login-step2').style.display='none';
+  document.getElementById('login-step1').style.display='block';
+}
+
+// ── DATA ─────────────────────────────────────────────────────────
 // Gruppen verifiziert gegen offiziellen FIFA/Media Markt Spielplan
-var GROUPS = {
-  A: ['Mexiko','Südkorea','Südafrika','Tschechien'],
-  B: ['Kanada','Bosnien-Herzegowina','Katar','Schweiz'],
-  C: ['Brasilien','Marokko','Haiti','Schottland'],
-  D: ['USA','Paraguay','Australien','Türkei'],
-  E: ['Deutschland','Curaçao','Elfenbeinküste','Ecuador'],
-  F: ['Niederlande','Japan','Schweden','Tunesien'],
-  G: ['Belgien','Ägypten','Iran','Neuseeland'],
-  H: ['Spanien','Kap Verde','Saudi-Arabien','Uruguay'],
-  I: ['Frankreich','Senegal','Irak','Norwegen'],
-  J: ['Argentinien','Algerien','Österreich','Jordanien'],
-  K: ['Portugal','DR Kongo','Usbekistan','Kolumbien'],
-  L: ['England','Kroatien','Ghana','Panama']
+var GROUPS={
+  A:['Mexiko','Südkorea','Südafrika','Tschechien'],
+  B:['Kanada','Bosnien-Herzegowina','Katar','Schweiz'],
+  C:['Brasilien','Marokko','Haiti','Schottland'],
+  D:['USA','Paraguay','Australien','Türkei'],
+  E:['Deutschland','Curaçao','Elfenbeinküste','Ecuador'],
+  F:['Niederlande','Japan','Schweden','Tunesien'],
+  G:['Belgien','Ägypten','Iran','Neuseeland'],
+  H:['Spanien','Kap Verde','Saudi-Arabien','Uruguay'],
+  I:['Frankreich','Senegal','Irak','Norwegen'],
+  J:['Argentinien','Algerien','Österreich','Jordanien'],
+  K:['Portugal','DR Kongo','Usbekistan','Kolumbien'],
+  L:['England','Kroatien','Ghana','Panama']
 };
-var GROUP_MATCHES = {
+// Spielpaarungen exakt laut offiziellem Spielplan (Heim:Gast, Datum)
+// Jede Gruppe: 6 Spiele in korrekter Reihenfolge
+var GROUP_MATCHES={
   A:[['Mexiko','Südafrika','11.06'],['Südkorea','Tschechien','12.06'],['Tschechien','Südafrika','18.06'],['Mexiko','Südkorea','19.06'],['Tschechien','Mexiko','25.06'],['Südafrika','Südkorea','25.06']],
   B:[['Kanada','Bosnien-Herzegowina','12.06'],['Katar','Schweiz','13.06'],['Schweiz','Bosnien-Herzegowina','18.06'],['Kanada','Katar','19.06'],['Schweiz','Kanada','24.06'],['Bosnien-Herzegowina','Katar','24.06']],
   C:[['Brasilien','Marokko','14.06'],['Haiti','Schottland','14.06'],['Schottland','Marokko','20.06'],['Brasilien','Haiti','20.06'],['Schottland','Brasilien','25.06'],['Marokko','Haiti','25.06']],
@@ -477,30 +843,34 @@ var GROUP_MATCHES = {
   L:[['England','Kroatien','17.06'],['Ghana','Panama','18.06'],['England','Ghana','23.06'],['Panama','Kroatien','24.06'],['Panama','England','27.06'],['Kroatien','Ghana','27.06']]
 };
 
-var MATCHES = [];
+// FIFA-Ränge (Stand Mai 2026, Quelle: FIFA-Weltrangliste)
+var FIFA_RANKS={
+  'Frankreich':1,'Spanien':2,'Argentinien':3,'England':4,'Portugal':5,
+  'Brasilien':6,'Niederlande':7,'Marokko':8,'Belgien':9,'Deutschland':10,
+  'Kroatien':11,'Kolumbien':13,'Senegal':14,'Mexiko':15,'USA':16,
+  'Uruguay':17,'Japan':18,'Schweiz':19,'Türkei':22,'Ecuador':23,
+  'Österreich':24,'Südkorea':25,'Australien':27,'Algerien':28,
+  'Ägypten':29,'Kanada':30,'Norwegen':31,'Panama':33,'Elfenbeinküste':34,
+  'Schweden':38,'Paraguay':40,'Tschechien':41,'Schottland':43,
+  'Tunesien':44,'Kap Verde':69,'Ghana':74,'Iran':21,'Neuseeland':85,
+  'Katar':55,'Irak':57,'Südafrika':60,'Saudi-Arabien':61,'Jordanien':63,
+  'Bosnien-Herzegowina':65,'Curaçao':82,'Haiti':83,'Usbekistan':50,
+  'DR Kongo':46,'Ecuador':23,'Peru':53,'Venezuela':49,'Nigeria':26,
+  'Mosambik':99
+};
+
+var MATCHES=[];
 (function(){
-  var id = 1;
-  var grpkeys = ['A','B','C','D','E','F','G','H','I','J','K','L'];
-  for(var gi = 0; gi < grpkeys.length; gi++){
-    var g = grpkeys[gi];
-    var ms = GROUP_MATCHES[g];
-    for(var k = 0; k < ms.length; k++)
-      MATCHES.push({id:'G'+id++, group:g, home:ms[k][0], away:ms[k][1], date:ms[k][2]});
+  var id=1;
+  var grpkeys=['A','B','C','D','E','F','G','H','I','J','K','L'];
+  for(var gi=0;gi<grpkeys.length;gi++){
+    var g=grpkeys[gi];
+    var ms=GROUP_MATCHES[g];
+    for(var k=0;k<ms.length;k++){
+      MATCHES.push({id:'G'+id++,group:g,home:ms[k][0],away:ms[k][1],date:ms[k][2]});
+    }
   }
 })();
-
-// Alle 48 Teams alphabetisch für Dropdowns
-var ALL_TEAMS = [
-  'Ägypten','Algerien','Argentinien','Australien','Belgien',
-  'Bosnien-Herzegowina','Brasilien','Curaçao','Deutschland',
-  'DR Kongo','Ecuador','Elfenbeinküste','England','Frankreich',
-  'Ghana','Haiti','Irak','Iran','Japan','Jordanien','Kanada',
-  'Kap Verde','Katar','Kolumbien','Kroatien','Marokko','Mexiko',
-  'Neuseeland','Niederlande','Norwegen','Österreich','Panama',
-  'Paraguay','Portugal','Saudi-Arabien','Schottland','Schweden',
-  'Schweiz','Senegal','Spanien','Südafrika','Südkorea',
-  'Tschechien','Tunesien','Türkei','Uruguay','USA','Usbekistan'
-];
 
 // ── FLAGGEN ──────────────────────────────────────────────────────
 var FLAGS = {
@@ -519,303 +889,612 @@ var FLAGS = {
 };
 function fl(name){ return (FLAGS[name]||'🏳')+'\u202F'; }
 
-// ── DROPDOWNS BEFÜLLEN ───────────────────────────────────────────
-function fillDropdowns(){
-  var ids = ['s-winner','s-finalist','s-third','s-surprise'];
-  for(var i = 0; i < ids.length; i++){
-    var sel = document.getElementById(ids[i]);
-    for(var t = 0; t < ALL_TEAMS.length; t++){
-      var opt = document.createElement('option');
-      opt.value = ALL_TEAMS[t];
-      opt.textContent = fl(ALL_TEAMS[t]) + ALL_TEAMS[t];
-      sel.appendChild(opt);
-    }
-  }
+// ── STATE ────────────────────────────────────────────────────────
+var STATE={players:[],results:{},tipps:{},sonder:{},sonderResult:{}};
+var SHA=null,TOKEN=null,ME=null;
+
+// ── GITHUB ───────────────────────────────────────────────────────
+function parseState(d){
+  if(d.players)STATE.players=d.players;
+  if(d.results)STATE.results=d.results;
+  if(d.tipps)STATE.tipps=d.tipps;
+  if(d.sonder)STATE.sonder=d.sonder;
+  if(d.sonderResult)STATE.sonderResult=d.sonderResult;
 }
 
-// ── FORMULAR RENDERN ─────────────────────────────────────────────
-function renderForm(){
-  var grpkeys = ['A','B','C','D','E','F','G','H','I','J','K','L'];
-  var html = '';
-  for(var gi = 0; gi < grpkeys.length; gi++){
-    var g = grpkeys[gi];
-    var ms = MATCHES.filter(function(m){ return m.group === g; });
-    html += '<div class="group-label">GRUPPE ' + g + ' &nbsp;&#9658;&nbsp; '
-          + GROUPS[g].map(function(t){ return fl(t)+t; }).join(' &middot; ') + '</div>';
-    html += '<table class="spiele-table" cellpadding="0" cellspacing="0">';
-    for(var mi = 0; mi < ms.length; mi++){
-      var m = ms[mi];
-      var row = (mi % 2 === 0) ? 'even' : 'odd';
-      html += '<tr class="' + row + '">'
-            + '<td class="sp-date">' + m.date + '</td>'
-            + '<td class="sp-home">' + fl(m.home) + m.home + '</td>'
-            + '<td align="center" class="sp-inputs" style="white-space:nowrap">'
-            +   '<span class="sp-tipp-display" id="dh_' + m.id + '">?</span>'
-            +   '<span class="sp-colon">:</span>'
-            +   '<span class="sp-tipp-display" id="da_' + m.id + '">?</span>'
-            +   '&nbsp;<button class="sp-tipp-btn" onclick="qtOpen(\'' + m.id + '\',\'' + m.home.replace(/'/g,"\\'") + '\',\'' + m.away.replace(/'/g,"\\'") + '\')">&#9998; Tippen</button>'
-            +   '<input type="hidden" id="h_' + m.id + '" />'
-            +   '<input type="hidden" id="a_' + m.id + '" />'
-            + '</td>'
-            + '<td class="sp-away">' + fl(m.away) + m.away + '</td>'
-            + '</tr>';
-    }
-    html += '</table>';
-    if(gi < grpkeys.length - 1)
-      html += '<div style="height:1px;background:#ccccaa"></div>';
-  }
-  document.getElementById('form-inner').innerHTML = html;
-}
-
-// ── INHALT ZUSAMMENBAUEN (gemeinsam für Mail + Kopieren) ─────────
-function buildContent(){
-  var name     = document.getElementById('player-name').value.trim();
-  var winner   = document.getElementById('s-winner').value;
-  var finalist = document.getElementById('s-finalist').value;
-  var third    = document.getElementById('s-third').value;
-  var surprise = document.getElementById('s-surprise').value;
-  var errEl    = document.getElementById('error-msg');
-  errEl.style.display = 'none';
-
-  if(!name){
-    errEl.textContent = '⚠ Bitte gib deinen Namen ein!';
-    errEl.style.display = 'block';
-    document.getElementById('player-name').focus();
-    return null;
-  }
-  if(!winner||!finalist||!third||!surprise){
-    errEl.textContent = '⚠ Bitte alle 4 Sondertipps ausfüllen!';
-    errEl.style.display = 'block';
-    return null;
-  }
-  if(winner === finalist){
-    errEl.textContent = '⚠ WM-Sieger und Finalist müssen verschiedene Teams sein!';
-    errEl.style.display = 'block';
-    return null;
-  }
-  var missing = [];
-  for(var i = 0; i < MATCHES.length; i++){
-    var m = MATCHES[i];
-    if(document.getElementById('h_'+m.id).value===''||document.getElementById('a_'+m.id).value==='')
-      missing.push(m.home+' - '+m.away);
-  }
-  if(missing.length > 0){
-    errEl.textContent = '⚠ Noch '+missing.length+' Spiel(e) nicht getippt! Bitte alle Felder ausfüllen.';
-    errEl.style.display = 'block';
-    return null;
-  }
-
-  // Lesbarer Teil
-  var lines = [];
-  lines.push('WM 2026 RZ Tippspiel - Tipps von: '+name);
-  lines.push('Abgeschickt am: '+new Date().toLocaleString('de-DE'));
-  lines.push('');
-  lines.push('--- SONDERTIPPS ---');
-  lines.push('WM-Sieger:         '+fl(winner)+winner);
-  lines.push('Finalist:          '+fl(finalist)+finalist);
-  lines.push('Dritter Platz:     '+fl(third)+third);
-  lines.push('Überraschungsteam: '+fl(surprise)+surprise);
-  lines.push('');
-
-  var grpkeys = ['A','B','C','D','E','F','G','H','I','J','K','L'];
-  for(var gi = 0; gi < grpkeys.length; gi++){
-    var g = grpkeys[gi];
-    lines.push('--- GRUPPE '+g+' ---');
-    var ms = MATCHES.filter(function(m){ return m.group===g; });
-    for(var mi = 0; mi < ms.length; mi++){
-      var m = ms[mi];
-      var h = document.getElementById('h_'+m.id).value;
-      var a = document.getElementById('a_'+m.id).value;
-      var home = m.home; while(home.length < 22) home += ' ';
-      lines.push(m.date+'  '+fl(m.home)+home+h+' : '+a+'  '+fl(m.away)+m.away);
-    }
-    lines.push('');
-  }
-
-  // JSON-Block
-  var tippsObj = {};
-  for(var i = 0; i < MATCHES.length; i++){
-    var m = MATCHES[i];
-    tippsObj[m.id] = {home:+document.getElementById('h_'+m.id).value, away:+document.getElementById('a_'+m.id).value};
-  }
-  var jsonBlock = JSON.stringify({
-    name: name,
-    sonder: {winner:winner, finalist:finalist, third:third, surprise:surprise},
-    tipps: tippsObj
-  });
-
-  lines.push('════════════════════════════════════════');
-  lines.push('IMPORT-BLOCK (nicht verändern!)');
-  lines.push('════════════════════════════════════════');
-  lines.push(jsonBlock);
-  lines.push('════════════════════════════════════════');
-
-  return {name: name, text: lines.join('\n')};
-}
-
-// ── MAIL BAUEN ───────────────────────────────────────────────────
-function buildMail(){
-  var result = buildContent();
-  if(!result) return;
-  var subject = encodeURIComponent('WM 2026 RZ Tippspiel - Tipps von '+result.name);
-  var body    = encodeURIComponent(result.text);
-  window.location.href = 'mailto:'+MAIL_TO+'?subject='+subject+'&body='+body;
-}
-
-// ── IN ZWISCHENABLAGE KOPIEREN ───────────────────────────────────
-function copyToClipboard(){
-  var result = buildContent();
-  if(!result) return;
-  var msgEl = document.getElementById('copy-msg');
-  navigator.clipboard.writeText(result.text).then(function(){
-    msgEl.style.display = 'block';
-    setTimeout(function(){ msgEl.style.display='none'; }, 4000);
-  }).catch(function(){
-    // Fallback für ältere Browser
-    var ta = document.createElement('textarea');
-    ta.value = result.text;
-    ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    msgEl.style.display = 'block';
-    setTimeout(function(){ msgEl.style.display='none'; }, 4000);
-  });
-}
-
-// ── SCHNELLTIPP POPUP ────────────────────────────────────────────
-var QT_PRESETS = [
-  [1,0],[2,0],[2,1],[3,0],[3,1],[3,2],
-  [0,0],[1,1],[2,2],
-  [0,1],[0,2],[1,2],[0,3],[1,3],[2,3]
-];
-var qtCurrentId = null;
-var qtH = 0, qtA = 0;
-var qtActive = 'h';
-
-function qtOpen(id, home, away){
-  qtCurrentId = id;
-  var curH = document.getElementById('h_'+id).value;
-  var curA = document.getElementById('a_'+id).value;
-  qtH = curH !== '' ? +curH : 0;
-  qtA = curA !== '' ? +curA : 0;
-  qtActive = 'h';
-  qtDoubleMode = false;
-
-  document.getElementById('qt-matchname').innerHTML = fl(home)+' <b>'+home+'</b> &ndash; <b>'+away+'</b> '+fl(away);
-  document.getElementById('qt-home-label').textContent = home;
-  document.getElementById('qt-away-label').textContent = away;
-  qtUpdateDisplay();
-  qtBuildPresets();
-  qtBuildNumpad();
-  document.getElementById('qt-overlay').classList.add('open');
-}
-
-function qtActivate(which){
-  qtActive = which;
-  qtUpdateDisplay();
-}
-
-function qtUpdateDisplay(){
-  var hEl = document.getElementById('qt-h');
-  var aEl = document.getElementById('qt-a');
-  hEl.textContent = qtH;
-  aEl.textContent = qtA;
-  hEl.className = 'qt-score-val' + (qtActive==='h' ? ' active' : '');
-  aEl.className = 'qt-score-val' + (qtActive==='a' ? ' active' : '');
-}
-
-function qtBuildPresets(){
-  var html = '';
-  for(var i = 0; i < QT_PRESETS.length; i++){
-    var h = QT_PRESETS[i][0], a = QT_PRESETS[i][1];
-    var sel = (h===qtH && a===qtA) ? ' sel' : '';
-    html += '<button class="qt-preset'+sel+'" onclick="qtSetPreset('+h+','+a+')">'
-          + h+':'+a+'</button>';
-  }
-  document.getElementById('qt-presets').innerHTML = html;
-}
-
-var qtDoubleMode = false;
-
-function qtBuildNumpad(){
-  var html = '';
-  if(!qtDoubleMode){
-    for(var n = 0; n <= 9; n++){
-      html += '<button class="qt-num-btn" onclick="qtNumPress('+n+')">'+n+'</button>';
-    }
-    html += '<button class="qt-num-btn" onclick="qtToggleDouble()" style="font-size:10px;font-weight:bold;background:#ffe8cc;border-color:#cc8800;color:#663300">2-stellig</button>';
+function ghLoad(cb){
+  if(TOKEN){
+    // Mit Token: GitHub API (lesen + schreiben)
+    fetch('https://api.github.com/repos/'+GH_USER+'/'+GH_REPO+'/contents/'+GH_FILE,
+      {headers:{Authorization:'token '+TOKEN,Accept:'application/vnd.github.v3+json'}})
+    .then(function(r){
+      if(r.status===404){cb(true);return;}
+      if(!r.ok){cb(false);return;}
+      r.json().then(function(j){
+        SHA=j.sha;
+        parseState(JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,''))))));
+        cb(true);
+      });
+    }).catch(function(){cb(false);});
   } else {
-    for(var n = 10; n <= 20; n++){
-      html += '<button class="qt-num-btn" onclick="qtNumPress('+n+')">'+n+'</button>';
+    // Ohne Token: Raw-URL (nur lesen, public repo)
+    var rawUrl='https://raw.githubusercontent.com/'+GH_USER+'/'+GH_REPO+'/main/'+GH_FILE+'?t='+Date.now();
+    fetch(rawUrl)
+    .then(function(r){
+      if(!r.ok){cb(false);return;}
+      r.json().then(function(d){
+        parseState(d);
+        cb(true);
+      });
+    }).catch(function(){cb(false);});
+  }
+}
+function ghSave(cb){
+  var payload={players:STATE.players,results:STATE.results,tipps:STATE.tipps,sonder:STATE.sonder,sonderResult:STATE.sonderResult};
+  var content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
+  var body={message:'update',content:content};
+  if(SHA)body.sha=SHA;
+  fetch('https://api.github.com/repos/'+GH_USER+'/'+GH_REPO+'/contents/'+GH_FILE,
+    {method:'PUT',headers:{Authorization:'token '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify(body)})
+  .then(function(r){
+    if(r.status===409){ghLoad(function(){ghSave(cb);});return;}
+    if(!r.ok){showToast('FEHLER '+r.status);if(cb)cb();return;}
+    r.json().then(function(j){SHA=j.content.sha;showToast('GESPEICHERT!');if(cb)cb();});
+  }).catch(function(){showToast('NETZWERKFEHLER');if(cb)cb();});
+}
+
+// ── SCORING ──────────────────────────────────────────────────────
+function calcPts(t,r){
+  if(!t||!r||t.home==null||r.home==null)return null;
+  var th=+t.home,ta=+t.away,rh=+r.home,ra=+r.away;
+  if(th===rh&&ta===ra)return 3;
+  if(th-ta===rh-ra)return 2;
+  if((th>ta&&rh>ra)||(th<ta&&rh<ra)||(th===ta&&rh===ra))return 1;
+  return 0;
+}
+// Sonderpunkte
+var SONDER_PTS = {winner:15, finalist:10, third:5};
+// Überraschungsteam: FIFA-Rang × Runden-Multiplikator (wird manuell eingetragen)
+// STATE.sonderResult = { "Max": "viertelfinale" } etc.
+var RUNDEN_MULT = {gruppe:0, achtelfinale:1, viertelfinale:2, halbfinale:3, finale:4, weltmeister:5};
+
+function calcSonderPts(name){
+  var s = STATE.sonder[name];
+  if(!s) return {sp:0, sw:0, sf:0, st:0, sur:0};
+  var r = STATE.sonderResult||{};
+  var sw=0, sf=0, st=0, sur=0;
+  // WM-Sieger
+  if(r.winner && s.winner === r.winner) sw = SONDER_PTS.winner;
+  // Finalist
+  if(r.finalist && s.finalist === r.finalist) sf = SONDER_PTS.finalist;
+  // Dritter Platz
+  if(r.third && s.third === r.third) st = SONDER_PTS.third;
+  // Überraschungsteam: FIFA-Rang × Runde
+  if(r.surpriseResults && r.surpriseResults[s.surprise]){
+    var runde = r.surpriseResults[s.surprise];
+    var rank  = FIFA_RANKS[s.surprise]||50;
+    sur = rank * (RUNDEN_MULT[runde]||0);
+  }
+  return {sp: sw+sf+st+sur, sw:sw, sf:sf, st:st, sur:sur};
+}
+
+function calcStats(name){
+  var t=STATE.tipps[name]||{},p=0,ex=0,df=0,ten=0,pl=0;
+  for(var i=0;i<MATCHES.length;i++){
+    var m=MATCHES[i],r=STATE.results[m.id],ti=t[m.id];
+    if(!r||r.home==null||!ti||ti.home==null)continue;
+    pl++;var v=calcPts(ti,r);p+=v;
+    if(v===3)ex++;else if(v===2)df++;else if(v===1)ten++;
+  }
+  var sp=calcSonderPts(name);
+  var ko = STATE.kopts ? (STATE.kopts[name]||0) : 0;
+  return{p:p+sp.sp+ko, base:p, ko:ko, ex:ex,df:df,ten:ten,pl:pl, sp:sp.sp,sw:sp.sw,sf:sp.sf,st:sp.st,sur:sp.sur};
+}
+
+// ── NAV ──────────────────────────────────────────────────────────
+function showPage(name,btn){
+  // Vor WM-Start keine Navigation möglich (außer ?admin)
+  var isAdmin = window.location.search.indexOf('admin') !== -1;
+  if(new Date() < WM_START && !isAdmin) return;
+
+  // Sicherstellen dass main-content sichtbar ist
+  document.getElementById('main-content').style.display='block';
+  document.getElementById('countdown-wrap').style.display='none';
+  var pages=['rangliste','spielplan','tippen','sonder','admin'];
+  for(var i=0;i<pages.length;i++){
+    var el=document.getElementById('page-'+pages[i]);
+    if(el)el.style.display=pages[i]===name?'block':'none';
+  }
+  var btns=document.querySelectorAll('.navbtn');
+  for(var i=0;i<btns.length;i++)btns[i].classList.remove('active');
+  if(btn)btn.classList.add('active');
+  if(name==='rangliste')renderRangliste();
+  if(name==='spielplan')renderSpielplan();
+  if(name==='tippen')renderTippen();
+  if(name==='sonder')renderSonder();
+  if(name==='admin')renderAdmin();
+}
+
+// ── SONDERTIPPS ──────────────────────────────────────────────────
+function renderSonder(){
+  var container=document.getElementById('sonder-inner');
+  var players=STATE.players;
+  if(!players.length){
+    container.innerHTML='<div style="padding:16px;font-size:11px;color:#999999;font-family:Verdana,Arial,sans-serif">Noch keine Spieler vorhanden.</div>';
+    return;
+  }
+  var hasSonder=false;
+  for(var i=0;i<players.length;i++){if(STATE.sonder[players[i]]){hasSonder=true;break;}}
+  if(!hasSonder){
+    container.innerHTML='<div style="padding:16px;font-size:11px;color:#999999;font-family:Verdana,Arial,sans-serif;font-style:italic">Noch keine Sondertipps eingegangen.</div>';
+    return;
+  }
+  var labels={winner:'&#127942; WM-Sieger',finalist:'&#129352; Finalist',third:'&#129353; Dritter Platz',surprise:'&#128293; &Uuml;berraschungsteam'};
+  var keys=['winner','finalist','third','surprise'];
+  var html='<table width="100%" cellpadding="0" cellspacing="0" class="rltable"><thead><tr>';
+  html+='<th style="width:160px">Spieler</th>';
+  for(var k=0;k<keys.length;k++)html+='<th>'+labels[keys[k]]+'</th>';
+  html+='</tr></thead><tbody>';
+  for(var i=0;i<players.length;i++){
+    var name=players[i];
+    var s=STATE.sonder[name];
+    html+='<tr class="'+(i%2===0?'even':'odd')+'">';
+    html+='<td style="font-weight:bold;font-size:12px">'+name+'</td>';
+    for(var k=0;k<keys.length;k++){
+      if(s&&s[keys[k]]){
+        var team=s[keys[k]];
+        try{team=decodeURIComponent(escape(team));}catch(e){}
+        html+='<td>'+fl(team)+team+'</td>';
+      }else{
+        html+='<td style="color:#cccccc;font-style:italic;font-size:10px">nicht getippt</td>';
+      }
     }
-    html += '<button class="qt-num-btn" onclick="qtToggleDouble()" style="font-size:10px;font-weight:bold;background:#ccffcc;border-color:#336633;color:#003300">0-9</button>';
+    html+='</tr>';
   }
-  document.getElementById('qt-numpad').innerHTML = html;
+  html+='</tbody></table>';
+  container.innerHTML=html;
 }
 
-function qtToggleDouble(){
-  qtDoubleMode = !qtDoubleMode;
-  qtBuildNumpad();
-}
+// ── RANGLISTE ────────────────────────────────────────────────────
+function renderRangliste(){
+  var pl=STATE.players.map(function(n){var s=calcStats(n);s.name=n;return s;});
+  pl.sort(function(a,b){return b.p-a.p||b.ex-a.ex||b.df-a.df;});
 
-function qtNumPress(n){
-  if(qtActive === 'h'){
-    qtH = n;
-    qtActive = 'a';
-  } else {
-    qtA = n;
-    qtActive = 'h';
+  var medals=['&#129351;','&#129352;','&#129353;'];
+  var tbody='';
+  for(var i=0;i<pl.length;i++){
+    var p=pl[i];
+    var rc=i<3?'rank-'+(i+1):'';
+    var sonderTip = p.sp>0
+      ? '<span title="Sieger: '+p.sw+'P  Finalist: '+p.sf+'P  3.Platz: '+p.st+'P  Überraschung: '+p.sur+'P" style="cursor:help">'+p.sp+'</span>'
+      : '<span style="color:#cccccc">0</span>';
+    tbody+='<tr class="'+(i%2===0?'even':'odd')+' '+rc+'">'
+      +'<td class="rank-no">'+(i<3?medals[i]:(i+1)+'.')+'</td>'
+      +'<td style="font-weight:bold;font-size:12px">'+p.name+'</td>'
+      +'<td><div class="ptsnum">'+p.p+'</div><div class="ptssub">'+p.pl+' Spiele</div></td>'
+      +'<td style="color:#555555;font-size:12px">'+p.base+'</td>'
+      +'<td style="color:#336699;font-weight:bold;font-size:12px">'+p.ko+'</td>'
+      +'<td style="color:#cc8800;font-weight:bold;font-size:12px">'+sonderTip+'</td>'
+      +'<td style="color:#336633;font-weight:bold;font-size:13px">'+p.ex+'</td>'
+      +'<td style="color:#885500;font-weight:bold;font-size:13px">'+p.df+'</td>'
+      +'<td style="color:#aa2222;font-weight:bold;font-size:13px">'+p.ten+'</td>'
+      +'<td style="color:#999999">'+p.pl+'</td>'
+      +'</tr>';
   }
-  qtDoubleMode = false; // nach Eingabe zurück auf 0-9
-  qtUpdateDisplay();
-  qtBuildPresets();
-  qtBuildNumpad();
+  document.getElementById('rl-body').innerHTML=tbody;
 }
 
-function qtSetPreset(h, a){
-  qtH = h; qtA = a;
-  qtUpdateDisplay();
-  qtBuildPresets();
-  qtConfirm();
+// ── SPIELPLAN ────────────────────────────────────────────────────
+function setPhase(p,btn){
+  var tabs=document.querySelectorAll('.phasetab');
+  for(var i=0;i<tabs.length;i++)tabs[i].classList.toggle('active',i===(p==='gruppe'?0:1));
+  document.getElementById('sp-gruppe').style.display=p==='gruppe'?'block':'none';
+  document.getElementById('sp-ko').style.display=p==='ko'?'block':'none';
+}
+function renderSpielplan(){
+  var grps=['A','B','C','D','E','F','G','H','I','J','K','L'];
+  // 4 columns per row
+  var rows=[];
+  for(var i=0;i<grps.length;i+=4)rows.push(grps.slice(i,i+4));
+  var html='';
+  for(var ri=0;ri<rows.length;ri++){
+    html+='<tr>';
+    for(var ci=0;ci<rows[ri].length;ci++){
+      var g=rows[ri][ci];
+      var ms=MATCHES.filter(function(m){return m.group===g;});
+      html+='<td class="groupcard"><div class="groupcardhdr">GRUPPE '+g+'<small>'+GROUPS[g].map(function(t){return fl(t)+t;}).join(' &middot; ')+'</small></div>';
+      for(var mi=0;mi<ms.length;mi++){
+        var m=ms[mi],r=STATE.results[m.id]||{},done=r.home!=null;
+        html+='<table width="100%" cellpadding="0" cellspacing="0" class="gmrow"><tr>'
+          +'<td class="gmdate">'+m.date+'</td>'
+          +'<td><span class="gmhome">'+fl(m.home)+m.home+'</span><br><span class="gmaway">'+fl(m.away)+m.away+'</span></td>'
+          +'<td align="right" class="gmscore '+(done?'done':'open')+'">'+(done?r.home+':'+r.away:'&ndash;:&ndash;')+'</td>'
+          +'</tr></table>';
+      }
+      html+='</td>';
+    }
+    // fill empty cells
+    for(var ci=rows[ri].length;ci<4;ci++)html+='<td></td>';
+    html+='</tr>';
+  }
+  document.getElementById('group-outer-table').innerHTML=html;
 }
 
-function qtClose(){
-  document.getElementById('qt-overlay').classList.remove('open');
-  qtCurrentId = null;
+// ── TIPPEN ───────────────────────────────────────────────────────
+function renderTippen(){
+  var sel=document.getElementById('tipper-select');
+  sel.innerHTML='<option value="">-- auswählen --</option>';
+  for(var i=0;i<STATE.players.length;i++)
+    sel.innerHTML+='<option value="'+STATE.players[i]+'"'+( ME===STATE.players[i]?' selected':'')+'>'+STATE.players[i]+'</option>';
+  if(ME)loadMyTipps();
+}
+function loadMyTipps(){
+  ME=document.getElementById('tipper-select').value;
+  if(!ME){
+    document.getElementById('tipp-form').innerHTML='';
+    document.getElementById('tipp-stat').textContent='';
+    return;
+  }
+  var myT=STATE.tipps[ME]||{};
+  var done=MATCHES.filter(function(m){return STATE.results[m.id]&&STATE.results[m.id].home!=null;}).length;
+  var tipped=MATCHES.filter(function(m){return myT[m.id]&&myT[m.id].home!=null;}).length;
+  var st=calcStats(ME);
+  document.getElementById('tipp-stat').textContent=tipped+'/'+MATCHES.length+' getippt  |  '+done+' ausgewertet  |  '+st.p+' Punkte';
+
+  var grps=['A','B','C','D','E','F','G','H','I','J','K','L'];
+  var rows=[];
+  for(var i=0;i<grps.length;i+=4)rows.push(grps.slice(i,i+4));
+  var html='<table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #bbbbaa">';
+  for(var ri=0;ri<rows.length;ri++){
+    html+='<tr>';
+    for(var ci=0;ci<rows[ri].length;ci++){
+      var g=rows[ri][ci];
+      var ms=MATCHES.filter(function(m){return m.group===g;});
+      html+='<td class="tippcard"><div class="tippcardhdr">GRUPPE '+g+'</div>';
+      for(var mi=0;mi<ms.length;mi++){
+        var m=ms[mi],r=STATE.results[m.id]||{},locked=r.home!=null;
+        var ti=myT[m.id]||{},pv=locked?calcPts(ti,r):null;
+        var ph=pv!=null?'<span class="ptstag p'+pv+'">'+pv+'P</span>':'';
+        var hv=ti.home!=null?ti.home:'',av=ti.away!=null?ti.away:'';
+        if(locked){
+          html+='<table width="100%" cellpadding="0" cellspacing="0" class="tipprow locked"><tr>'
+            +'<td><b>'+fl(m.home)+m.home+'</b> &ndash; '+fl(m.away)+m.away+'<br><span style="font-size:9px;color:#aaa">'+m.date+'</span></td>'
+            +'<td align="right" nowrap>'
+            +'<span style="font-family:\'Courier New\',monospace;font-size:15px;font-weight:bold;color:#555">'+(hv!==''?hv:'?')+':'+(av!==''?av:'?')+'</span> '+ph
+            +'<br><span style="font-family:\'Courier New\',monospace;font-size:13px;color:#aaa">('+r.home+':'+r.away+')</span>'
+            +'</td>'
+            +'</tr></table>';
+        }else{
+          html+='<table width="100%" cellpadding="0" cellspacing="0" class="tipprow"><tr>'
+            +'<td><b>'+fl(m.home)+m.home+'</b> &ndash; '+fl(m.away)+m.away+'<br><span style="font-size:9px;color:#aaa">'+m.date+'</span></td>'
+            +'<td align="right" nowrap>'
+            +'<input class="tippinp" type="number" readonly value="'+hv+'" id="t_'+m.id+'_h"/>'
+            +' <span style="font-family:\'Courier New\',monospace;font-weight:bold">:</span> '
+            +'<input class="tippinp" type="number" readonly value="'+av+'" id="t_'+m.id+'_a"/>'
+            +'</td></tr></table>';
+        }
+      }
+      html+='</td>';
+    }
+    for(var ci=rows[ri].length;ci<4;ci++)html+='<td></td>';
+    html+='</tr>';
+  }
+  html+='</table>';
+  document.getElementById('tipp-form').innerHTML=html;
+}
+function saveTipps(){
+  if(!ME)return;
+  document.getElementById('save-msg').textContent='Speichere...';
+  if(!STATE.tipps[ME])STATE.tipps[ME]={};
+  for(var i=0;i<MATCHES.length;i++){
+    var m=MATCHES[i];
+    if(STATE.results[m.id]&&STATE.results[m.id].home!=null)continue;
+    var h=document.getElementById('t_'+m.id+'_h'),a=document.getElementById('t_'+m.id+'_a');
+    if(h&&a&&h.value!==''&&a.value!=='')STATE.tipps[ME][m.id]={home:+h.value,away:+a.value};
+  }
+  ghSave(function(){
+    document.getElementById('save-msg').textContent='Gespeichert!';
+    setTimeout(function(){document.getElementById('save-msg').textContent='';},3000);
+    loadMyTipps();
+  });
 }
 
-function qtCloseIfBg(e){
-  if(e.target === document.getElementById('qt-overlay')) qtClose();
+// ── ADMIN ────────────────────────────────────────────────────────
+function adminLogin(){
+  var t=document.getElementById('gh-token').value.trim();
+  if(!t)return;TOKEN=t;
+  setStatus('VERBINDE...',false);
+  ghLoad(function(ok){
+    if(!ok){showToast('VERBINDUNG FEHLGESCHLAGEN');TOKEN=null;setStatus('FEHLER',false);return;}
+    setStatus('VERBUNDEN',true);
+    localStorage.setItem('wm_tok',t);
+    document.getElementById('admin-login-wrap').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
+    renderAdmin();renderRangliste();renderSpielplan();renderTippen();
+  });
 }
-
-function qtConfirm(){
-  if(!qtCurrentId) return;
-  document.getElementById('h_'+qtCurrentId).value = qtH;
-  document.getElementById('a_'+qtCurrentId).value = qtA;
-  document.getElementById('dh_'+qtCurrentId).textContent = qtH;
-  document.getElementById('da_'+qtCurrentId).textContent = qtA;
-  var allBtns = document.querySelectorAll('.sp-tipp-btn');
-  for(var i=0;i<allBtns.length;i++){
-    var oc = allBtns[i].getAttribute('onclick')||'';
-    if(oc.indexOf("'"+qtCurrentId+"'") >= 0){
-      allBtns[i].textContent = '✓ '+qtH+':'+qtA;
-      allBtns[i].style.background = '#ccffcc';
-      allBtns[i].style.borderColor = '#336633';
-      allBtns[i].style.color = '#003300';
-      break;
+function adminLogout(){
+  TOKEN=null;localStorage.removeItem('wm_tok');
+  document.getElementById('admin-login-wrap').style.display='block';
+  document.getElementById('admin-panel').style.display='none';
+  document.getElementById('gh-token').value='';
+  document.getElementById('admin-pw').value='';
+  document.getElementById('login-step1').style.display='block';
+  document.getElementById('login-step2').style.display='none';
+  document.getElementById('pw-error').style.display='none';
+  setStatus('KEIN TOKEN',false);
+}
+function setStatus(txt,on){
+  document.getElementById('gh-status').textContent=txt;
+  document.getElementById('dot').className='dot'+(on?' on':'');
+}
+function renderAdmin(){
+  if(!TOKEN||document.getElementById('admin-panel').style.display==='none')return;
+  var grps=['A','B','C','D','E','F','G','H','I','J','K','L'];
+  var html='';
+  for(var gi=0;gi<grps.length;gi++){
+    var g=grps[gi];
+    var ms=MATCHES.filter(function(m){return m.group===g;});
+    html+='<div class="admgrphdr">GRUPPE '+g+'</div>';
+    for(var mi=0;mi<ms.length;mi++){
+      var m=ms[mi],r=STATE.results[m.id]||{};
+      html+='<table width="100%" cellpadding="0" cellspacing="0" class="admrow"><tr>'
+        +'<td class="admlabel">'+fl(m.home)+m.home+' &ndash; '+fl(m.away)+m.away+'<small>'+m.date+'</small></td>'
+        +'<td align="right" nowrap style="padding-right:4px">'
+        +'<input class="adminp" type="number" min="0" max="20" value="'+(r.home!=null?r.home:'')+'" id="r_'+m.id+'_h"/>'
+        +' <b style="color:#888">:</b> '
+        +'<input class="adminp" type="number" min="0" max="20" value="'+(r.away!=null?r.away:'')+'" id="r_'+m.id+'_a"/>'
+        +' <button class="btnok" onclick="saveResult(\''+m.id+'\')">OK</button>'
+        +'</td></tr></table>';
     }
   }
-  qtClose();
+  document.getElementById('admin-matches').innerHTML=html;
+
+  var phtml='';
+  for(var i=0;i<STATE.players.length;i++){
+    phtml+='<table cellpadding="0" cellspacing="2" style="margin-bottom:5px;width:100%"><tr>'
+      +'<td><input type="text" style="border:2px inset #aaa;font-family:Verdana,Arial,sans-serif;font-size:11px;padding:4px 6px;background:#ffffee;width:100%" value="'+STATE.players[i]+'" onchange="STATE.players['+i+']=this.value"/></td>'
+      +'<td width="40"><button class="btnred" onclick="delPlayer('+i+')">&#10005;</button></td>'
+      +'</tr></table>';
+  }
+  document.getElementById('admin-players').innerHTML=phtml;
+  fillSonderDropdowns();
+}
+function saveSonderResult(){
+  if(!STATE.sonderResult) STATE.sonderResult={};
+  var r=STATE.sonderResult;
+  r.winner   = document.getElementById('sr-winner').value   ||null;
+  r.finalist = document.getElementById('sr-finalist').value ||null;
+  r.third    = document.getElementById('sr-third').value    ||null;
+  r.surpriseResults = r.surpriseResults||{};
+  var rows=document.querySelectorAll('.sr-surprise-row');
+  for(var i=0;i<rows.length;i++){
+    var team=rows[i].getAttribute('data-team');
+    var runde=rows[i].querySelector('select').value;
+    if(runde) r.surpriseResults[team]=runde;
+  }
+  ghSave(function(){
+    document.getElementById('sr-msg').textContent='✓ Gespeichert!';
+    setTimeout(function(){document.getElementById('sr-msg').textContent='';},3000);
+    renderRangliste();
+  });
+}
+function fillSonderDropdowns(){
+  var ALLE_TEAMS=['Ägypten','Algerien','Argentinien','Australien','Belgien','Bosnien-Herzegowina','Brasilien','Curaçao','Deutschland','DR Kongo','Ecuador','Elfenbeinküste','England','Frankreich','Ghana','Haiti','Irak','Iran','Japan','Jordanien','Kanada','Kap Verde','Katar','Kolumbien','Kroatien','Marokko','Mexiko','Neuseeland','Niederlande','Norwegen','Österreich','Panama','Paraguay','Portugal','Saudi-Arabien','Schottland','Schweden','Schweiz','Senegal','Spanien','Südafrika','Südkorea','Tschechien','Tunesien','Türkei','Uruguay','USA','Usbekistan'];
+  var ids=['sr-winner','sr-finalist','sr-third'];
+  var r=STATE.sonderResult||{};
+  for(var k=0;k<ids.length;k++){
+    var sel=document.getElementById(ids[k]);
+    if(!sel||sel.options.length>1)continue;
+    for(var t=0;t<ALLE_TEAMS.length;t++){
+      var o=document.createElement('option');o.value=ALLE_TEAMS[t];o.textContent=fl(ALLE_TEAMS[t])+ALLE_TEAMS[t];sel.appendChild(o);
+    }
+  }
+  if(r.winner)   document.getElementById('sr-winner').value=r.winner;
+  if(r.finalist) document.getElementById('sr-finalist').value=r.finalist;
+  if(r.third)    document.getElementById('sr-third').value=r.third;
+  var RUNDEN=[['gruppe','Gruppenphase (Aus)'],['achtelfinale','Achtelfinale'],['viertelfinale','Viertelfinale'],['halbfinale','Halbfinale'],['finale','Finale'],['weltmeister','Weltmeister']];
+  var surpriseTeams={};
+  for(var name in STATE.sonder){var s=STATE.sonder[name];if(s&&s.surprise)surpriseTeams[s.surprise]=true;}
+  var surHtml='';
+  var sr=r.surpriseResults||{};
+  for(var team in surpriseTeams){
+    surHtml+='<div class="sr-surprise-row" data-team="'+team+'" style="margin-bottom:4px">'+fl(team)+team+': ';
+    surHtml+='<select style="border:2px inset #aaa;font-family:Verdana,Arial,sans-serif;font-size:10px;padding:2px 4px;background:#ffffee"><option value="">-- Runde --</option>';
+    for(var ri=0;ri<RUNDEN.length;ri++){
+      surHtml+='<option value="'+RUNDEN[ri][0]+'"'+(sr[team]===RUNDEN[ri][0]?' selected':'')+'>'+RUNDEN[ri][1]+'</option>';
+    }
+    surHtml+='</select></div>';
+  }
+  if(!surHtml) surHtml='<span style="font-size:10px;color:#aaa;font-style:italic">Noch keine Überraschungsteam-Tipps eingegangen.</span>';
+  document.getElementById('sr-surprise-rows').innerHTML=surHtml;
+}
+function importTipps(){
+  var raw = document.getElementById('import-json').value.trim();
+  var msgEl = document.getElementById('import-msg');
+  msgEl.style.color = '#336633';
+  msgEl.textContent = '';
+
+  // JSON-Block aus Mail extrahieren falls ganzer Mailtext eingeklebt wurde
+  var jsonStr = raw;
+  var blockMatch = raw.match(/[{][^{}]*"name"[^{}]*"tipps"[\s\S]*[}]$/m);
+  if(blockMatch) jsonStr = blockMatch[0];
+
+  var data;
+  try {
+    data = JSON.parse(jsonStr);
+  } catch(e) {
+    msgEl.style.color = '#cc0000';
+    msgEl.textContent = '⚠ Ungültiges Format — bitte nur den Import-Block einfügen.';
+    return;
+  }
+
+  if(!data.name || !data.tipps){
+    msgEl.style.color = '#cc0000';
+    msgEl.textContent = '⚠ Fehlende Felder: "name" oder "tipps" nicht gefunden.';
+    return;
+  }
+
+  // Spieler anlegen falls nicht vorhanden
+  if(STATE.players.indexOf(data.name) < 0){
+    STATE.players.push(data.name);
+  }
+
+  // Sondertipps übernehmen falls vorhanden
+  if(data.sonder){
+    if(!STATE.sonder) STATE.sonder = {};
+    STATE.sonder[data.name] = data.sonder;
+  }
+
+  // Tipps übernehmen — nur Spiele die noch nicht gespielt sind überschreiben
+  if(!STATE.tipps[data.name]) STATE.tipps[data.name] = {};
+  var count = 0;
+  for(var id in data.tipps){
+    var t = data.tipps[id];
+    if(t.home != null && t.away != null){
+      STATE.tipps[data.name][id] = {home: +t.home, away: +t.away};
+      count++;
+    }
+  }
+
+  ghSave(function(){
+    msgEl.textContent = '✓ ' + data.name + ' importiert — ' + count + ' Tipps gespeichert.';
+    document.getElementById('import-json').value = '';
+    renderAdmin();
+    renderRangliste();
+    renderTippen();
+  });
+}
+function saveResult(id){
+  var h=document.getElementById('r_'+id+'_h').value,a=document.getElementById('r_'+id+'_a').value;
+  if(h===''||a==='')return;
+  STATE.results[id]={home:+h,away:+a};
+  ghSave(function(){renderRangliste();renderSpielplan();if(ME)loadMyTipps();});
+}
+function addPlayer(){
+  var inp=document.getElementById('new-player'),n=inp.value.trim();
+  if(!n||STATE.players.indexOf(n)>=0)return;
+  STATE.players.push(n);inp.value='';renderAdmin();
+}
+function delPlayer(i){
+  if(!confirm('"'+STATE.players[i]+'" wirklich entfernen?'))return;
+  STATE.players.splice(i,1);renderAdmin();
+}
+// Einmalige Reparatur für falsch kodierte Umlaute in der data.json
+function repairEncoding(){
+  function fix(str){
+    if(typeof str !== 'string') return str;
+    try { return decodeURIComponent(escape(str)); } catch(e){ return str; }
+  }
+  function fixObj(obj){
+    if(!obj) return obj;
+    if(typeof obj === 'string') return fix(obj);
+    if(Array.isArray(obj)) return obj.map(fixObj);
+    var out = {};
+    for(var k in obj) out[fix(k)] = fixObj(obj[k]);
+    return out;
+  }
+  STATE.players = STATE.players.map(fix);
+  STATE.sonder  = fixObj(STATE.sonder);
+  STATE.sonderResult = fixObj(STATE.sonderResult);
+  ghSave(function(){
+    showToast('ENCODING REPARIERT ✓');
+    renderRangliste();
+    renderSonder();
+  });
 }
 
-// ── INIT ─────────────────────────────────────────────────────────
+function exportMattermost(){
+  var pl=STATE.players.map(function(n){var s=calcStats(n);s.name=n;return s;});
+  pl.sort(function(a,b){return b.p-a.p||b.ex-a.ex;});
+  var done=MATCHES.filter(function(m){return STATE.results[m.id]&&STATE.results[m.id].home!=null;}).length;
+  var mx=['\uD83E\uDD47','\uD83E\uDD48','\uD83E\uDD49'];
+  var lines=['### \u26BD WM 2026 Tippspiel \u2014 Stand nach '+done+' Spielen'];
+  for(var i=0;i<pl.length;i++){
+    var p=pl[i];
+    lines.push((i<3?mx[i]:(i+1)+'.')+' **'+p.name+'** \u2014 '+p.p+' Punkte ('+p.ex+'\u00d7 exakt, '+p.df+'\u00d7 Diff, '+p.ten+'\u00d7 Tendenz)');
+  }
+  navigator.clipboard.writeText(lines.join('\n')).then(function(){showToast('KOPIERT!');});
+}
+
+// ── TOAST & INIT ─────────────────────────────────────────────────
+function closeWelcome(){
+  document.getElementById('welcome-overlay').classList.remove('open');
+  localStorage.setItem('wm_welcomed','1');
+}
+
+function maybeShowWelcome(){
+  // Nur zeigen wenn WM schon gestartet und noch nicht gesehen
+  if(new Date() >= WM_START && !localStorage.getItem('wm_welcomed')){
+    document.getElementById('welcome-overlay').classList.add('open');
+  }
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';
+  clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none';},2500);
+}
+
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+
+function updateCountdown(){
+  var diff = WM_START - new Date();
+  if(diff <= 0){ openMainContent(); return; }
+  var days  = Math.floor(diff / 86400000);
+  var hours = Math.floor((diff % 86400000) / 3600000);
+  var mins  = Math.floor((diff % 3600000)  / 60000);
+  var secs  = Math.floor((diff % 60000)    / 1000);
+  document.getElementById('cd-days').textContent  = pad(days);
+  document.getElementById('cd-hours').textContent = pad(hours);
+  document.getElementById('cd-mins').textContent  = pad(mins);
+  document.getElementById('cd-secs').textContent  = pad(secs);
+}
+
+function openMainContent(){
+  document.getElementById('countdown-wrap').style.display = 'none';
+  document.getElementById('main-content').style.display   = 'block';
+  if(window._cdInterval){ clearInterval(window._cdInterval); }
+  maybeShowWelcome();
+}
+
 function init(){
-  fillDropdowns();
-  renderForm();
+  var isAdmin = window.location.search.indexOf('admin') !== -1;
+  var diff = WM_START - new Date();
+
+  if(diff <= 0 || isAdmin){
+    openMainContent();
+  } else {
+    document.getElementById('countdown-wrap').style.display = 'block';
+    updateCountdown();
+    window._cdInterval = setInterval(updateCountdown, 1000);
+  }
+
+  var saved = localStorage.getItem('wm_tok');
+  if(saved){
+    TOKEN=saved;
+    setStatus('VERBINDE...',false);
+    ghLoad(function(ok){
+      setStatus(ok?'VERBUNDEN':'OFFLINE',ok);
+      if(ok && isAdmin){
+        document.getElementById('gh-token').value=saved;
+        document.getElementById('admin-login-wrap').style.display='none';
+        document.getElementById('admin-panel').style.display='block';
+      }
+      renderRangliste();renderSpielplan();renderTippen();
+      if(ok && isAdmin) renderAdmin();
+      if(!isAdmin) maybeShowWelcome();
+    });
+  } else {
+    // Ohne Token: Daten trotzdem öffentlich laden
+    setStatus('Lade...',false);
+    ghLoad(function(ok){
+      setStatus(ok?'Online':'Offline',false);
+      renderRangliste();renderSpielplan();renderTippen();
+      if(!isAdmin) maybeShowWelcome();
+    });
+  }
 }
-window.onload = init;
+window.onload=init;
 </script>
 </body>
 </html>
