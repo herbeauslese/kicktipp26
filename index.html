@@ -883,33 +883,53 @@ function renderKoBracket(){
     return s;
   }
 
-  function matchCard(m,top,left,w){
+    function matchCard(m,top,left,w){
     var sbMatch=KO_CACHE.matches.filter(function(x){return x.match_num===m.num;})[0];
     var deadline=sbMatch&&sbMatch.deadline?new Date(sbMatch.deadline):null;
     var locked=deadline&&new Date()>=deadline;
     var sbId=sbMatch?sbMatch.id:null;
     var ti=tippLookup[m.num];
+    var r=resultLookup[m.num];
+    var pts=null;
+    if(r&&r.home_score!=null&&ti)
+      pts=calcPts({home:ti.home_score,away:ti.away_score},{home:r.home_score,away:r.away_score});
+    var pcol=pts===3?'#006600':pts===2?'#cc7700':pts===1?'#cc0000':'#888';
     w=w||175;
     var h='<div style="position:absolute;top:'+top+'px;left:'+left+'px;width:'+w+'px;'
          +'border:2px outset #aaa;background:#f5f0dc;font-family:Verdana,sans-serif;'
          +'font-size:10px;box-sizing:border-box">';
     h+='<div style="position:absolute;top:1px;right:3px;font-family:monospace;font-size:7px;color:#ccc">#'+m.num+'</div>';
-    h+='<div style="display:flex;align-items:center;padding:4px 20px 4px 6px;border-bottom:1px solid #e0d8c0">'
-      +'<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+teamStr(m.num,'h',m.h)+'</span>'
-      +'<span style="font-family:Impact,sans-serif;font-size:13px;color:#336633;margin-left:4px">'+scoreStr(m.num,'h')+'</span>'
-      +'</div>';
-    h+='<div style="display:flex;align-items:center;padding:4px 20px 4px 6px">'
-      +'<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+teamStr(m.num,'a',m.a)+'</span>'
-      +'<span style="font-family:Impact,sans-serif;font-size:13px;color:#336633;margin-left:4px">'+scoreStr(m.num,'a')+'</span>'
-      +'</div>';
+
+    // Heim-Zeile: Team | Tipp-Tor | Ergebnis-Tor
+    h+='<div style="display:flex;align-items:center;padding:4px 6px;border-bottom:1px solid #e0d8c0;gap:4px">'
+      +'<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+teamStr(m.num,'h',m.h)+'</span>';
+    if(ME&&ti)
+      h+='<span style="font-family:monospace;font-size:11px;font-weight:bold;color:#555;min-width:14px;text-align:right">'+ti.home_score+'</span>';
+    if(r&&r.home_score!=null)
+      h+='<span style="font-family:Impact,sans-serif;font-size:13px;color:#336633;min-width:14px;text-align:right">'+r.home_score+'</span>';
+    h+='</div>';
+
+    // Gast-Zeile: Team | Tipp-Tor | Ergebnis-Tor
+    h+='<div style="display:flex;align-items:center;padding:4px 6px;gap:4px">'
+      +'<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+teamStr(m.num,'a',m.a)+'</span>';
+    if(ME&&ti)
+      h+='<span style="font-family:monospace;font-size:11px;font-weight:bold;color:#555;min-width:14px;text-align:right">'+ti.away_score+'</span>';
+    if(r&&r.away_score!=null)
+      h+='<span style="font-family:Impact,sans-serif;font-size:13px;color:#336633;min-width:14px;text-align:right">'+r.away_score+'</span>';
+    h+='</div>';
+
+    // Unterzeile: Punkte-Badge + Tipp-Button
     if(ME){
-      h+='<div style="padding:2px 6px;border-top:1px dashed #ddd;display:flex;align-items:center;background:#fffff8">';
-      if(ti)h+=tippStr(m.num);
-      else if(sbId&&!locked){
-        var hn=teamStr(m.num,'h',m.h).replace(/<[^>]+>/g,'').replace(/'/g,"\\'");
-        var an=teamStr(m.num,'a',m.a).replace(/<[^>]+>/g,'').replace(/'/g,"\\'");
+      h+='<div style="padding:2px 6px;border-top:1px dashed #ddd;display:flex;align-items:center;justify-content:space-between;background:#fffff8">';
+      if(pts!=null)
+        h+='<span style="background:'+pcol+';color:#fff;font-size:9px;font-weight:bold;padding:2px 5px;border-radius:2px">'+pts+'P</span>';
+      else if(!ti&&sbId&&!locked){
+        var hn=teamStr(m.num,'h',m.h).replace(/<[^>]+>/g,'').replace(/'/g,"\'");
+        var an=teamStr(m.num,'a',m.a).replace(/<[^>]+>/g,'').replace(/'/g,"\'");
         h+='<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px" onclick="koTippOpen('+sbId+",\'"+hn+"\',\'"+an+"\',null,null)"+'">&#9998; Tippen</button>';
-      }else h+='<span style="color:#ccc;font-size:8px">&#8211;</span>';
+      } else {
+        h+='<span></span>';
+      }
       h+='</div>';
     }
     h+='</div>';
@@ -1107,8 +1127,8 @@ function renderKoAdmin(){
 function saveSfTeams(matchNum){
   var h=document.getElementById('sf-h-'+matchNum).value;
   var a=document.getElementById('sf-a-'+matchNum).value;
-  if(!h||!a){showToast('Bitte beide Teams ausw\u00e4hlen');return;}
-  sb.from('ko_matches').update({team_home:h||undefined,team_away:a||undefined}).eq('match_num',matchNum)
+  if(!h&&!a){showToast('Bitte mindestens ein Team ausw\u00e4hlen');return;}
+  sb.from('ko_matches').update({team_home:h||null,team_away:a||null}).eq('match_num',matchNum)
     .then(function(res){
       if(res.error){showToast('Fehler: '+res.error.message);return;}
       showToast('#'+matchNum+' gespeichert ✓');
