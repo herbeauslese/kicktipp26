@@ -844,10 +844,9 @@ function renderKoBracket(){
   var cont=document.getElementById('ko-bracket');
   if(!cont)return;
 
-  var teamLookup={},resultLookup={},matchIdLookup={},tippLookup={};
+  var teamLookup={},resultLookup={},tippLookup={};
   KO_CACHE.matches.forEach(function(m){
     teamLookup[m.match_num]={h:m.team_home,a:m.team_away};
-    matchIdLookup[m.match_num]=m.id;
   });
   KO_CACHE.results.forEach(function(r){
     var m=KO_CACHE.matches.filter(function(x){return x.id===r.ko_match_id;})[0];
@@ -884,43 +883,42 @@ function renderKoBracket(){
     return s;
   }
 
-  function matchCard(m,top,left){
+  function matchCard(m,top,left,w){
     var sbMatch=KO_CACHE.matches.filter(function(x){return x.match_num===m.num;})[0];
     var deadline=sbMatch&&sbMatch.deadline?new Date(sbMatch.deadline):null;
     var locked=deadline&&new Date()>=deadline;
     var sbId=sbMatch?sbMatch.id:null;
     var ti=tippLookup[m.num];
-    var tippH=ME?18:0;
-    var cardH=50+tippH;
-    var h='<div style="position:absolute;top:'+top+'px;left:'+left+'px;width:160px;'
+    w=w||175;
+    var h='<div style="position:absolute;top:'+top+'px;left:'+left+'px;width:'+w+'px;'
          +'border:2px outset #aaa;background:#f5f0dc;font-family:Verdana,sans-serif;'
-         +'font-size:9px;box-sizing:border-box">';
+         +'font-size:10px;box-sizing:border-box">';
     h+='<div style="position:absolute;top:1px;right:3px;font-family:monospace;font-size:7px;color:#ccc">#'+m.num+'</div>';
-    h+='<div style="display:flex;align-items:center;padding:3px 18px 3px 5px;border-bottom:1px solid #e0d8c0">'
+    h+='<div style="display:flex;align-items:center;padding:4px 20px 4px 6px;border-bottom:1px solid #e0d8c0">'
       +'<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+teamStr(m.num,'h',m.h)+'</span>'
-      +'<span style="font-family:Impact,sans-serif;font-size:12px;color:#336633;margin-left:4px">'+scoreStr(m.num,'h')+'</span>'
+      +'<span style="font-family:Impact,sans-serif;font-size:13px;color:#336633;margin-left:4px">'+scoreStr(m.num,'h')+'</span>'
       +'</div>';
-    h+='<div style="display:flex;align-items:center;padding:3px 18px 3px 5px">'
+    h+='<div style="display:flex;align-items:center;padding:4px 20px 4px 6px">'
       +'<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+teamStr(m.num,'a',m.a)+'</span>'
-      +'<span style="font-family:Impact,sans-serif;font-size:12px;color:#336633;margin-left:4px">'+scoreStr(m.num,'a')+'</span>'
+      +'<span style="font-family:Impact,sans-serif;font-size:13px;color:#336633;margin-left:4px">'+scoreStr(m.num,'a')+'</span>'
       +'</div>';
     if(ME){
-      h+='<div style="padding:2px 5px;border-top:1px dashed #ddd;display:flex;align-items:center;background:#fffff8">';
+      h+='<div style="padding:2px 6px;border-top:1px dashed #ddd;display:flex;align-items:center;background:#fffff8">';
       if(ti)h+=tippStr(m.num);
       else if(sbId&&!locked){
         var hn=teamStr(m.num,'h',m.h).replace(/<[^>]+>/g,'').replace(/'/g,"\\'");
         var an=teamStr(m.num,'a',m.a).replace(/<[^>]+>/g,'').replace(/'/g,"\\'");
-        h+='<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px" onclick="koTippOpen('+sbId+",\'"+hn+"\',\'"+an+"\',null,null)"+'">'+'&#9998; Tippen</button>';
-      }
-      else h+='<span style="color:#ccc;font-size:8px">&#8211;</span>';
+        h+='<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px" onclick="koTippOpen('+sbId+",\'"+hn+"\',\'"+an+"\',null,null)"+'">&#9998; Tippen</button>';
+      }else h+='<span style="color:#ccc;font-size:8px">&#8211;</span>';
       h+='</div>';
     }
     h+='</div>';
     return h;
   }
 
-  function colHdr(txt,left,gold){
-    return '<div style="position:absolute;top:0;left:'+left+'px;width:160px;'
+  function colHdr(txt,top,left,w,gold){
+    w=w||175;
+    return '<div style="position:absolute;top:'+top+'px;left:'+left+'px;width:'+w+'px;'
       +'background:'+(gold?'linear-gradient(90deg,#664400,#332200)':'linear-gradient(90deg,#2a4a1a,#1a2a0a)')
       +';color:#ffd700;font-family:Impact,sans-serif;font-size:10px;letter-spacing:1px;'
       +'padding:3px 6px;border-left:3px solid #ffd700;box-sizing:border-box">'
@@ -934,64 +932,66 @@ function renderKoBracket(){
   var P3=KO_BRACKET_FIXED[4].matches;
   var FI=KO_BRACKET_FIXED[5].matches;
 
-  var tippExtra=ME?18:0;
-  var HDR=28;
-  var totalH=860+tippExtra*16+HDR;
-  var cols=[0,168,336,504,672,840];
+  var tippH=ME?20:0;
+  var cardH=58+tippH;
+  var HDR=26;
 
-  var af_tops=[27,135,243,351,459,567,675,783];
-  var vf_tops=[81,297,513,729];
-  var hf_tops=[189,621];
-  var fi_top=405;
-  var p3_top=728;
+  // Berechne exakte tops (ohne tipp zuerst, dann skaliere)
+  var sfSlot=64;
+  var af_tops=[32,160,288,416,544,672,800,928];
+  var vf_tops=[96,352,608,864];
+  var hf_tops=[224,736];
+  var fi_top=480;
+  var p3_base=568;
 
-  // Wenn ME gewählt: alle tops um tippExtra*2 pro SF-Slot anpassen
-  if(ME){
-    var extra=54;
-    af_tops=af_tops.map(function(t,i){return t+Math.round(tippExtra*i*2);});
-    vf_tops=vf_tops.map(function(t,i){return t+Math.round(tippExtra*i*4);});
-    hf_tops=hf_tops.map(function(t,i){return t+Math.round(tippExtra*i*8);});
-    fi_top=fi_top+Math.round(tippExtra*7.5);
-    p3_top=p3_top+Math.round(tippExtra*14);
-  }
+  // Wenn ME: alles proportional strecken
+  var scale=ME?(cardH/58):1;
+  function sc(v){return Math.round(v*scale);}
+
+  var cols=[0,185,370,555,740];
+  var totalH=sc(1018)+HDR+40;
 
   var html='<div style="overflow-x:auto;padding:6px">'
-    +'<div style="position:relative;height:'+(totalH+20)+'px;min-width:'+(1008)+'px">';
+    +'<div style="position:relative;height:'+totalH+'px;min-width:925px">';
 
   // Headers
-  html+=colHdr('SECHZEHNTELFINALE',cols[0],false);
-  html+=colHdr('ACHTELFINALE',cols[1],false);
-  html+=colHdr('VIERTELFINALE',cols[2],false);
-  html+=colHdr('HALBFINALE',cols[3],false);
-  html+=colHdr('&#127942; FINALE',cols[4],true);
-  html+=colHdr('PLATZ 3',cols[5],false);
+  html+=colHdr('SECHZEHNTELFINALE',0,cols[0],175,false);
+  html+=colHdr('ACHTELFINALE',0,cols[1],175,false);
+  html+=colHdr('VIERTELFINALE',0,cols[2],175,false);
+  html+=colHdr('HALBFINALE',0,cols[3],175,false);
+  html+=colHdr('&#127942; FINALE / PLATZ 3',0,cols[4],175,true);
 
-  // SF: alle 16 direkt untereinander
+  // SF
   SF.forEach(function(m,i){
-    var top=HDR+i*(54)+(ME?i*tippExtra:0);
+    var top=HDR+sc(i*64);
     html+=matchCard(m,top,cols[0]);
   });
 
-  // AF: 8 zentriert
+  // AF
   AF.forEach(function(m,i){
-    html+=matchCard(m,HDR+af_tops[i]+(ME?i*tippExtra*2:0),cols[1]);
+    html+=matchCard(m,HDR+sc(af_tops[i]),cols[1]);
   });
 
-  // VF: 4
+  // VF
   VF.forEach(function(m,i){
-    html+=matchCard(m,HDR+vf_tops[i]+(ME?i*tippExtra*4:0),cols[2]);
+    html+=matchCard(m,HDR+sc(vf_tops[i]),cols[2]);
   });
 
-  // HF: 2
+  // HF
   HF.forEach(function(m,i){
-    html+=matchCard(m,HDR+hf_tops[i]+(ME?i*tippExtra*8:0),cols[3]);
+    html+=matchCard(m,HDR+sc(hf_tops[i]),cols[3]);
   });
 
-  // FI
-  html+=matchCard(FI[0],HDR+fi_top,cols[4]);
+  // Finale
+  html+=matchCard(FI[0],HDR+sc(fi_top),cols[4]);
 
-  // P3
-  html+=matchCard(P3[0],HDR+p3_top,cols[5]);
+  // P3 Label + Karte in derselben Spalte unter Finale
+  var p3LabelTop=HDR+sc(p3_base)+8;
+  html+='<div style="position:absolute;top:'+p3LabelTop+'px;left:'+cols[4]+'px;width:175px;'
+    +'background:linear-gradient(90deg,#2a4a1a,#1a2a0a);color:#ffd700;font-family:Impact,sans-serif;'
+    +'font-size:10px;letter-spacing:1px;padding:3px 6px;border-left:3px solid #ffd700;box-sizing:border-box">'
+    +'SPIEL UM PLATZ 3</div>';
+  html+=matchCard(P3[0],p3LabelTop+26,cols[4]);
 
   html+='</div></div>';
   cont.innerHTML=html;
