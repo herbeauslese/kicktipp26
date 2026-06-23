@@ -196,11 +196,11 @@ a:visited { color: #660099; }
         <div class="sectionhdr">SPIELPLAN WM 2026</div>
         <div class="tipselbar">
           <table cellpadding="0" cellspacing="0" width="100%"><tr>
-            <td style="font-size:10px;font-weight:bold;color:#555555;text-transform:uppercase;letter-spacing:1px;padding-right:8px">Spieler:</td>
-            <td><select class="retroselect" id="tipper-select" onchange="loadMyTipps()">
+            <td style="font-size:10px;font-weight:bold;color:#555555;text-transform:uppercase;letter-spacing:1px;padding-right:8px;white-space:nowrap">Spieler:</td>
+            <td style="white-space:nowrap"><select class="retroselect" id="tipper-select" onchange="loadMyTipps()">
               <option value="">-- ausw&auml;hlen --</option>
             </select></td>
-            <td align="right"><span class="statbar" id="tipp-stat"></span></td>
+            <td align="right" width="100%"><span class="statbar" id="tipp-stat"></span></td>
           </tr></table>
         </div>
         <div class="phasetabrow">
@@ -343,6 +343,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; 
+
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -883,33 +884,34 @@ function renderKoBracket(){
     return s;
   }
 
-  // Kartenhöhe: jede Karte hat 2 Teams = fixe Höhe damit Zentrieruing klappt
-  var CARD_H=56; // px inkl margin
-  var CARD_H_ME=70; // mit Tipp-Zeile
-
-  function matchCard(m){
+  function matchCard(m,top,left){
     var sbMatch=KO_CACHE.matches.filter(function(x){return x.match_num===m.num;})[0];
     var deadline=sbMatch&&sbMatch.deadline?new Date(sbMatch.deadline):null;
     var locked=deadline&&new Date()>=deadline;
     var sbId=sbMatch?sbMatch.id:null;
     var ti=tippLookup[m.num];
-    var h='<div style="border:2px outset #aaa;background:#f5f0dc;font-family:Verdana,sans-serif;font-size:9px;position:relative;box-sizing:border-box">';
+    var tippH=ME?18:0;
+    var cardH=50+tippH;
+    var h='<div style="position:absolute;top:'+top+'px;left:'+left+'px;width:160px;'
+         +'border:2px outset #aaa;background:#f5f0dc;font-family:Verdana,sans-serif;'
+         +'font-size:9px;box-sizing:border-box">';
     h+='<div style="position:absolute;top:1px;right:3px;font-family:monospace;font-size:7px;color:#ccc">#'+m.num+'</div>';
-    h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 18px 3px 5px;border-bottom:1px solid #e8e0cc">'
-      +'<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px">'+teamStr(m.num,'h',m.h)+'</span>'
-      +'<span style="font-family:Impact,sans-serif;font-size:12px;color:#336633;margin-left:4px;flex-shrink:0">'+scoreStr(m.num,'h')+'</span>'
+    h+='<div style="display:flex;align-items:center;padding:3px 18px 3px 5px;border-bottom:1px solid #e0d8c0">'
+      +'<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+teamStr(m.num,'h',m.h)+'</span>'
+      +'<span style="font-family:Impact,sans-serif;font-size:12px;color:#336633;margin-left:4px">'+scoreStr(m.num,'h')+'</span>'
       +'</div>';
-    h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 18px 3px 5px">'
-      +'<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px">'+teamStr(m.num,'a',m.a)+'</span>'
-      +'<span style="font-family:Impact,sans-serif;font-size:12px;color:#336633;margin-left:4px;flex-shrink:0">'+scoreStr(m.num,'a')+'</span>'
+    h+='<div style="display:flex;align-items:center;padding:3px 18px 3px 5px">'
+      +'<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+teamStr(m.num,'a',m.a)+'</span>'
+      +'<span style="font-family:Impact,sans-serif;font-size:12px;color:#336633;margin-left:4px">'+scoreStr(m.num,'a')+'</span>'
       +'</div>';
     if(ME){
-      h+='<div style="padding:2px 5px;border-top:1px dashed #ddd;display:flex;align-items:center;justify-content:space-between;background:#fffff8">';
+      h+='<div style="padding:2px 5px;border-top:1px dashed #ddd;display:flex;align-items:center;background:#fffff8">';
       if(ti)h+=tippStr(m.num);
-      else if(sbId&&!locked)h+='<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px" onclick="koTippOpen('+sbId
-        +',\''+teamStr(m.num,'h',m.h).replace(/<[^>]+>/g,'').replace(/\'/g,"\\'")+'\''+
-        ',\''+teamStr(m.num,'a',m.a).replace(/<[^>]+>/g,'').replace(/\'/g,"\\'")+'\''+
-        ',null,null)">&#9998; Tippen</button>';
+      else if(sbId&&!locked){
+        var hn=teamStr(m.num,'h',m.h).replace(/<[^>]+>/g,'').replace(/'/g,"\\'");
+        var an=teamStr(m.num,'a',m.a).replace(/<[^>]+>/g,'').replace(/'/g,"\\'");
+        h+='<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px" onclick="koTippOpen('+sbId+",\'"+hn+"\',\'"+an+"\',null,null)"+'">'+'&#9998; Tippen</button>';
+      }
       else h+='<span style="color:#ccc;font-size:8px">&#8211;</span>';
       h+='</div>';
     }
@@ -917,83 +919,79 @@ function renderKoBracket(){
     return h;
   }
 
-  function colHdr(txt,gold){
-    return '<div style="background:'+(gold?'linear-gradient(90deg,#664400,#332200)':'linear-gradient(90deg,#2a4a1a,#1a2a0a)')
+  function colHdr(txt,left,gold){
+    return '<div style="position:absolute;top:0;left:'+left+'px;width:160px;'
+      +'background:'+(gold?'linear-gradient(90deg,#664400,#332200)':'linear-gradient(90deg,#2a4a1a,#1a2a0a)')
       +';color:#ffd700;font-family:Impact,sans-serif;font-size:10px;letter-spacing:1px;'
-      +'padding:3px 6px;border-left:3px solid #ffd700;margin-bottom:4px;white-space:nowrap">'
+      +'padding:3px 6px;border-left:3px solid #ffd700;box-sizing:border-box">'
       +(gold?'&#127942; ':'')+txt+'</div>';
   }
 
-  var SF=KO_BRACKET_FIXED[0].matches; // 16
-  var AF=KO_BRACKET_FIXED[1].matches; // 8
-  var VF=KO_BRACKET_FIXED[2].matches; // 4
-  var HF=KO_BRACKET_FIXED[3].matches; // 2
-  var P3=KO_BRACKET_FIXED[4].matches; // 1
-  var FI=KO_BRACKET_FIXED[5].matches; // 1
+  var SF=KO_BRACKET_FIXED[0].matches;
+  var AF=KO_BRACKET_FIXED[1].matches;
+  var VF=KO_BRACKET_FIXED[2].matches;
+  var HF=KO_BRACKET_FIXED[3].matches;
+  var P3=KO_BRACKET_FIXED[4].matches;
+  var FI=KO_BRACKET_FIXED[5].matches;
 
-  // Jede Runde als Spalte, Karten vertikal zentriert zwischen ihren SF-Paarungen
-  // SF: 16 Karten direkt untereinander
-  // AF: 8 Karten, jede zwischen 2 SF-Karten (2× Abstand)
-  // VF: 4 Karten, jede zwischen 2 AF-Karten
-  // HF: 2 Karten, jede zwischen 2 VF-Karten
-  // FI+P3: 1+1
+  var tippExtra=ME?18:0;
+  var HDR=28;
+  var totalH=860+tippExtra*16+HDR;
+  var cols=[0,168,336,504,672,840];
 
-  // Baue jede Spalte als absolute-positioned Elemente in einem Container
-  // Einfacher: flex-column mit flex-grow für Spacing
+  var af_tops=[27,135,243,351,459,567,675,783];
+  var vf_tops=[81,297,513,729];
+  var hf_tops=[189,621];
+  var fi_top=405;
+  var p3_top=728;
 
-  function buildCol(matches, totalSlots, hdr, gold){
-    // totalSlots = wie viele SF-Slots diese Spalte abdeckt (16 für SF, 16 für AF etc.)
-    var slotH = ME ? 76 : 62; // px pro SF-Slot
-    var html='<div style="display:flex;flex-direction:column;width:160px;flex-shrink:0">';
-    html+=colHdr(hdr,gold);
-    var slotsPerCard = totalSlots / matches.length;
-    matches.forEach(function(m,i){
-      // Padding oben = halbe freie Höhe, dann Karte, dann halbe freie Höhe
-      var cardH = ME ? 70 : 52;
-      var totalH = slotsPerCard * slotH;
-      var padV = Math.max(0, (totalH - cardH) / 2);
-      if(i>0) html+='<div style="height:'+Math.round(padV)+'px"></div>';
-      html+=matchCard(m);
-      html+='<div style="height:'+Math.round(padV)+'px"></div>';
-    });
-    html+='</div>';
-    return html;
+  // Wenn ME gewählt: alle tops um tippExtra*2 pro SF-Slot anpassen
+  if(ME){
+    var extra=54;
+    af_tops=af_tops.map(function(t,i){return t+Math.round(tippExtra*i*2);});
+    vf_tops=vf_tops.map(function(t,i){return t+Math.round(tippExtra*i*4);});
+    hf_tops=hf_tops.map(function(t,i){return t+Math.round(tippExtra*i*8);});
+    fi_top=fi_top+Math.round(tippExtra*7.5);
+    p3_top=p3_top+Math.round(tippExtra*14);
   }
 
-  var slotH = ME ? 76 : 62;
-  var totalH = 16 * slotH;
-
   var html='<div style="overflow-x:auto;padding:6px">'
-    +'<div style="display:flex;gap:6px;align-items:flex-start">';
+    +'<div style="position:relative;height:'+(totalH+20)+'px;min-width:'+(1008)+'px">';
 
-  // Sechzehntelfinale — alle 16 direkt untereinander
-  html+='<div style="display:flex;flex-direction:column;width:155px;flex-shrink:0">';
-  html+=colHdr('SECHZEHNTELFINALE',false);
-  SF.forEach(function(m){ html+=matchCard(m); html+='<div style="height:4px"></div>'; });
-  html+='</div>';
+  // Headers
+  html+=colHdr('SECHZEHNTELFINALE',cols[0],false);
+  html+=colHdr('ACHTELFINALE',cols[1],false);
+  html+=colHdr('VIERTELFINALE',cols[2],false);
+  html+=colHdr('HALBFINALE',cols[3],false);
+  html+=colHdr('&#127942; FINALE',cols[4],true);
+  html+=colHdr('PLATZ 3',cols[5],false);
 
-  // Achtelfinale — 8 Karten, jede zwischen 2 SF-Karten
-  html+=buildCol(AF,16,'ACHTELFINALE',false);
+  // SF: alle 16 direkt untereinander
+  SF.forEach(function(m,i){
+    var top=HDR+i*(54)+(ME?i*tippExtra:0);
+    html+=matchCard(m,top,cols[0]);
+  });
 
-  // Viertelfinale — 4 Karten
-  html+=buildCol(VF,16,'VIERTELFINALE',false);
+  // AF: 8 zentriert
+  AF.forEach(function(m,i){
+    html+=matchCard(m,HDR+af_tops[i]+(ME?i*tippExtra*2:0),cols[1]);
+  });
 
-  // Halbfinale — 2 Karten
-  html+=buildCol(HF,16,'HALBFINALE',false);
+  // VF: 4
+  VF.forEach(function(m,i){
+    html+=matchCard(m,HDR+vf_tops[i]+(ME?i*tippExtra*4:0),cols[2]);
+  });
 
-  // Finale + Platz 3
-  var cardH = ME ? 70 : 52;
-  var padFI = Math.max(0,(4*slotH - cardH)/2);
-  var padP3 = Math.max(0,(4*slotH - cardH)/2);
-  html+='<div style="display:flex;flex-direction:column;width:155px;flex-shrink:0">';
-  html+=colHdr('FINALE',true);
-  html+='<div style="height:'+Math.round(padFI)+'px"></div>';
-  html+=matchCard(FI[0]);
-  html+='<div style="height:'+Math.round(2*slotH)+'px"></div>';
-  html+=colHdr('PLATZ 3',false);
-  html+='<div style="height:'+Math.round(padP3)+'px"></div>';
-  html+=matchCard(P3[0]);
-  html+='</div>';
+  // HF: 2
+  HF.forEach(function(m,i){
+    html+=matchCard(m,HDR+hf_tops[i]+(ME?i*tippExtra*8:0),cols[3]);
+  });
+
+  // FI
+  html+=matchCard(FI[0],HDR+fi_top,cols[4]);
+
+  // P3
+  html+=matchCard(P3[0],HDR+p3_top,cols[5]);
 
   html+='</div></div>';
   cont.innerHTML=html;
