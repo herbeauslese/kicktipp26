@@ -932,14 +932,17 @@ function renderKoBracket(){
       h+='<div style="padding:2px 6px;border-top:1px dashed #ddd;display:flex;align-items:center;justify-content:space-between;background:#fffff8">';
       if(pts!=null)
         h+='<span style="background:'+pcol+';color:#fff;font-size:9px;font-weight:bold;padding:2px 5px;border-radius:2px">'+pts+'P</span>';
-      else if(!ti&&sbId&&!locked){
+      else
+        h+='<span></span>';
+      if(sbId&&!locked){
         var hn=teamStr(m.num,'h',m.h).replace(/<[^>]+>/g,'').replace(/'/g,"\'");
         var an=teamStr(m.num,'a',m.a).replace(/<[^>]+>/g,'').replace(/'/g,"\'");
-        h+='<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px" onclick="koTippOpen('+sbId+",\'"+hn+"\',\'"+an+"\',null,null)"+'">&#9998; Tippen</button>';
-      } else if(ti&&!pts){
-        h+='<span style="color:#888;font-size:8px">noch nicht ausgewertet</span>';
-      } else {
-        h+='<span></span>';
+        var curH=ti?ti.home_score:'null';
+        var curA=ti?ti.away_score:'null';
+        h+='<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px" onclick="koTippOpen('+sbId+",\'"+hn+"\',\'"+an+"\',"+curH+','+curA+')">'
+          +(ti?'&#9998; &Auml;ndern':'&#9998; Tippen')+'</button>';
+      } else if(locked&&!pts){
+        h+='<span style="color:#cc0000;font-size:8px">&#128274;</span>';
       }
       h+='</div>';
     }
