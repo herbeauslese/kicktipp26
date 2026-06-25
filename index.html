@@ -331,19 +331,18 @@ a:visited { color: #660099; }
 
 <script type="text/javascript">
 // ── CONFIG ───────────────────────────────────────────────────────
-var GH_USER = 'DEIN_GITHUB_USERNAME';
-var GH_REPO = 'wm2026-tippspiel';
+var GH_USER = 'herbeauslese';
+var GH_REPO = 'kicktipp26';
 var GH_FILE = 'data.json';
 
 // ── SUPABASE (K.O.-Phase) ────────────────────────────────────────
-var SUPABASE_URL  = 'DEINE_SUPABASE_URL';   // z.B. https://xxxx.supabase.co
-var SUPABASE_ANON = 'DEIN_ANON_KEY';
+var SUPABASE_URL  = 'https://gkseswjknedvipxjybdy.supabase.co';   // z.B. https://xxxx.supabase.co
+var SUPABASE_ANON = 'sb_publishable_CS9HhMGcVdoMyhl7cqAsXA_D0CNZ4Mj';
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
-// SHA-256 Hash des Passworts "admin2026" — hier durch eigenen Hash ersetzen
-// Hash erzeugen: https://emn178.github.io/online-tools/sha256.html
-var PW_HASH = '6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6'; // Standard: "admin2026" — unbedingt ersetzen!
+
+var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; 
 
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
