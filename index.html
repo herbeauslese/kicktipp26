@@ -331,18 +331,19 @@ a:visited { color: #660099; }
 
 <script type="text/javascript">
 // ── CONFIG ───────────────────────────────────────────────────────
-var GH_USER = 'herbeauslese';
-var GH_REPO = 'kicktipp26';
+var GH_USER = 'DEIN_GITHUB_USERNAME';
+var GH_REPO = 'wm2026-tippspiel';
 var GH_FILE = 'data.json';
 
 // ── SUPABASE (K.O.-Phase) ────────────────────────────────────────
-var SUPABASE_URL  = 'https://gkseswjknedvipxjybdy.supabase.co';   // z.B. https://xxxx.supabase.co
-var SUPABASE_ANON = 'sb_publishable_CS9HhMGcVdoMyhl7cqAsXA_D0CNZ4Mj';
+var SUPABASE_URL  = 'DEINE_SUPABASE_URL';   // z.B. https://xxxx.supabase.co
+var SUPABASE_ANON = 'DEIN_ANON_KEY';
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
-
-var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; 
+// SHA-256 Hash des Passworts "admin2026" — hier durch eigenen Hash ersetzen
+// Hash erzeugen: https://emn178.github.io/online-tools/sha256.html
+var PW_HASH = '6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6'; // Standard: "admin2026" — unbedingt ersetzen!
 
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -455,13 +456,16 @@ var KO_CACHE = {matches:[], results:[], tipps:[]};  // Supabase KO-Daten
 
 function loadKoCache(cb){
   Promise.all([
-    sb.from('ko_matches').select('*').order('round').order('match_num'),
+    sb.from('ko_matches').select('*').order('match_num'),
     sb.from('ko_results').select('*'),
     sb.from('ko_tipps').select('*')
   ]).then(function(results){
-    if(results[0].data) KO_CACHE.matches  = results[0].data;
-    if(results[1].data) KO_CACHE.results  = results[1].data;
-    if(results[2].data) KO_CACHE.tipps    = results[2].data;
+    if(results[0].data) KO_CACHE.matches = results[0].data;
+    if(results[1].data) KO_CACHE.results = results[1].data;
+    if(results[2].data) KO_CACHE.tipps   = results[2].data;
+    if(cb) cb();
+  }).catch(function(err){
+    console.warn('KO Cache Ladefehler:', err);
     if(cb) cb();
   });
 }
@@ -919,6 +923,12 @@ function renderKoBracket(){
     h+='</div>';
 
     // Unterzeile: Punkte-Badge + Tipp-Button
+    // Deadline-Zeile immer anzeigen (auch ohne Spieler)
+    if(deadline){
+      var dlStr=deadline.toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+      h+='<div style="padding:1px 6px;font-size:8px;color:'+(locked?'#cc0000':'#888888')+';border-top:1px solid #ece4cc">'
+        +(locked?'&#128274;':'&#128275;')+' '+dlStr+'</div>';
+    }
     if(ME){
       h+='<div style="padding:2px 6px;border-top:1px dashed #ddd;display:flex;align-items:center;justify-content:space-between;background:#fffff8">';
       if(pts!=null)
@@ -927,6 +937,8 @@ function renderKoBracket(){
         var hn=teamStr(m.num,'h',m.h).replace(/<[^>]+>/g,'').replace(/'/g,"\'");
         var an=teamStr(m.num,'a',m.a).replace(/<[^>]+>/g,'').replace(/'/g,"\'");
         h+='<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px" onclick="koTippOpen('+sbId+",\'"+hn+"\',\'"+an+"\',null,null)"+'">&#9998; Tippen</button>';
+      } else if(ti&&!pts){
+        h+='<span style="color:#888;font-size:8px">noch nicht ausgewertet</span>';
       } else {
         h+='<span></span>';
       }
@@ -1159,8 +1171,9 @@ function autoAdvanceKo(matchId, hs, as, cb){
     .then(function(res){
       if(res.error||!res.data){if(cb)cb();return;}
       var m=res.data;
-      var winner = hs>as ? m.team_home : m.team_away;
-      var loser  = hs>as ? m.team_away : m.team_home;
+      // Sieger = wer mehr Tore hat (inkl. Elfmeter wenn eingetragen)
+      var winner = hs>=as ? m.team_home : m.team_away;
+      var loser  = hs>=as ? m.team_away : m.team_home;
       var num=m.match_num;
 
       // Finde Folge-Spiel aus dem fixen Bracket
@@ -1230,6 +1243,10 @@ function qtConfirmKo(){
     showToast('Tipp gespeichert \u2713');
     qtClose();
     qtCurrentIsKo=null;
+    // Cache neu laden → Bracket bleibt mit aktuellem Spieler
+    loadKoCache(function(){
+      renderKoBracket();
+    });
     });
 }
 
@@ -1551,7 +1568,16 @@ function exportMattermost(){
     var p=pl[i];
     lines.push((i<3?mx[i]:(i+1)+'.')+' **'+p.name+'** \u2014 '+p.p+' Punkte ('+p.ex+'\u00d7 exakt, '+p.df+'\u00d7 Diff, '+p.ten+'\u00d7 Tendenz)');
   }
-  navigator.clipboard.writeText(lines.join('\n')).then(function(){showToast('KOPIERT!');});
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(lines.join('\n')).then(function(){showToast('KOPIERT!');});
+  } else {
+    // Fallback für HTTP
+    var ta=document.createElement('textarea');
+    ta.value=lines.join('\n');
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');showToast('KOPIERT!');}catch(e){showToast('Bitte manuell kopieren');}
+    document.body.removeChild(ta);
+  }
 }
 
 // ── TOAST & INIT ─────────────────────────────────────────────────
