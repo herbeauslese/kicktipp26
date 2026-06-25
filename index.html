@@ -343,6 +343,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; 
+
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -527,14 +528,20 @@ function calcPts(t,r){
   if((th>ta&&rh>ra)||(th<ta&&rh<ra)||(th===ta&&rh===ra))return 1;
   return 0;
 }
-// KO-Punkte (Ergebnis + Verlängerung/Elfmeter-Bonus)
+// KO-Punkte (Ergebnis + Verlängerung/Elfmeter-Bonus oder Abzug)
 function calcKoPts(tip, res){
   if(!tip||!res||res.home_score==null)return 0;
   var pts = calcPts({home:tip.home_score,away:tip.away_score},{home:res.home_score,away:res.away_score});
   if(pts===null)return 0;
-  // Bonus: Elfmeter korrekt (+2P), Verlängerung korrekt (+1P)
-  if(res.elfmeter && tip.elfmeter) pts+=2;
-  else if(res.verlaengerung && tip.verlaengerung) pts+=1;
+  // Elfmeter: +2P richtig, -2P falsch
+  if(tip.elfmeter){
+    pts += res.elfmeter ? 2 : -2;
+  } else if(tip.verlaengerung){
+    // Nur Verlängerung: +1P richtig, -1P falsch
+    pts += res.verlaengerung ? 1 : -1;
+  } else {
+    // Nichts getippt aber Verlängerung/Elfmeter war: kein Abzug (war kein Tipp)
+  }
   return pts;
 }
 
@@ -1245,9 +1252,12 @@ function koTippOpen(matchId, home, away, curH, curA, curVerl, curElf){
     confirmBtn.parentNode.insertBefore(extraDiv,confirmBtn);
   }
   extraDiv.style.display='flex';
-  extraDiv.innerHTML='<span style="font-size:9px;color:#888;align-self:center">Zusatz:</span>'
-    +'<button id="qt-btn-verl" onclick="qtToggleVerl()" style="font-family:Verdana,sans-serif;font-size:9px;font-weight:bold;border:2px outset #aaa;padding:3px 8px;cursor:pointer;background:#ffffee;color:#333">&#9203; Verl.</button>'
-    +'<button id="qt-btn-elf"  onclick="qtToggleElf()"  style="font-family:Verdana,sans-serif;font-size:9px;font-weight:bold;border:2px outset #aaa;padding:3px 8px;cursor:pointer;background:#ffffee;color:#333">&#127919; Elfmeter</button>';
+  extraDiv.innerHTML='<div style="width:100%">'
+    +'<div style="font-size:9px;font-weight:bold;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;border-top:2px solid #ffcc00;padding-top:5px">&#127919; Spielverlauf-Tipp <span style="font-weight:normal;color:#888">(+/&#8722;2P / +/&#8722;1P)</span></div>'
+    +'<div style="display:flex;gap:6px">'
+    +'<button id="qt-btn-verl" onclick="qtToggleVerl()" style="flex:1;font-family:Verdana,sans-serif;font-size:10px;font-weight:bold;border:3px outset #aaa;padding:6px 4px;cursor:pointer;background:#ffffee;color:#555">&#9203; Verl&auml;ngerung<br><span style="font-size:8px;font-weight:normal">+1P / &#8722;1P</span></button>'
+    +'<button id="qt-btn-elf"  onclick="qtToggleElf()"  style="flex:1;font-family:Verdana,sans-serif;font-size:10px;font-weight:bold;border:3px outset #aaa;padding:6px 4px;cursor:pointer;background:#ffffee;color:#555">&#127919; Elfmeter<br><span style="font-size:8px;font-weight:normal">+2P / &#8722;2P</span></button>'
+    +'</div></div>';
   qtUpdateKoExtra();
   var _qo=document.getElementById('qt-overlay');_qo.style.display='flex';_qo.style.alignItems='center';_qo.style.justifyContent='center';
   qtCurrentIsKo = matchId;
@@ -1275,12 +1285,14 @@ function qtUpdateKoExtra(){
   var bv=document.getElementById('qt-btn-verl');
   var be=document.getElementById('qt-btn-elf');
   if(!bv||!be)return;
-  bv.style.background = qtKoVerl ? '#336633' : '#ffffee';
-  bv.style.color      = qtKoVerl ? '#ffff00' : '#333';
-  bv.style.borderStyle= qtKoVerl ? 'inset'   : 'outset';
-  be.style.background = qtKoElf  ? '#336633' : '#ffffee';
-  be.style.color      = qtKoElf  ? '#ffff00' : '#333';
-  be.style.borderStyle= qtKoElf  ? 'inset'   : 'outset';
+  bv.style.background   = qtKoVerl ? '#336633' : '#ffffee';
+  bv.style.color        = qtKoVerl ? '#ffff00' : '#555';
+  bv.style.borderStyle  = qtKoVerl ? 'inset'   : 'outset';
+  bv.style.borderColor  = qtKoVerl ? '#225522' : '#aaa';
+  be.style.background   = qtKoElf  ? '#cc7700' : '#ffffee';
+  be.style.color        = qtKoElf  ? '#ffffff' : '#555';
+  be.style.borderStyle  = qtKoElf  ? 'inset'   : 'outset';
+  be.style.borderColor  = qtKoElf  ? '#885500' : '#aaa';
 }
 function qtConfirmKo(){
   if(qtCurrentIsKo===null) return;
