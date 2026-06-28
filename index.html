@@ -343,7 +343,6 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; 
-
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -951,7 +950,11 @@ function renderKoBracket(){
         h+='<span style="background:'+pcol+';color:#fff;font-size:9px;font-weight:bold;padding:2px 5px;border-radius:2px">'+pts+'P</span>';
       else
         h+='<span></span>';
-      if(sbId&&!locked){
+      // Tipp-Button nur wenn echte Teams eingetragen
+      var homeReal=teamLookup[m.num]&&teamLookup[m.num].h&&!teamLookup[m.num].h.match(/^(Sieger|Verlierer|[12]\. Gruppe|3\. )/);
+      var awayReal=teamLookup[m.num]&&teamLookup[m.num].a&&!teamLookup[m.num].a.match(/^(Sieger|Verlierer|[12]\. Gruppe|3\. )/);
+      var teamsReady=homeReal&&awayReal;
+      if(sbId&&!locked&&teamsReady){
         var hn=teamStr(m.num,'h',m.h).replace(/<[^>]+>/g,'').replace(/'/g,"\'");
         var an=teamStr(m.num,'a',m.a).replace(/<[^>]+>/g,'').replace(/'/g,"\'");
         var curH=ti?ti.home_score:'null';
@@ -1129,7 +1132,7 @@ function renderKoAdmin(){
         rhtml+='<div style="font-size:9px;font-weight:bold;color:#555;padding:3px 0;border-bottom:1px solid #ddd;margin-top:4px">'+label+'</div>';
         rhtml+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:2px">';
         rd.matches.forEach(function(m){
-          var row=byNum[m.match_num];
+          var row=byNum[m.num];
           if(!row){rhtml+='<div style="background:#eee;padding:4px;font-size:9px;color:#aaa">#'+m.num+' –</div>';return;}
           var r=row.ko_results&&row.ko_results[0]||{};
           rhtml+='<div style="background:#f5f0dc;border:1px outset #aaa;padding:4px 5px;font-size:10px">'
