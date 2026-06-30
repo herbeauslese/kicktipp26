@@ -9,7 +9,7 @@ body {
   background-color: #003300;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='1' fill='%23005500'/%3E%3C/svg%3E");
   font-family: Verdana, Arial, sans-serif;
-  font-size: 12px; 
+  font-size: 12px;
   color: #000000;
   margin: 4px;
 }
@@ -343,7 +343,6 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; 
-
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -952,23 +951,23 @@ function renderKoBracket(){
         +(locked?'&#128274;':'&#128275;')+' '+dlStr+'</div>';
     }
     if(ME){
-      h+='<div style="padding:3px 6px;border-top:1px dashed #ddd;background:#fffff8">';
+      h+='<div style="padding:3px 6px;border-top:1px dashed #ddd;background:#fffff8;display:flex;align-items:center;justify-content:space-between;gap:3px">';
       if(pts!=null||vePts!=null){
-        h+='<div style="display:flex;flex-direction:column;gap:2px">';
+        h+='<span style="display:flex;gap:3px;align-items:center;flex-wrap:wrap">';
         if(pts!=null)
-          h+='<div style="display:flex;align-items:center;justify-content:space-between">'
-            +'<span style="font-size:8px;color:#888">Ergebnis</span>'
-            +'<span style="background:'+pcol+';color:#fff;font-size:10px;font-weight:bold;padding:2px 6px;border-radius:2px">'+totalPts+'P</span>'
-            +'</div>';
+          h+='<span style="background:'+pcol+';color:#fff;font-size:8px;font-weight:bold;padding:1px 4px;border-radius:2px">Erg. '+totalPts+'P</span>';
         if(vePts!=null){
           var veCol = vePts>0 ? '#006600' : '#aa0000';
-          var veLabel = (ti.elfmeter?'Elfmeter':'Verl&auml;ngerung')+' '+(vePts>0?'richtig':'falsch');
-          h+='<div style="display:flex;align-items:center;justify-content:space-between">'
-            +'<span style="font-size:8px;color:#888">'+veLabel+'</span>'
-            +'<span style="background:'+veCol+';color:#fff;font-size:9px;font-weight:bold;padding:1px 5px;border-radius:2px">'+(vePts>0?'+':'')+vePts+'P</span>'
-            +'</div>';
+          var veIcon = ti.elfmeter ? '&#127919;' : '&#9203;';
+          h+='<span style="background:'+veCol+';color:#fff;font-size:8px;font-weight:bold;padding:1px 4px;border-radius:2px">'+veIcon+' '+(vePts>0?'+':'')+vePts+'P</span>';
         }
-        h+='</div>';
+        h+='</span>';
+      } else if(ti&&(ti.verlaengerung||ti.elfmeter)){
+        // Noch kein Ergebnis, aber V/E getippt — zeigen ohne Wertung
+        var tippIcon = ti.elfmeter ? '&#127919; Elfmeter' : '&#9203; Verl.';
+        h+='<span style="background:#888;color:#fff;font-size:8px;font-weight:bold;padding:1px 4px;border-radius:2px">'+tippIcon+' getippt</span>';
+      } else {
+        h+='<span></span>';
       }
       // Tipp-Button nur wenn echte Teams eingetragen
       var homeReal=teamLookup[m.num]&&teamLookup[m.num].h&&!teamLookup[m.num].h.match(/^(Sieger|Verlierer|[12]\. Gruppe|3\. )/);
@@ -981,11 +980,10 @@ function renderKoBracket(){
         var curA=ti?ti.away_score:'null';
         var curV=ti&&ti.verlaengerung?'true':'false';
         var curE=ti&&ti.elfmeter?'true':'false';
-        h+='<div style="margin-top:'+((pts!=null||vePts!=null)?'4px':'0')+';text-align:right">'
-          +'<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px" onclick="koTippOpen('+sbId+",\'"+hn+"\',\'"+an+"\',"+curH+','+curA+','+curV+','+curE+')">'
-          +(ti?'&#9998; &Auml;ndern':'&#9998; Tippen')+'</button></div>';
+        h+='<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px;flex-shrink:0" onclick="koTippOpen('+sbId+",\'"+hn+"\',\'"+an+"\',"+curH+','+curA+','+curV+','+curE+')">'
+          +(ti?'&#9998;':'&#9998; Tippen')+'</button>';
       } else if(locked&&pts==null){
-        h+='<div style="text-align:right"><span style="color:#cc0000;font-size:8px">&#128274;</span></div>';
+        h+='<span style="color:#cc0000;font-size:8px">&#128274;</span>';
       }
       h+='</div>';
     }
