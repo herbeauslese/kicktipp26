@@ -909,10 +909,16 @@ function renderKoBracket(){
     var sbId=sbMatch?sbMatch.id:null;
     var ti=tippLookup[m.num];
     var r=resultLookup[m.num];
-    var pts=null;
-    if(r&&r.home_score!=null&&ti)
+    var pts=null, vePts=null;
+    if(r&&r.home_score!=null&&ti){
       pts=calcPts({home:ti.home_score,away:ti.away_score},{home:r.home_score,away:r.away_score});
-    var pcol=pts===3?'#006600':pts===2?'#cc7700':pts===1?'#cc0000':'#888';
+      if(pts!=null){
+        if(ti.elfmeter) vePts = r.elfmeter ? 2 : -2;
+        else if(ti.verlaengerung) vePts = r.verlaengerung ? 1 : -1;
+      }
+    }
+    var totalPts = pts!=null ? pts+(vePts||0) : null;
+    var pcol=totalPts>=3?'#006600':totalPts===2?'#cc7700':totalPts===1?'#cc0000':totalPts<0?'#660000':'#888';
     w=w||175;
     var h='<div style="position:absolute;top:'+top+'px;left:'+left+'px;width:'+w+'px;'
          +'border:2px outset #aaa;background:#f5f0dc;font-family:Verdana,sans-serif;'
@@ -946,10 +952,16 @@ function renderKoBracket(){
     }
     if(ME){
       h+='<div style="padding:2px 6px;border-top:1px dashed #ddd;display:flex;align-items:center;justify-content:space-between;background:#fffff8">';
+      h+='<span style="display:flex;gap:3px;align-items:center">';
       if(pts!=null)
-        h+='<span style="background:'+pcol+';color:#fff;font-size:9px;font-weight:bold;padding:2px 5px;border-radius:2px">'+pts+'P</span>';
-      else
-        h+='<span></span>';
+        h+='<span style="background:'+pcol+';color:#fff;font-size:9px;font-weight:bold;padding:2px 5px;border-radius:2px">'+totalPts+'P</span>';
+      if(vePts!=null){
+        var veCol = vePts>0 ? '#006600' : '#aa0000';
+        var veLabel = (vePts>0?'+':'')+vePts+(ti.elfmeter?' &#127919;':' &#9203;');
+        h+='<span style="background:'+veCol+';color:#fff;font-size:8px;font-weight:bold;padding:1px 4px;border-radius:2px" title="'
+          +(ti.elfmeter?'Elfmeter':'Verl&auml;ngerung')+' '+(vePts>0?'richtig getippt':'falsch getippt')+'">'+veLabel+'</span>';
+      }
+      h+='</span>';
       // Tipp-Button nur wenn echte Teams eingetragen
       var homeReal=teamLookup[m.num]&&teamLookup[m.num].h&&!teamLookup[m.num].h.match(/^(Sieger|Verlierer|[12]\. Gruppe|3\. )/);
       var awayReal=teamLookup[m.num]&&teamLookup[m.num].a&&!teamLookup[m.num].a.match(/^(Sieger|Verlierer|[12]\. Gruppe|3\. )/);
@@ -963,7 +975,7 @@ function renderKoBracket(){
         var curE=ti&&ti.elfmeter?'true':'false';
         h+='<button class="sp-tipp-btn" style="font-size:8px;padding:1px 5px" onclick="koTippOpen('+sbId+",\'"+hn+"\',\'"+an+"\',"+curH+','+curA+','+curV+','+curE+')">'
           +(ti?'&#9998; &Auml;ndern':'&#9998; Tippen')+'</button>';
-      } else if(locked&&!pts){
+      } else if(locked&&pts==null){
         h+='<span style="color:#cc0000;font-size:8px">&#128274;</span>';
       }
       h+='</div>';
