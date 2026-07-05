@@ -353,6 +353,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; 
+
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -1352,7 +1353,18 @@ var CHART_COLS = [
 ];
 
 function toggleChartPlayer(name){
-  CHART_ACTIVE[name] = !CHART_ACTIVE[name];
+  var active = Object.keys(CHART_ACTIVE).filter(function(k){return CHART_ACTIVE[k];});
+  var allActive = active.length === Object.keys(CHART_ACTIVE).length;
+  var onlyThis = active.length===1 && active[0]===name;
+
+  if(allActive || onlyThis){
+    // Alle an → nur diesen; oder nur dieser an → wieder alle an
+    Object.keys(CHART_ACTIVE).forEach(function(k){ CHART_ACTIVE[k] = (k===name) ? !onlyThis : onlyThis ? true : false; });
+    if(allActive) Object.keys(CHART_ACTIVE).forEach(function(k){ CHART_ACTIVE[k] = (k===name); });
+  } else {
+    // Teils aktiv → diesen togglen
+    CHART_ACTIVE[name] = !CHART_ACTIVE[name];
+  }
   renderRankChart();
   updateChartPills();
 }
@@ -1401,11 +1413,24 @@ function renderRankChart(){
   ctx.scale(dpr,dpr);
   ctx.fillStyle='#fffff8'; ctx.fillRect(0,0,W,H);
 
+  // Gruppenphase-Spieltage
   var datesSet={};
   for(var i=0;i<MATCHES.length;i++){
     var m=MATCHES[i];
     if(STATE.results[m.id]&&STATE.results[m.id].home!=null) datesSet[m.date]=true;
   }
+  // KO-Spieltage aus Supabase-Cache hinzufügen
+  KO_CACHE.matches.forEach(function(m){
+    var res=KO_CACHE.results.filter(function(r){return r.ko_match_id===m.id;})[0];
+    if(res&&res.home_score!=null&&m.deadline){
+      // Datum aus Deadline extrahieren (UTC → DE)
+      var d=new Date(m.deadline);
+      // Spieltag = Datum des Spiels (Deadline ist Anstoßzeit)
+      var dd=String(d.getUTCDate()).padStart(2,'0');
+      var mm=String(d.getUTCMonth()+1).padStart(2,'0');
+      datesSet[dd+'.'+mm]=true;
+    }
+  });
   var dates=Object.keys(datesSet).sort(function(a,b){
     var ad=a.split('.'),bd=b.split('.');
     return(+ad[1]*100+ +ad[0])-(+bd[1]*100+ +bd[0]);
@@ -1459,18 +1484,36 @@ function renderRankChart(){
   }
 
   // Serien berechnen
+  // Hilfsfunktion: Datum-Wert aus DD.MM String
+  function dateVal(s){ var p=s.split('.');return +p[1]*100+ +p[0]; }
+
   var allSeries=players.map(function(p){
     return{name:p,series:dates.map(function(date){
+      var dv=dateVal(date);
       var scores=players.map(function(pp){
-        var t=STATE.tipps[pp]||{},pts=0;
+        var t=STATE.tipps[pp]||{};
+        var pts=0;
+        // Gruppenphase
         for(var i=0;i<MATCHES.length;i++){
           var m2=MATCHES[i],r2=STATE.results[m2.id];
           if(!r2||r2.home==null)continue;
-          var md=m2.date.split('.'),dd=date.split('.');
-          if((+md[1]*100+ +md[0])>(+dd[1]*100+ +dd[0]))continue;
+          if(dateVal(m2.date)>dv)continue;
           var ti2=t[m2.id];
           if(ti2&&ti2.home!=null)pts+=calcPts(ti2,r2);
         }
+        // KO-Phase
+        KO_CACHE.matches.forEach(function(km){
+          var res=KO_CACHE.results.filter(function(r){return r.ko_match_id===km.id;})[0];
+          if(!res||res.home_score==null)return;
+          if(!km.deadline)return;
+          var kd=new Date(km.deadline);
+          var kdd=String(kd.getUTCDate()).padStart(2,'0');
+          var kmm=String(kd.getUTCMonth()+1).padStart(2,'0');
+          if(dateVal(kdd+'.'+kmm)>dv)return;
+          var tip=KO_CACHE.tipps.filter(function(ti){return ti.ko_match_id===km.id&&ti.player_name===pp;})[0];
+          if(!tip)return;
+          pts+=calcKoPts(tip,res);
+        });
         return{name:pp,pts:pts};
       });
       scores.sort(function(a,b){return b.pts-a.pts;});
