@@ -1106,7 +1106,7 @@ function updateKoTeams(matchId){
     .then(function(res){
       if(res.error){showToast('Fehler: '+res.error.message);return;}
       showToast('Teams aktualisiert ✓');
-      loadKoCache(function(){renderRangliste();});
+      loadKoCache(function(){renderRangliste();renderRankChart();});
         });
 }
 
@@ -1215,7 +1215,7 @@ function saveKoResult(matchId){
       // Automatisch nächste Runde updaten
       autoAdvanceKo(matchId,+h,+a,function(){
         showToast('Ergebnis gespeichert ✓');
-        loadKoCache(function(){renderRangliste();renderKoBracket();});
+        loadKoCache(function(){renderRangliste();renderKoBracket();renderRankChart();});
         renderKoAdmin();
       });
     });
@@ -1905,7 +1905,7 @@ function init(){
       }
       renderRangliste();renderSpielplan();renderTippen();
       if(ok && isAdmin) renderAdmin();
-      loadKoCache(function(){ renderRangliste(); renderKoBracket(); });
+      loadKoCache(function(){ renderRangliste(); renderKoBracket(); renderRankChart(); });
     });
   } else {
     // Ohne Token: Daten trotzdem öffentlich laden
@@ -1913,7 +1913,7 @@ function init(){
     ghLoad(function(ok){
       setStatus(ok?'Online':'Offline',false);
       renderRangliste();renderSpielplan();renderTippen();
-      loadKoCache(function(){ renderRangliste(); renderKoBracket(); });
+      loadKoCache(function(){ renderRangliste(); renderKoBracket(); renderRankChart(); });
     });
   }
 }
