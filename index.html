@@ -353,7 +353,6 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27';
-
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -691,6 +690,49 @@ function renderSonder(){
     html+='</tr>';
   }
   html+='</tbody></table>';
+
+  // Underdog-Berechnung Transparenz
+  html+='<div style="margin-top:12px;border-top:2px solid #ffcc00;padding-top:8px">';
+  html+='<div style="font-family:Impact,Arial,sans-serif;font-size:12px;color:#ffcc00;background:linear-gradient(90deg,#2a4a1a,#1a2a0a);padding:4px 10px;border-left:3px solid #ffd700;letter-spacing:1px;margin-bottom:6px">&#128293; ÜBERRASCHUNGSTEAM — BERECHNUNG</div>';
+  html+='<div style="font-family:Verdana,Arial,sans-serif;font-size:9px;color:#888;padding:0 8px 6px">Formel: FIFA-Rang × Runden-Multiplikator ÷ 5 &nbsp;|&nbsp; Multiplikatoren: 16tel=1, AF=2×0, VF=2, HF=3, Finale=4, Weltmeister=5 &nbsp;|&nbsp; Noch nicht gewertet</div>';
+
+  // Sammle alle getippten Underdog-Teams (unique)
+  var underdogMap = {}; // team → [spieler]
+  for(var i=0;i<players.length;i++){
+    var s2=STATE.sonder[players[i]];
+    if(!s2||!s2.surprise)continue;
+    var t2=s2.surprise;
+    try{t2=decodeURIComponent(escape(t2));}catch(e){}
+    if(!underdogMap[t2]) underdogMap[t2]=[];
+    underdogMap[t2].push(players[i]);
+  }
+
+  var MULT_LABELS={sechzehntelfinale:'16tel ×1',achtelfinale:'AF ×1',viertelfinale:'VF ×2',halbfinale:'HF ×3',dritter:'P3 ×3',finale:'Finale ×4',weltmeister:'Weltm. ×5'};
+  var MULT_VAL={sechzehntelfinale:1,achtelfinale:1,viertelfinale:2,halbfinale:3,dritter:3,finale:4,weltmeister:5};
+
+  html+='<table width="100%" cellpadding="0" cellspacing="0" class="rltable"><thead><tr>'
+    +'<th>Team</th><th>FIFA-Rang</th><th>Erreichte Runde</th><th>Berechnung</th><th>Punkte (Vorschau)</th><th>Getippt von</th>'
+    +'</tr></thead><tbody>';
+
+  var udTeams=Object.keys(underdogMap);
+  for(var ui=0;ui<udTeams.length;ui++){
+    var team=udTeams[ui];
+    var rank=FIFA_RANKS[team]||'?';
+    var runde=getTeamKoRound(team);
+    var mult=runde?MULT_VAL[runde]:0;
+    var pts=runde&&rank!=='?'?Math.round(rank*mult/5):0;
+    var rundeLabel=runde?MULT_LABELS[runde]:'noch nicht KO';
+    var rechnung=rank!=='?'&&runde?(rank+' × '+mult+' ÷ 5 = '+pts):'–';
+    html+='<tr class="'+(ui%2===0?'even':'odd')+'">'
+      +'<td>'+fl(team)+team+'</td>'
+      +'<td style="text-align:center;color:#555">'+rank+'</td>'
+      +'<td style="color:#336633;font-weight:bold">'+rundeLabel+'</td>'
+      +'<td style="font-family:\'Courier New\',monospace;font-size:10px;color:#555">'+rechnung+'</td>'
+      +'<td style="text-align:center;font-weight:bold;color:'+(pts>0?'#336633':'#aaa')+'">'+(pts>0?'+'+pts+'P':'–')+'</td>'
+      +'<td style="font-size:10px;color:#666">'+underdogMap[team].join(', ')+'</td>'
+      +'</tr>';
+  }
+  html+='</tbody></table></div>';
   container.innerHTML=html;
 }
 
