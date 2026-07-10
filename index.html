@@ -352,7 +352,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
-var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27'; 
+var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27';
 
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -414,18 +414,13 @@ var GROUP_MATCHES={
 
 // FIFA-Ränge (Stand Mai 2026, Quelle: FIFA-Weltrangliste)
 var FIFA_RANKS={
-  'Frankreich':1,'Spanien':2,'Argentinien':3,'England':4,'Portugal':5,
-  'Brasilien':6,'Niederlande':7,'Marokko':8,'Belgien':9,'Deutschland':10,
-  'Kroatien':11,'Kolumbien':13,'Senegal':14,'Mexiko':15,'USA':16,
-  'Uruguay':17,'Japan':18,'Schweiz':19,'Türkei':22,'Ecuador':23,
-  'Österreich':24,'Südkorea':25,'Australien':27,'Algerien':28,
-  'Ägypten':29,'Kanada':30,'Norwegen':31,'Panama':33,'Elfenbeinküste':34,
-  'Schweden':38,'Paraguay':40,'Tschechien':41,'Schottland':43,
-  'Tunesien':44,'Kap Verde':69,'Ghana':74,'Iran':21,'Neuseeland':85,
-  'Katar':55,'Irak':57,'Südafrika':60,'Saudi-Arabien':61,'Jordanien':63,
-  'Bosnien-Herzegowina':65,'Curaçao':82,'Haiti':83,'Usbekistan':50,
-  'DR Kongo':46,'Ecuador':23,'Peru':53,'Venezuela':49,'Nigeria':26,
-  'Mosambik':99
+  'Marokko':7,
+  'Japan':18,
+  'Türkei':22,
+  'Norwegen':31,
+  'Mexiko':14,
+  'USA':17,
+  'Elfenbeinküste':33
 };
 
 var MATCHES=[];
@@ -561,6 +556,41 @@ var SONDER_PTS = {winner:15, finalist:10, third:5};
 // STATE.sonderResult = { "Max": "viertelfinale" } etc.
 var RUNDEN_MULT = {gruppe:0, achtelfinale:1, viertelfinale:2, halbfinale:3, finale:4, weltmeister:5};
 
+
+// Berechnet automatisch die weiteste KO-Runde eines Teams
+function getTeamKoRound(teamName){
+  if(!teamName) return null;
+  // Runden-Reihenfolge (von spät nach früh)
+  var roundOrder = ['weltmeister','finale','dritter','halbfinale','viertelfinale','achtelfinale','sechzehntelfinale'];
+  var roundMap = {sechzehntelfinale:1,achtelfinale:2,viertelfinale:3,halbfinale:4,dritter:4,finale:5,weltmeister:6};
+  var bestRound = null;
+  var bestVal = 0;
+
+  KO_CACHE.matches.forEach(function(m){
+    // Prüfe ob dieses Team in diesem Spiel spielt
+    var isHome = m.team_home && m.team_home.toLowerCase()===teamName.toLowerCase();
+    var isAway = m.team_away && m.team_away.toLowerCase()===teamName.toLowerCase();
+    if(!isHome && !isAway) return;
+
+    // Spiel hat ein Ergebnis → Team hat diese Runde erreicht
+    var res = KO_CACHE.results.filter(function(r){return r.ko_match_id===m.id;})[0];
+    if(!res||res.home_score==null) return;
+
+    var rval = roundMap[m.round]||0;
+
+    // Hat das Team gewonnen?
+    var won = (isHome && res.home_score > res.away_score) ||
+              (isAway && res.away_score > res.home_score);
+
+    // Runde erreicht = Team hat gespielt
+    if(rval > bestVal){ bestVal=rval; bestRound=m.round; }
+
+    // Wenn gewonnen im Finale → Weltmeister
+    if(m.round==='finale' && won){ bestRound='weltmeister'; bestVal=6; }
+  });
+
+  return bestRound;
+}
 function calcSonderPts(name){
   var s = STATE.sonder[name];
   if(!s) return {sp:0, sw:0, sf:0, st:0, sur:0};
@@ -572,13 +602,18 @@ function calcSonderPts(name){
   if(r.finalist && s.finalist === r.finalist) sf = SONDER_PTS.finalist;
   // Dritter Platz
   if(r.third && s.third === r.third) st = SONDER_PTS.third;
-  // Überraschungsteam: FIFA-Rang × Runde
-  if(r.surpriseResults && r.surpriseResults[s.surprise]){
-    var runde = r.surpriseResults[s.surprise];
-    var rank  = FIFA_RANKS[s.surprise]||50;
-    sur = rank * (RUNDEN_MULT[runde]||0);
+  // Überraschungsteam: automatisch aus KO_CACHE berechnen
+  if(s.surprise){
+    var autoRunde = getTeamKoRound(s.surprise);
+    // Fallback: manuell eingetragene Runde
+    if(!autoRunde && r.surpriseResults && r.surpriseResults[s.surprise])
+      autoRunde = r.surpriseResults[s.surprise];
+    if(autoRunde){
+      var rank = FIFA_RANKS[s.surprise]||50;
+      sur = Math.round(rank * (RUNDEN_MULT[autoRunde]||0) / 5);
+    }
   }
-  return {sp: sw+sf+st+sur, sw:sw, sf:sf, st:st, sur:sur};
+  return {sp: sw+sf+st, sw:sw, sf:sf, st:st, sur:sur};  // sur noch nicht in sp
 }
 
 function calcStats(name){
@@ -669,8 +704,9 @@ function renderRangliste(){
   for(var i=0;i<pl.length;i++){
     var p=pl[i];
     var rc=i<3?'rank-'+(i+1):'';
-    var sonderTip = p.sp>0
-      ? '<span title="Sieger: '+p.sw+'P  Finalist: '+p.sf+'P  3.Platz: '+p.st+'P  Überraschung: '+p.sur+'P" style="cursor:help">'+p.sp+'</span>'
+    var surStr = p.sur>0 ? ' <span style="color:#888;font-size:9px">(+'+p.sur+')</span>' : '';
+    var sonderTip = (p.sp>0||p.sur>0)
+      ? '<span title="Sieger: '+p.sw+'P  Finalist: '+p.sf+'P  3.Platz: '+p.st+'P  Überraschung (noch nicht gewertet): '+p.sur+'P" style="cursor:help">'+p.sp+surStr+'</span>'
       : '<span style="color:#cccccc">0</span>';
     tbody+='<tr class="'+(i%2===0?'even':'odd')+' '+rc+'">'
       +'<td class="rank-no">'+(i<3?medals[i]:(i+1)+'.')+'</td>'
