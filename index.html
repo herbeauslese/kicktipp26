@@ -12,7 +12,7 @@ body {
   font-size: 12px;
   color: #000000;
   margin: 4px;
-} 
+}
 a { color: #003399; text-decoration: underline; }
 a:hover { color: #ff0000; text-decoration: underline; }
 a:visited { color: #660099; }
@@ -353,6 +353,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27';
+
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -553,7 +554,7 @@ function calcKoPts(tip, res){
 var SONDER_PTS = {winner:15, finalist:10, third:5};
 // Überraschungsteam: FIFA-Rang × Runden-Multiplikator (wird manuell eingetragen)
 // STATE.sonderResult = { "Max": "viertelfinale" } etc.
-var RUNDEN_MULT = {gruppe:0, achtelfinale:1, viertelfinale:2, halbfinale:3, finale:4, weltmeister:5};
+var RUNDEN_MULT = {gruppe:0, sechzehntelfinale:1, achtelfinale:2, viertelfinale:4, halbfinale:8, dritter:8, finale:12, weltmeister:16};
 
 
 // Berechnet automatisch die weiteste KO-Runde eines Teams
@@ -609,7 +610,7 @@ function calcSonderPts(name){
       autoRunde = r.surpriseResults[s.surprise];
     if(autoRunde){
       var rank = FIFA_RANKS[s.surprise]||50;
-      sur = Math.round(rank * (RUNDEN_MULT[autoRunde]||0) / 5);
+      sur = Math.round(rank * (RUNDEN_MULT[autoRunde]||0) / 4);
     }
   }
   return {sp: sw+sf+st, sw:sw, sf:sf, st:st, sur:sur};  // sur noch nicht in sp
@@ -694,7 +695,7 @@ function renderSonder(){
   // Underdog-Berechnung Transparenz
   html+='<div style="margin-top:12px;border-top:2px solid #ffcc00;padding-top:8px">';
   html+='<div style="font-family:Impact,Arial,sans-serif;font-size:12px;color:#ffcc00;background:linear-gradient(90deg,#2a4a1a,#1a2a0a);padding:4px 10px;border-left:3px solid #ffd700;letter-spacing:1px;margin-bottom:6px">&#128293; ÜBERRASCHUNGSTEAM — BERECHNUNG</div>';
-  html+='<div style="font-family:Verdana,Arial,sans-serif;font-size:9px;color:#888;padding:0 8px 6px">Formel: FIFA-Rang × Runden-Multiplikator ÷ 5 &nbsp;|&nbsp; Multiplikatoren: 16tel=1, AF=2×0, VF=2, HF=3, Finale=4, Weltmeister=5 &nbsp;|&nbsp; Noch nicht gewertet</div>';
+  html+='<div style="font-family:Verdana,Arial,sans-serif;font-size:9px;color:#888;padding:0 8px 6px">Formel: FIFA-Rang × Runden-Multiplikator ÷ 4 &nbsp;|&nbsp; Multiplikatoren: 16tel=1, AF=2, VF=4, HF=8, Finale=12, Weltmeister=16 &nbsp;|&nbsp; Noch nicht gewertet</div>';
 
   // Sammle alle getippten Underdog-Teams (unique)
   var underdogMap = {}; // team → [spieler]
@@ -707,8 +708,8 @@ function renderSonder(){
     underdogMap[t2].push(players[i]);
   }
 
-  var MULT_LABELS={sechzehntelfinale:'16tel ×1',achtelfinale:'AF ×1',viertelfinale:'VF ×2',halbfinale:'HF ×3',dritter:'P3 ×3',finale:'Finale ×4',weltmeister:'Weltm. ×5'};
-  var MULT_VAL={sechzehntelfinale:1,achtelfinale:1,viertelfinale:2,halbfinale:3,dritter:3,finale:4,weltmeister:5};
+  var MULT_LABELS={sechzehntelfinale:'16tel ×1',achtelfinale:'AF ×2',viertelfinale:'VF ×4',halbfinale:'HF ×8',dritter:'P3 ×8',finale:'Finale ×12',weltmeister:'Weltm. ×16'};
+  var MULT_VAL={sechzehntelfinale:1,achtelfinale:2,viertelfinale:4,halbfinale:8,dritter:8,finale:12,weltmeister:16};
 
   html+='<table width="100%" cellpadding="0" cellspacing="0" class="rltable"><thead><tr>'
     +'<th>Team</th><th>FIFA-Rang</th><th>Erreichte Runde</th><th>Berechnung</th><th>Punkte (Vorschau)</th><th>Getippt von</th>'
@@ -720,9 +721,9 @@ function renderSonder(){
     var rank=FIFA_RANKS[team]||'?';
     var runde=getTeamKoRound(team);
     var mult=runde?MULT_VAL[runde]:0;
-    var pts=runde&&rank!=='?'?Math.round(rank*mult/5):0;
+    var pts=runde&&rank!=='?'?Math.round(rank*mult/4):0;
     var rundeLabel=runde?MULT_LABELS[runde]:'noch nicht KO';
-    var rechnung=rank!=='?'&&runde?(rank+' × '+mult+' ÷ 5 = '+pts):'–';
+    var rechnung=rank!=='?'&&runde?(rank+' × '+mult+' ÷ 4 = '+pts):'–';
     html+='<tr class="'+(ui%2===0?'even':'odd')+'">'
       +'<td>'+fl(team)+team+'</td>'
       +'<td style="text-align:center;color:#555">'+rank+'</td>'
