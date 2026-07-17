@@ -353,7 +353,6 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27';
-
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -1306,13 +1305,10 @@ function autoAdvanceKo(matchId, hs, as, cb){
     .then(function(res){
       if(res.error||!res.data){if(cb)cb();return;}
       var m=res.data;
-      // Sieger = wer mehr Tore hat (inkl. Elfmeter wenn eingetragen)
       var winner = hs>=as ? m.team_home : m.team_away;
       var loser  = hs>=as ? m.team_away : m.team_home;
       var num=m.match_num;
 
-      // Finde Folge-Spiel aus dem fixen Bracket
-      var nextMatchNum=null, nextSide=null, isLoser=false;
       var AF=[
         {num:89,h:74,a:77},{num:90,h:73,a:75},{num:91,h:76,a:78},{num:92,h:79,a:80},
         {num:93,h:83,a:84},{num:94,h:81,a:82},{num:95,h:86,a:88},{num:96,h:85,a:87}
@@ -1324,23 +1320,30 @@ function autoAdvanceKo(matchId, hs, as, cb){
       var F=[{num:104,h:101,a:102},{num:103,h:101,a:102,loser:true}];
       var allRounds=[AF,VF,HF,F];
 
+      // Sammle ALLE Folge-Spiele (z.B. HF → Finale + Platz 3)
+      var nexts=[];
       allRounds.forEach(function(round){
         round.forEach(function(next){
-          if(next.h===num){nextMatchNum=next.num;nextSide='home';isLoser=!!next.loser;}
-          if(next.a===num){nextMatchNum=next.num;nextSide='away';isLoser=!!next.loser;}
+          if(next.h===num) nexts.push({num:next.num,side:'home',loser:!!next.loser});
+          if(next.a===num) nexts.push({num:next.num,side:'away',loser:!!next.loser});
         });
       });
 
-      if(!nextMatchNum){if(cb)cb();return;}
-      var teamToSet=isLoser?loser:winner;
-      sb.from('ko_matches').select('id').eq('match_num',nextMatchNum).single()
-        .then(function(nr){
-          if(nr.error||!nr.data){if(cb)cb();return;}
-          var upd={};
-          upd[nextSide==='home'?'team_home':'team_away']=teamToSet;
-          sb.from('ko_matches').update(upd).eq('id',nr.data.id)
-            .then(function(){if(cb)cb();});
-        });
+      if(!nexts.length){if(cb)cb();return;}
+
+      // Alle Folge-Spiele nacheinander aktualisieren
+      var pending=nexts.length;
+      nexts.forEach(function(next){
+        var teamToSet=next.loser?loser:winner;
+        sb.from('ko_matches').select('id').eq('match_num',next.num).single()
+          .then(function(nr){
+            if(nr.error||!nr.data){pending--;if(pending===0&&cb)cb();return;}
+            var upd={};
+            upd[next.side==='home'?'team_home':'team_away']=teamToSet;
+            sb.from('ko_matches').update(upd).eq('id',nr.data.id)
+              .then(function(){pending--;if(pending===0&&cb)cb();});
+          });
+      });
     });
 }
 function koTippOpen(matchId, home, away, curH, curA, curVerl, curElf){
