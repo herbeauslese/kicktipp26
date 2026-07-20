@@ -593,26 +593,62 @@ function getTeamKoRound(teamName){
 function calcSonderPts(name){
   var s = STATE.sonder[name];
   if(!s) return {sp:0, sw:0, sf:0, st:0, sur:0};
+
+  // Automatische Auswertung aus KO_CACHE
+  var winner   = getKoWinner(104);      // Sieger des Finals
+  var finalist = getKoLoser(104);       // Verlierer des Finals
+  var third    = getKoWinner(103);      // Sieger des Platz-3-Spiels
+
+  // Fallback: manuell eingetragen (STATE.sonderResult)
   var r = STATE.sonderResult||{};
+  if(!winner   && r.winner)   winner   = r.winner;
+  if(!finalist && r.finalist) finalist = r.finalist;
+  if(!third    && r.third)    third    = r.third;
+
   var sw=0, sf=0, st=0, sur=0;
-  // WM-Sieger
-  if(r.winner && s.winner === r.winner) sw = SONDER_PTS.winner;
-  // Finalist
-  if(r.finalist && s.finalist === r.finalist) sf = SONDER_PTS.finalist;
-  // Dritter Platz
-  if(r.third && s.third === r.third) st = SONDER_PTS.third;
-  // Überraschungsteam: automatisch aus KO_CACHE berechnen
+
+  // WM-Sieger: 15P
+  if(winner && s.winner === winner) sw = SONDER_PTS.winner;
+
+  // Finalist: 10P — aber NICHT wenn man ihn schon als Sieger richtig hatte
+  if(finalist && s.finalist === finalist && s.finalist !== s.winner) sf = SONDER_PTS.finalist;
+  // Sonderfall: Finalist-Tipp war richtig UND man hat den Sieger auch richtig → kein Doppelt
+  if(finalist && s.finalist === finalist && sw > 0 && s.finalist === s.winner) sf = 0;
+
+  // Dritter Platz: 5P
+  if(third && s.third === third) st = SONDER_PTS.third;
+
+  // Underdog: automatisch aus KO_CACHE
   if(s.surprise){
-    var autoRunde = getTeamKoRound(s.surprise);
-    // Fallback: manuell eingetragene Runde
-    if(!autoRunde && r.surpriseResults && r.surpriseResults[s.surprise])
-      autoRunde = r.surpriseResults[s.surprise];
+    var surTeam = s.surprise;
+    try{surTeam=decodeURIComponent(escape(surTeam));}catch(e){}
+    var autoRunde = getTeamKoRound(surTeam);
+    if(!autoRunde && r.surpriseResults && r.surpriseResults[surTeam])
+      autoRunde = r.surpriseResults[surTeam];
     if(autoRunde){
-      var rank = FIFA_RANKS[s.surprise]||50;
+      var rank = FIFA_RANKS[surTeam]||0;
       sur = Math.round(rank * (RUNDEN_MULT[autoRunde]||0) / 5);
     }
   }
-  return {sp: sw+sf+st, sw:sw, sf:sf, st:st, sur:sur};  // sur noch nicht in sp
+
+  return {sp: sw+sf+st+sur, sw:sw, sf:sf, st:st, sur:sur,
+          winner:winner, finalist:finalist, third:third};
+}
+
+// Hilfsfunktionen: Sieger/Verlierer eines Spiels aus KO_CACHE
+function getKoWinner(matchNum){
+  var m=KO_CACHE.matches.filter(function(x){return x.match_num===matchNum;})[0];
+  if(!m)return null;
+  var res=KO_CACHE.results.filter(function(r){return r.ko_match_id===m.id;})[0];
+  if(!res||res.home_score==null)return null;
+  return res.home_score>=res.away_score ? m.team_home : m.team_away;
+}
+function getKoLoser(matchNum){
+  var m=KO_CACHE.matches.filter(function(x){return x.match_num===matchNum;})[0];
+  if(!m)return null;
+  var res=KO_CACHE.results.filter(function(r){return r.ko_match_id===m.id;})[0];
+  if(!res||res.home_score==null)return null;
+  return res.home_score>=res.away_score ? m.team_away : m.team_home;
 }
 
 function calcStats(name){
@@ -667,34 +703,76 @@ function renderSonder(){
     container.innerHTML='<div style="padding:16px;font-size:11px;color:#999999;font-family:Verdana,Arial,sans-serif;font-style:italic">Noch keine Sondertipps eingegangen.</div>';
     return;
   }
+  // Automatische Ergebnisse aus KO_CACHE
+  var actualWinner   = getKoWinner(104);
+  var actualFinalist = getKoLoser(104);
+  var actualThird    = getKoWinner(103);
+
   var labels={winner:'&#127942; WM-Sieger',finalist:'&#129352; Finalist',third:'&#129353; Dritter Platz',surprise:'&#128293; &Uuml;berraschungsteam'};
+  var actuals={winner:actualWinner,finalist:actualFinalist,third:actualThird,surprise:null};
   var keys=['winner','finalist','third','surprise'];
-  var html='<table width="100%" cellpadding="0" cellspacing="0" class="rltable"><thead><tr>';
-  html+='<th style="width:160px">Spieler</th>';
-  for(var k=0;k<keys.length;k++)html+='<th>'+labels[keys[k]]+'</th>';
-  html+='</tr></thead><tbody>';
+
+  // Aktuelle Ergebnisse anzeigen
+  var html='';
+  var hasAny = actualWinner||actualFinalist||actualThird;
+  if(hasAny){
+    html+='<div style="display:flex;gap:8px;flex-wrap:wrap;padding:6px 8px;background:#ffffee;border-bottom:2px solid #ffcc00;font-family:Verdana,sans-serif;font-size:10px">';
+    html+='<span style="font-weight:bold;color:#555">Ergebnis:</span>';
+    if(actualWinner)   html+='<span>&#127942; '+fl(actualWinner)+actualWinner+'</span>';
+    if(actualFinalist) html+='<span>&#129352; '+fl(actualFinalist)+actualFinalist+'</span>';
+    if(actualThird)    html+='<span>&#129353; '+fl(actualThird)+actualThird+'</span>';
+    html+='</div>';
+  }
+
+  var html2='<table width="100%" cellpadding="0" cellspacing="0" class="rltable"><thead><tr>';
+  html2+='<th style="width:130px">Spieler</th>';
+  for(var k=0;k<keys.length;k++) html2+='<th>'+labels[keys[k]]+'</th>';
+  html2+='<th>Sonder-P</th>';
+  html2+='</tr></thead><tbody>';
+
   for(var i=0;i<players.length;i++){
     var name=players[i];
     var s=STATE.sonder[name];
-    html+='<tr class="'+(i%2===0?'even':'odd')+'">';
-    html+='<td style="font-weight:bold;font-size:12px">'+name+'</td>';
+    var sp=calcSonderPts(name);
+    html2+='<tr class="'+(i%2===0?'even':'odd')+'">';
+    html2+='<td style="font-weight:bold;font-size:11px">'+name+'</td>';
     for(var k=0;k<keys.length;k++){
-      if(s&&s[keys[k]]){
-        var team=s[keys[k]];
+      var key=keys[k];
+      if(s&&s[key]){
+        var team=s[key];
         try{team=decodeURIComponent(escape(team));}catch(e){}
-        html+='<td>'+fl(team)+team+'</td>';
+        var actual=actuals[key];
+        var correct = actual && team===actual;
+        // Finalist-Tipp korrekt, aber Sieger auch richtig getippt → kein Doppelt
+        var noDouble = key==='finalist' && correct && sp.sw>0;
+        var bg = actual ? (correct&&!noDouble?'#e8ffe8':correct&&noDouble?'#fff8e8':'#fff0f0') : '';
+        var icon = '';
+        if(actual){
+          if(correct&&!noDouble) icon=' <b style="color:#336633">✓</b>';
+          else if(correct&&noDouble) icon=' <b style="color:#cc7700">✓ (kein Bonus, Sieger bereits richtig)</b>';
+          else icon=' <b style="color:#cc0000">✗</b>';
+        }
+        html2+='<td style="background:'+bg+';font-size:10px">'+fl(team)+team+icon+'</td>';
       }else{
-        html+='<td style="color:#cccccc;font-style:italic;font-size:10px">nicht getippt</td>';
+        html2+='<td style="color:#ccc;font-style:italic;font-size:10px">–</td>';
       }
     }
-    html+='</tr>';
+    // Sonderpunkte Gesamt
+    var spTotal=sp.sw+sp.sf+sp.st;
+    html2+='<td style="font-weight:bold;font-size:12px;color:#336633">'+(spTotal>0?spTotal+'P':'–')
+      +'<div style="font-size:8px;font-weight:normal;color:#888">'
+      +(sp.sw?'S:'+sp.sw+'P ':'')+(sp.sf?'F:'+sp.sf+'P ':'')+(sp.st?'D:'+sp.st+'P ':'')
+      +(sp.sur?'<span style="color:#886600;font-weight:bold">+'+sp.sur+'P UD</span>':'')
+      +'</div></td>';
+    html2+='</tr>';
   }
-  html+='</tbody></table>';
+  html2+='</tbody></table>';
+  html+=html2;
 
   // Underdog-Berechnung Transparenz
   html+='<div style="margin-top:12px;border-top:2px solid #ffcc00;padding-top:8px">';
   html+='<div style="font-family:Impact,Arial,sans-serif;font-size:12px;color:#ffcc00;background:linear-gradient(90deg,#2a4a1a,#1a2a0a);padding:4px 10px;border-left:3px solid #ffd700;letter-spacing:1px;margin-bottom:6px">&#128293; ÜBERRASCHUNGSTEAM — BERECHNUNG</div>';
-  html+='<div style="font-family:Verdana,Arial,sans-serif;font-size:9px;color:#888;padding:0 8px 6px">Formel: FIFA-Rang × Runden-Multiplikator ÷ 4 &nbsp;|&nbsp; Multiplikatoren: 16tel=1, AF=2, VF=3, HF=4, Finale=5, Weltmeister=6 (÷5) &nbsp;|&nbsp; Noch nicht gewertet</div>';
+  html+='<div style="font-family:Verdana,Arial,sans-serif;font-size:9px;color:#888;padding:0 8px 6px">Formel: FIFA-Rang × Runden-Multiplikator ÷ 5 &nbsp;|&nbsp; Multiplikatoren: 16tel=1, AF=2, VF=3, HF=4, Finale=5, Weltmeister=6 &nbsp;|&nbsp; Jetzt in Gesamtwertung enthalten</div>';
 
   // Sammle alle getippten Underdog-Teams (unique)
   var underdogMap = {}; // team → [spieler]
@@ -711,7 +789,7 @@ function renderSonder(){
   var MULT_VAL={sechzehntelfinale:1,achtelfinale:2,viertelfinale:3,halbfinale:4,dritter:4,finale:5,weltmeister:6};
 
   html+='<table width="100%" cellpadding="0" cellspacing="0" class="rltable"><thead><tr>'
-    +'<th>Team</th><th>FIFA-Rang</th><th>Erreichte Runde</th><th>Berechnung</th><th>Punkte (Vorschau)</th><th>Getippt von</th>'
+    +'<th>Team</th><th>FIFA-Rang</th><th>Erreichte Runde</th><th>Berechnung</th><th>Punkte</th><th>Getippt von</th>'
     +'</tr></thead><tbody>';
 
   var udTeams=Object.keys(underdogMap);
@@ -748,7 +826,7 @@ function renderRangliste(){
     var rc=i<3?'rank-'+(i+1):'';
     var surStr = p.sur>0 ? ' <span style="color:#888;font-size:9px">(+'+p.sur+')</span>' : '';
     var sonderTip = (p.sp>0||p.sur>0)
-      ? '<span title="Sieger: '+p.sw+'P  Finalist: '+p.sf+'P  3.Platz: '+p.st+'P  Überraschung (noch nicht gewertet): '+p.sur+'P" style="cursor:help">'+p.sp+surStr+'</span>'
+      ? '<span title="Sieger: '+p.sw+'P  Finalist: '+p.sf+'P  3.Platz: '+p.st+'P  Überraschung: '+p.sur+'P" style="cursor:help">'+p.sp+surStr+'</span>'
       : '<span style="color:#cccccc">0</span>';
     tbody+='<tr class="'+(i%2===0?'even':'odd')+' '+rc+'">'
       +'<td class="rank-no">'+(i<3?medals[i]:(i+1)+'.')+'</td>'
@@ -1303,11 +1381,13 @@ function saveKoResult(matchId){
 function autoAdvanceKo(matchId, hs, as, cb){
   sb.from('ko_matches').select('*').eq('id',matchId).single()
     .then(function(res){
-      if(res.error||!res.data){if(cb)cb();return;}
+      if(res.error||!res.data){console.warn('autoAdvance: match not found',matchId);if(cb)cb();return;}
       var m=res.data;
+      console.log('autoAdvance: match',m.match_num,'result',hs,':',as,'home=',m.team_home,'away=',m.team_away);
       var winner = hs>=as ? m.team_home : m.team_away;
       var loser  = hs>=as ? m.team_away : m.team_home;
       var num=m.match_num;
+      console.log('autoAdvance: winner=',winner,'loser=',loser,'num=',num);
 
       var AF=[
         {num:89,h:74,a:77},{num:90,h:73,a:75},{num:91,h:76,a:78},{num:92,h:79,a:80},
@@ -1329,19 +1409,26 @@ function autoAdvanceKo(matchId, hs, as, cb){
         });
       });
 
-      if(!nexts.length){if(cb)cb();return;}
+      console.log('autoAdvance: nexts found=',nexts.length, JSON.stringify(nexts));
+      if(!nexts.length){console.log('autoAdvance: no next match for',num);if(cb)cb();return;}
 
       // Alle Folge-Spiele nacheinander aktualisieren
       var pending=nexts.length;
       nexts.forEach(function(next){
         var teamToSet=next.loser?loser:winner;
-        sb.from('ko_matches').select('id').eq('match_num',next.num).single()
+        console.log('autoAdvance: updating match_num',next.num,'side',next.side,'team',teamToSet);
+        sb.from('ko_matches').select('id,match_num,team_home,team_away').eq('match_num',next.num).single()
           .then(function(nr){
+            console.log('autoAdvance: found next match result=',JSON.stringify(nr.data),'error=',nr.error);
             if(nr.error||!nr.data){pending--;if(pending===0&&cb)cb();return;}
             var upd={};
             upd[next.side==='home'?'team_home':'team_away']=teamToSet;
+            console.log('autoAdvance: updating id',nr.data.id,'with',JSON.stringify(upd));
             sb.from('ko_matches').update(upd).eq('id',nr.data.id)
-              .then(function(){pending--;if(pending===0&&cb)cb();});
+              .then(function(ur){
+                console.log('autoAdvance: update result',JSON.stringify(ur));
+                pending--;if(pending===0&&cb)cb();
+              });
           });
       });
     });
