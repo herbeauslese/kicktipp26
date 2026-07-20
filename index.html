@@ -611,12 +611,18 @@ function calcSonderPts(name){
   // WM-Sieger: 15P
   if(winner && s.winner === winner) sw = SONDER_PTS.winner;
 
-  // Finalist: 10P — immer wenn richtig getippt, auch wenn Sieger auch richtig
-  // Sieger zählt auch als Finalist → wenn Sieger-Tipp = echter Finalist → 10P
+  // Finalist: 10P wenn getipptes Team im Finale war (egal ob Sieger oder Verlierer)
+  // Auch: wenn Sieger-Tipp im Finale war → 10P
+  var finalistsInFinal = [winner, finalist].filter(Boolean);
   var finalistTip = s.finalist;
-  if(finalistTip && finalist && finalistTip === finalist) sf = SONDER_PTS.finalist;
-  // Bonus: Sieger-Tipp war der echte Finalist (man hat beide Finalisten richtig)
-  if(s.winner && finalist && s.winner === finalist && sf===0) sf = SONDER_PTS.finalist;
+  try{if(finalistTip)finalistTip=decodeURIComponent(escape(finalistTip));}catch(e){}
+  var winnerTip = s.winner;
+  try{if(winnerTip)winnerTip=decodeURIComponent(escape(winnerTip));}catch(e){}
+
+  // Finalist-Tipp im Finale?
+  if(finalistTip && finalistsInFinal.indexOf(finalistTip)>=0) sf = SONDER_PTS.finalist;
+  // Sieger-Tipp war im Finale (aber nicht Sieger → nur Finalist-Punkte)?
+  if(!sf && winnerTip && finalistsInFinal.indexOf(winnerTip)>=0 && winnerTip!==winner) sf = SONDER_PTS.finalist;
 
   // Dritter Platz: 5P
   if(third && s.third === third) st = SONDER_PTS.third;
@@ -1578,28 +1584,32 @@ function renderRankChart(){
   ctx.scale(dpr,dpr);
   ctx.fillStyle='#fffff8'; ctx.fillRect(0,0,W,H);
 
-  // Gruppenphase-Spieltage
+  // Datenpunkte: Gruppenphase pro Spieltag + KO pro Runde
   var datesSet={};
   for(var i=0;i<MATCHES.length;i++){
     var m=MATCHES[i];
     if(STATE.results[m.id]&&STATE.results[m.id].home!=null) datesSet[m.date]=true;
   }
-  // KO-Spieltage aus Supabase-Cache hinzufügen
-  KO_CACHE.matches.forEach(function(m){
-    var res=KO_CACHE.results.filter(function(r){return r.ko_match_id===m.id;})[0];
-    if(res&&res.home_score!=null&&m.deadline){
-      // Datum aus Deadline extrahieren (UTC → DE)
-      var d=new Date(m.deadline);
-      // Spieltag = Datum des Spiels (Deadline ist Anstoßzeit)
-      var dd=String(d.getUTCDate()).padStart(2,'0');
-      var mm=String(d.getUTCMonth()+1).padStart(2,'0');
-      datesSet[dd+'.'+mm]=true;
-    }
-  });
   var dates=Object.keys(datesSet).sort(function(a,b){
     var ad=a.split('.'),bd=b.split('.');
     return(+ad[1]*100+ +ad[0])-(+bd[1]*100+ +bd[0]);
   });
+
+  // KO-Runden als eigene Datenpunkte (nach letztem Gruppenphase-Spieltag)
+  var koRoundOrder=['sechzehntelfinale','achtelfinale','viertelfinale','halbfinale','dritter','finale'];
+  var koRoundLabels={sechzehntelfinale:'16tel',achtelfinale:'AF',viertelfinale:'VF',halbfinale:'HF',dritter:'P3',finale:'Finale'};
+  var koRoundDone={};
+  KO_CACHE.matches.forEach(function(m){
+    var res=KO_CACHE.results.filter(function(r){return r.ko_match_id===m.id;})[0];
+    if(res&&res.home_score!=null) koRoundDone[m.round]=true;
+  });
+  // Füge abgeschlossene KO-Runden als Punkte hinzu
+  var koPoints=[]; // {label, round}
+  koRoundOrder.forEach(function(rnd){
+    if(koRoundDone[rnd]) koPoints.push({label:koRoundLabels[rnd],round:rnd});
+  });
+  var allPoints = dates.map(function(d){return{label:d,type:'gruppe',date:d};});
+  koPoints.forEach(function(kp){allPoints.push({label:kp.label,type:'ko',round:kp.round});});
   if(!dates.length){
     ctx.fillStyle='#aaa';ctx.font='11px Verdana,sans-serif';
     ctx.textAlign='center';ctx.fillText('Noch keine Spieltage',W/2,H/2);
@@ -1609,12 +1619,8 @@ function renderRankChart(){
   var mg={t:16,r:10,b:26,l:26};
   var cw=W-mg.l-mg.r, ch=H-mg.t-mg.b;
   var nP=players.length;
-  var xs=cw/Math.max(dates.length-1,1);
-
-  // KO-Startdatum
-  var koDate='28.06';
-  var koIdx=-1;
-  dates.forEach(function(d,i){ if(d.indexOf(koDate)===0&&koIdx===-1) koIdx=i; });
+  // KO-Trennlinie: Index des ersten KO-Punkts
+  var koIdx=allPoints.findIndex(function(p){return p.type==='ko';});
 
   // Rang-Gridlinien
   for(var rank=1;rank<=nP;rank++){
@@ -1626,19 +1632,21 @@ function renderRankChart(){
     ctx.textAlign='right';ctx.fillText(rank,mg.l-4,gy+3);
   }
 
-  // Spieltag X-Achse
-  dates.forEach(function(d,di){
-    var x=mg.l+(dates.length===1?cw/2:xs*di);
+  // X-Achse Labels
+  var xs=cw/Math.max(allPoints.length-1,1);
+  allPoints.forEach(function(pt,di){
+    var x=mg.l+(allPoints.length===1?cw/2:xs*di);
     ctx.setLineDash([2,6]);ctx.strokeStyle='rgba(0,0,0,0.04)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(x,mg.t);ctx.lineTo(x,mg.t+ch);ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle='#999';ctx.font='8px Verdana,sans-serif';
-    ctx.textAlign='center';ctx.fillText(d.substr(0,5),x,H-6);
+    ctx.fillStyle=pt.type==='ko'?'#cc7700':'#999';
+    ctx.font=(pt.type==='ko'?'bold ':'')+'8px Verdana,sans-serif';
+    ctx.textAlign='center';ctx.fillText(pt.label,x,H-6);
   });
 
   // KO-Trennlinie
   if(koIdx>=0){
-    var kx=mg.l+xs*koIdx;
+    var kx=mg.l+(allPoints.length===1?cw/2:xs*koIdx);
     ctx.save();
     ctx.setLineDash([6,4]);ctx.strokeStyle='#cc7700';ctx.lineWidth=1.5;
     ctx.beginPath();ctx.moveTo(kx,mg.t);ctx.lineTo(kx,mg.t+ch);ctx.stroke();
@@ -1652,29 +1660,33 @@ function renderRankChart(){
   // Hilfsfunktion: Datum-Wert aus DD.MM String
   function dateVal(s){ var p=s.split('.');return +p[1]*100+ +p[0]; }
 
+  // KO-Runden-Reihenfolge für Vergleich
+  var koRndIdx={sechzehntelfinale:1,achtelfinale:2,viertelfinale:3,halbfinale:4,dritter:5,finale:6};
+
   var allSeries=players.map(function(p){
-    return{name:p,series:dates.map(function(date){
-      var dv=dateVal(date);
+    return{name:p,series:allPoints.map(function(pt){
       var scores=players.map(function(pp){
         var t=STATE.tipps[pp]||{};
         var pts=0;
-        // Gruppenphase
+        // Gruppenphase: alle Spiele bis zu diesem Datum
         for(var i=0;i<MATCHES.length;i++){
           var m2=MATCHES[i],r2=STATE.results[m2.id];
           if(!r2||r2.home==null)continue;
-          if(dateVal(m2.date)>dv)continue;
+          if(pt.type==='gruppe'){
+            if(dateVal(m2.date)>dateVal(pt.date))continue;
+          }
+          // Bei KO-Punkt: alle Gruppenphase-Spiele zählen
           var ti2=t[m2.id];
           if(ti2&&ti2.home!=null)pts+=calcPts(ti2,r2);
         }
-        // KO-Phase
+        // KO-Phase: alle Runden bis zu diesem Punkt
         KO_CACHE.matches.forEach(function(km){
           var res=KO_CACHE.results.filter(function(r){return r.ko_match_id===km.id;})[0];
           if(!res||res.home_score==null)return;
-          if(!km.deadline)return;
-          var kd=new Date(km.deadline);
-          var kdd=String(kd.getUTCDate()).padStart(2,'0');
-          var kmm=String(kd.getUTCMonth()+1).padStart(2,'0');
-          if(dateVal(kdd+'.'+kmm)>dv)return;
+          // Bei Gruppe-Punkt: keine KO-Punkte
+          if(pt.type==='gruppe')return;
+          // Bei KO-Punkt: nur Runden bis einschließlich dieser
+          if((koRndIdx[km.round]||0)>(koRndIdx[pt.round]||0))return;
           var tip=KO_CACHE.tipps.filter(function(ti){return ti.ko_match_id===km.id&&ti.player_name===pp;})[0];
           if(!tip)return;
           pts+=calcKoPts(tip,res);
@@ -1692,7 +1704,7 @@ function renderRankChart(){
     if(!CHART_ACTIVE[ps.name]) return;
     var col=CHART_COLS[pi%CHART_COLS.length];
     var pts=ps.series.map(function(rank,di){
-      return{x:mg.l+(dates.length===1?cw/2:xs*di),y:mg.t+ch*((rank-1)/Math.max(nP-1,1))};
+      return{x:mg.l+(allPoints.length===1?cw/2:xs*di),y:mg.t+ch*((rank-1)/Math.max(nP-1,1))};
     });
     if(!pts.length)return;
     ctx.strokeStyle=col;ctx.lineWidth=2;ctx.setLineDash([]);
