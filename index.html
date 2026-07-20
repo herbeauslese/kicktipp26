@@ -353,6 +353,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27';
+
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -777,7 +778,7 @@ function renderSonder(){
     html2+='<td style="font-weight:bold;font-size:12px;color:#336633">'+(spTotal>0?spTotal+'P':'–')
       +'<div style="font-size:8px;font-weight:normal;color:#888">'
       +(sp.sw?'S:'+sp.sw+'P ':'')+(sp.sf?'F:'+sp.sf+'P ':'')+(sp.st?'D:'+sp.st+'P ':'')
-      +(sp.sur?'<span style="color:#886600;font-weight:bold">+'+sp.sur+'P UD</span>':'')
+      +(sp.sur?'<span style="color:#886600;font-weight:bold"> +'+sp.sur+'P UD</span>':'')
       +'</div></td>';
     html2+='</tr>';
   }
@@ -839,9 +840,9 @@ function renderRangliste(){
   for(var i=0;i<pl.length;i++){
     var p=pl[i];
     var rc=i<3?'rank-'+(i+1):'';
-    var surStr = p.sur>0 ? ' <span style="color:#888;font-size:9px">(+'+p.sur+')</span>' : '';
+    var surStr = '';
     var sonderTip = (p.sp>0||p.sur>0)
-      ? '<span title="Sieger: '+p.sw+'P  Finalist: '+p.sf+'P  3.Platz: '+p.st+'P  Überraschung: '+p.sur+'P" style="cursor:help">'+p.sp+surStr+'</span>'
+      ? '<span title="Sieger: '+p.sw+'P  Finalist: '+p.sf+'P  3.Platz: '+p.st+'P  Underdog: '+p.sur+'P" style="cursor:help">'+p.sp+surStr+'</span>'
       : '<span style="color:#cccccc">0</span>';
     tbody+='<tr class="'+(i%2===0?'even':'odd')+' '+rc+'">'
       +'<td class="rank-no">'+(i<3?medals[i]:(i+1)+'.')+'</td>'
