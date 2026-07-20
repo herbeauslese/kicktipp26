@@ -353,7 +353,6 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27';
-
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -751,9 +750,23 @@ function renderSonder(){
         var team=s[key];
         try{team=decodeURIComponent(escape(team));}catch(e){}
         var actual=actuals[key];
-        var correct = actual && team===actual;
-        var bg = actual ? (correct?'#e8ffe8':'#fff0f0') : '';
-        var icon = actual ? (correct?' <b style="color:#336633">✓</b>':' <b style="color:#cc0000">✗</b>') : '';
+        var correct = false;
+        if(key==='finalist'){
+          // Grün wenn Team im Finale war (egal ob Sieger oder Verlierer)
+          var inFinal = [actualWinner,actualFinalist].filter(Boolean);
+          correct = inFinal.indexOf(team)>=0;
+        } else if(key==='surprise'){
+          correct = false; // Kein richtig/falsch für Underdog
+        } else {
+          correct = actuals[key] && team===actuals[key];
+        }
+        var bg = actuals[key]||key==='finalist' ? (correct?'#e8ffe8':'#fff0f0') : '';
+        if(key==='surprise') bg='';
+        var icon = '';
+        if(key!=='surprise'){
+          var hasResult = key==='finalist' ? (actualWinner||actualFinalist) : actuals[key];
+          if(hasResult) icon = correct?' <b style="color:#336633">✓</b>':' <b style="color:#cc0000">✗</b>';
+        }
         html2+='<td style="background:'+bg+';font-size:10px">'+fl(team)+team+icon+'</td>';
       }else{
         html2+='<td style="color:#ccc;font-style:italic;font-size:10px">–</td>';
@@ -1610,7 +1623,7 @@ function renderRankChart(){
   });
   var allPoints = dates.map(function(d){return{label:d,type:'gruppe',date:d};});
   koPoints.forEach(function(kp){allPoints.push({label:kp.label,type:'ko',round:kp.round});});
-  if(!dates.length){
+  if(!allPoints.length){
     ctx.fillStyle='#aaa';ctx.font='11px Verdana,sans-serif';
     ctx.textAlign='center';ctx.fillText('Noch keine Spieltage',W/2,H/2);
     return;
@@ -1691,6 +1704,10 @@ function renderRankChart(){
           if(!tip)return;
           pts+=calcKoPts(tip,res);
         });
+        // Sonderpunkte: bei letztem Punkt (Finale) komplett dazuzählen
+        if(pt.type==='ko' && pt.round==='finale'){
+          pts += calcSonderPts(pp).sp;
+        }
         return{name:pp,pts:pts};
       });
       scores.sort(function(a,b){return b.pts-a.pts;});
