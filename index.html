@@ -353,6 +353,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // ── ADMIN PASSWORT ───────────────────────────────────────────────
 
 var PW_HASH = '951ee813dae1abbc9e1d899e140d766d2b3069db366b26a3e93a5985be005f27';
+
 async function hashString(str){
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
@@ -610,10 +611,12 @@ function calcSonderPts(name){
   // WM-Sieger: 15P
   if(winner && s.winner === winner) sw = SONDER_PTS.winner;
 
-  // Finalist: 10P — aber NICHT wenn man ihn schon als Sieger richtig hatte
-  if(finalist && s.finalist === finalist && s.finalist !== s.winner) sf = SONDER_PTS.finalist;
-  // Sonderfall: Finalist-Tipp war richtig UND man hat den Sieger auch richtig → kein Doppelt
-  if(finalist && s.finalist === finalist && sw > 0 && s.finalist === s.winner) sf = 0;
+  // Finalist: 10P — immer wenn richtig getippt, auch wenn Sieger auch richtig
+  // Sieger zählt auch als Finalist → wenn Sieger-Tipp = echter Finalist → 10P
+  var finalistTip = s.finalist;
+  if(finalistTip && finalist && finalistTip === finalist) sf = SONDER_PTS.finalist;
+  // Bonus: Sieger-Tipp war der echte Finalist (man hat beide Finalisten richtig)
+  if(s.winner && finalist && s.winner === finalist && sf===0) sf = SONDER_PTS.finalist;
 
   // Dritter Platz: 5P
   if(third && s.third === third) st = SONDER_PTS.third;
@@ -743,15 +746,8 @@ function renderSonder(){
         try{team=decodeURIComponent(escape(team));}catch(e){}
         var actual=actuals[key];
         var correct = actual && team===actual;
-        // Finalist-Tipp korrekt, aber Sieger auch richtig getippt → kein Doppelt
-        var noDouble = key==='finalist' && correct && sp.sw>0;
-        var bg = actual ? (correct&&!noDouble?'#e8ffe8':correct&&noDouble?'#fff8e8':'#fff0f0') : '';
-        var icon = '';
-        if(actual){
-          if(correct&&!noDouble) icon=' <b style="color:#336633">✓</b>';
-          else if(correct&&noDouble) icon=' <b style="color:#cc7700">✓ (kein Bonus, Sieger bereits richtig)</b>';
-          else icon=' <b style="color:#cc0000">✗</b>';
-        }
+        var bg = actual ? (correct?'#e8ffe8':'#fff0f0') : '';
+        var icon = actual ? (correct?' <b style="color:#336633">✓</b>':' <b style="color:#cc0000">✗</b>') : '';
         html2+='<td style="background:'+bg+';font-size:10px">'+fl(team)+team+icon+'</td>';
       }else{
         html2+='<td style="color:#ccc;font-style:italic;font-size:10px">–</td>';
